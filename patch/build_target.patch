@@ -1,0 +1,18 @@
+diff --git a/build/all.gyp b/build/all.gyp
+index 2813ca2..01a9a22 100644
+--- a/build/all.gyp
++++ b/build/all.gyp
+@@ -276,6 +276,13 @@
+       ],
+     }, # target_name: All
+     {
++      'target_name': 'minibrowser',
++      'type': 'none',
++      'dependencies': [
++        '../minibrowser/minibrowser.gyp:minibrowser',
++      ],
++    }, # target_name: minibrowser
++    {
+       'target_name': 'All_syzygy',
+       'type': 'none',
+       'conditions': [

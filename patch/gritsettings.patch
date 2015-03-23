@@ -1,0 +1,14 @@
+diff --git a/tools/gritsettings/resource_ids b/tools/gritsettings/resource_ids
+index a64ae83..653becf 100644
+--- a/tools/gritsettings/resource_ids
++++ b/tools/gritsettings/resource_ids
+@@ -160,6 +160,9 @@
+   "content/shell/shell_resources.grd": {
+     "includes": [25500],
+   },
++  "minibrowser/minibrowser_resources.grd": {
++    "includes": [25600],
++  },
+   # This file is generated during the build.
+   "<(SHARED_INTERMEDIATE_DIR)/content/browser/tracing/tracing_resources.grd": {
+     "includes": [25750],
