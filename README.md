@@ -8,10 +8,10 @@ The official guide: http://dev.chromium.org/developers/how-tos/get-the-code
 #### Sprocket code
 Inside chromium's 'src' directory, run the following commands.
 ```shell
-# get the code
-git clone https://github.com/szeged/sprocket.git minibrowser
 # make a work branch
 git checkout -b sprocket
+# get the code
+git clone https://github.com/szeged/sprocket.git minibrowser
 # apply pathes to chrome
 git apply minibrowser/patch/gritsettings.patch
 git apply minibrowser/patch/build_target.patch
