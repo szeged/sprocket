@@ -1,12 +1,12 @@
 {
   'variables': {
-    'minibrowser_version': '0.1.0.0',
+    'sprocket_version': '0.1.0.0',
   },
   'targets': [
     {
-      'target_name': 'minibrowser_lib',
+      'target_name': 'sprocket_lib',
       'type': 'static_library',
-      'defines': ['MINI_BROWSER_VERSION="<(minibrowser_version)"'],
+      'defines': ['SPROCKET_VERSION="<(sprocket_version)"'],
       'variables': {
         'chromium_code': 1,
       },
@@ -22,7 +22,7 @@
         '../content/content.gyp:content_renderer',
         '../content/content.gyp:content_resources',
         '../content/content.gyp:content_utility',
-        'minibrowser_resources',
+        'sprocket_resources',
         '../base/base.gyp:base',
         '../base/base.gyp:base_static',
         '../base/third_party/dynamic_annotations/dynamic_annotations.gyp:dynamic_annotations',
@@ -89,9 +89,9 @@
         'browser/net/url_request_context_getter.cc',
         'browser/ui/context_menu_model.cc',
         'browser/ui/context_menu_model.h',
-        'browser/ui/minibrowser.cc',
-        'browser/ui/minibrowser.h',
-        'browser/ui/minibrowser_views.cc',
+        'browser/ui/web_contents.cc',
+        'browser/ui/web_contents.h',
+        'browser/ui/web_contents_views.cc',
         'common/content_client.cc',
         'common/content_client.h',
       ],
@@ -100,16 +100,16 @@
       ],
     },
     {
-      'target_name': 'minibrowser_resources',
+      'target_name': 'sprocket_resources',
       'type': 'none',
       'variables': {
-        'grit_out_dir': '<(SHARED_INTERMEDIATE_DIR)/minibrowser',
+        'grit_out_dir': '<(SHARED_INTERMEDIATE_DIR)/sprocket',
       },
       'actions': [
         {
-          'action_name': 'generate_minibrowser_resources',
+          'action_name': 'generate_sprocket_resources',
           'variables': {
-            'grit_grd_file': 'minibrowser_resources.grd',
+            'grit_grd_file': 'sprocket_resources.grd',
           },
           'includes': [ '../build/grit_action.gypi' ],
         },
@@ -119,7 +119,7 @@
         {
           'destination': '<(PRODUCT_DIR)',
           'files': [
-            '<(SHARED_INTERMEDIATE_DIR)/minibrowser/minibrowser_resources.pak'
+            '<(SHARED_INTERMEDIATE_DIR)/sprocket/sprocket_resources.pak'
           ],
         },
       ],
@@ -127,14 +127,14 @@
     {
       # We build a minimal set of resources so WebKit in content_shell has
       # access to necessary resources.
-      'target_name': 'minibrowser_pak',
+      'target_name': 'sprocket_pak',
       'type': 'none',
       'dependencies': [
         '../content/app/resources/content_resources.gyp:content_resources',
         '../content/app/strings/content_strings.gyp:content_strings',
         #'browser/tracing/tracing_resources.gyp:tracing_resources',
         '../content/content.gyp:content_resources',
-        'minibrowser_resources',
+        'sprocket_resources',
         '<(DEPTH)/net/net.gyp:net_resources',
         '<(DEPTH)/third_party/WebKit/public/blink_resources.gyp:blink_resources',
         '<(DEPTH)/ui/resources/ui_resources.gyp:ui_resources',
@@ -142,7 +142,7 @@
       ],
       'actions': [
         {
-          'action_name': 'repack_minibrowser_pack',
+          'action_name': 'repack_sprocket_pack',
           'variables': {
             'pak_inputs': [
               '<(SHARED_INTERMEDIATE_DIR)/blink/public/resources/blink_resources.pak',
@@ -157,21 +157,21 @@
               '<(SHARED_INTERMEDIATE_DIR)/ui/strings/app_locale_settings_en-US.pak',
               '<(SHARED_INTERMEDIATE_DIR)/ui/strings/ui_strings_en-US.pak',
             ],
-            'pak_output': '<(PRODUCT_DIR)/minibrowser.pak',
+            'pak_output': '<(PRODUCT_DIR)/sprocket.pak',
           },
           'includes': [ '../build/repack_action.gypi' ],
         },
       ],
     },
     {
-      'target_name': 'minibrowser',
+      'target_name': 'sprocket',
       'type': 'executable',
       'variables': {
         'chromium_code': 1,
       },
       'dependencies': [
-        'minibrowser_lib',
-        'minibrowser_pak',
+        'sprocket_lib',
+        'sprocket_pak',
         '../third_party/mesa/mesa.gyp:osmesa',
         '../tools/imagediff/image_diff.gyp:image_diff',
         '../build/linux/system.gyp:x11',
@@ -181,9 +181,9 @@
         '..',
       ],
       'sources': [
-        'minibrowser_main.cc',
-        'minibrowser_main_delegate.cc',
-        'minibrowser_main_delegate.h',
+        'main.cc',
+        'main_delegate.cc',
+        'main_delegate.h',
       ],
     }]
 }

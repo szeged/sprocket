@@ -4,8 +4,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef MINI_BROWSER_BROWSER_NET_URL_REQUEST_CONTEXT_GETTER_H_
-#define MINI_BROWSER_BROWSER_NET_URL_REQUEST_CONTEXT_GETTER_H_
+#ifndef SPROCKET_BROWSER_NET_URL_REQUEST_CONTEXT_GETTER_H_
+#define SPROCKET_BROWSER_NET_URL_REQUEST_CONTEXT_GETTER_H_
 
 #include "base/compiler_specific.h"
 #include "base/files/file_path.h"
@@ -30,9 +30,9 @@ class ProxyService;
 class URLRequestContextStorage;
 }
 
-class MiniBrowserURLRequestContextGetter : public net::URLRequestContextGetter {
+class SprocketURLRequestContextGetter : public net::URLRequestContextGetter {
  public:
-  MiniBrowserURLRequestContextGetter(
+  SprocketURLRequestContextGetter(
       bool ignore_certificate_errors,
       const base::FilePath& base_path,
       base::MessageLoop* io_loop,
@@ -48,7 +48,7 @@ class MiniBrowserURLRequestContextGetter : public net::URLRequestContextGetter {
   net::HostResolver* host_resolver();
 
  protected:
-  ~MiniBrowserURLRequestContextGetter() override;
+  ~SprocketURLRequestContextGetter() override;
 
   // Used by subclasses to create their own implementation of NetworkDelegate
   // and net::ProxyService.
@@ -69,7 +69,7 @@ class MiniBrowserURLRequestContextGetter : public net::URLRequestContextGetter {
   content::ProtocolHandlerMap protocol_handlers_;
   content::URLRequestInterceptorScopedVector request_interceptors_;
 
-  DISALLOW_COPY_AND_ASSIGN(MiniBrowserURLRequestContextGetter);
+  DISALLOW_COPY_AND_ASSIGN(SprocketURLRequestContextGetter);
 };
 
-#endif  // MINI_BROWSER_BROWSER_NET_URL_REQUEST_CONTEXT_GETTER_H_
+#endif  // SPROCKET_BROWSER_NET_URL_REQUEST_CONTEXT_GETTER_H_

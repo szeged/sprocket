@@ -4,7 +4,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "minibrowser/browser/net/url_request_context_getter.h"
+#include "sprocket/browser/net/url_request_context_getter.h"
 
 #include "base/command_line.h"
 #include "base/logging.h"
@@ -16,8 +16,8 @@
 #include "content/public/browser/browser_thread.h"
 #include "content/public/browser/cookie_store_factory.h"
 #include "content/public/common/content_switches.h"
-#include "minibrowser/browser/net/network_delegate.h"
-#include "minibrowser/common/content_client.h"
+#include "sprocket/browser/net/network_delegate.h"
+#include "sprocket/common/content_client.h"
 #include "net/base/cache_type.h"
 #include "net/cert/cert_verifier.h"
 #include "net/cookies/cookie_monster.h"
@@ -58,7 +58,7 @@ void InstallProtocolHandlers(net::URLRequestJobFactoryImpl* job_factory,
 
 }  // namespace
 
-MiniBrowserURLRequestContextGetter::MiniBrowserURLRequestContextGetter(
+SprocketURLRequestContextGetter::SprocketURLRequestContextGetter(
     bool ignore_certificate_errors,
     const base::FilePath& base_path,
     base::MessageLoop* io_loop,
@@ -81,25 +81,25 @@ MiniBrowserURLRequestContextGetter::MiniBrowserURLRequestContextGetter(
   proxy_config_service_.reset(GetProxyConfigService());
 }
 
-MiniBrowserURLRequestContextGetter::~MiniBrowserURLRequestContextGetter() {
+SprocketURLRequestContextGetter::~SprocketURLRequestContextGetter() {
 }
 
-net::NetworkDelegate* MiniBrowserURLRequestContextGetter::CreateNetworkDelegate() {
-  return new MiniBrowserNetworkDelegate;
+net::NetworkDelegate* SprocketURLRequestContextGetter::CreateNetworkDelegate() {
+  return new SprocketNetworkDelegate;
 }
 
-net::ProxyConfigService* MiniBrowserURLRequestContextGetter::GetProxyConfigService() {
+net::ProxyConfigService* SprocketURLRequestContextGetter::GetProxyConfigService() {
   return net::ProxyService::CreateSystemProxyConfigService(
       io_loop_->message_loop_proxy(), file_loop_->message_loop_proxy());
 }
 
-net::ProxyService* MiniBrowserURLRequestContextGetter::GetProxyService() {
+net::ProxyService* SprocketURLRequestContextGetter::GetProxyService() {
   // TODO(jam): use v8 if possible, look at chrome code.
   return net::ProxyService::CreateUsingSystemProxyResolver(
       proxy_config_service_.release(), 0, /*url_request_context_->net_log()*/ NULL);
 }
 
-net::URLRequestContext* MiniBrowserURLRequestContextGetter::GetURLRequestContext() {
+net::URLRequestContext* SprocketURLRequestContextGetter::GetURLRequestContext() {
   DCHECK(content::BrowserThread::CurrentlyOn(content::BrowserThread::IO));
 
   if (!url_request_context_) {
@@ -117,7 +117,7 @@ net::URLRequestContext* MiniBrowserURLRequestContextGetter::GetURLRequestContext
                                   base::WorkerPool::GetTaskRunner(true))));
     storage_->set_http_user_agent_settings(
         new net::StaticHttpUserAgentSettings(
-            "en-us,en", GetMiniBrowserUserAgent()));
+            "en-us,en", GetSprocketUserAgent()));
 
     scoped_ptr<net::HostResolver> host_resolver(
         net::HostResolver::CreateDefaultResolver(
@@ -228,10 +228,10 @@ net::URLRequestContext* MiniBrowserURLRequestContextGetter::GetURLRequestContext
 }
 
 scoped_refptr<base::SingleThreadTaskRunner>
-    MiniBrowserURLRequestContextGetter::GetNetworkTaskRunner() const {
+    SprocketURLRequestContextGetter::GetNetworkTaskRunner() const {
   return content::BrowserThread::GetMessageLoopProxyForThread(content::BrowserThread::IO);
 }
 
-net::HostResolver* MiniBrowserURLRequestContextGetter::host_resolver() {
+net::HostResolver* SprocketURLRequestContextGetter::host_resolver() {
   return url_request_context_->host_resolver();
 }

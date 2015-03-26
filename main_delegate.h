@@ -4,20 +4,20 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef MINI_BROWSER_MAIN_DELEGATE_H_
-#define MINI_BROWSER_MAIN_DELEGATE_H_
+#ifndef SPROCKET_MAIN_DELEGATE_H_
+#define SPROCKET_MAIN_DELEGATE_H_
 
 #include "base/memory/scoped_ptr.h"
 #include "content/public/app/content_main_delegate.h"
-#include "minibrowser/common/content_client.h"
+#include "sprocket/common/content_client.h"
 
-class MiniBrowserContentBrowserClient;
+class SprocketContentBrowserClient;
 
-class MiniBrowserMainDelegate : public content::ContentMainDelegate {
+class SprocketMainDelegate : public content::ContentMainDelegate {
 
 public:
-  MiniBrowserMainDelegate();
-  ~MiniBrowserMainDelegate() override;
+  SprocketMainDelegate();
+  ~SprocketMainDelegate() override;
 
 protected:
   // content::ContentMainDelegate implementation:
@@ -30,10 +30,10 @@ protected:
 
   static void InitializeResourceBundle();
 private:
-  scoped_ptr<MiniBrowserContentBrowserClient> browser_client_;
-  MiniBrowserContentClient content_client_;
+  scoped_ptr<SprocketContentBrowserClient> browser_client_;
+  SprocketContentClient content_client_;
 
-  DISALLOW_COPY_AND_ASSIGN(MiniBrowserMainDelegate);
+  DISALLOW_COPY_AND_ASSIGN(SprocketMainDelegate);
 };
 
-#endif  // MINI_BROWSER_MAIN_DELEGATE_H_
+#endif  // SPROCKET_MAIN_DELEGATE_H_

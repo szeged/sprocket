@@ -4,8 +4,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef MINI_BROWSER_BROWSER_BROWSER_MAIN_H_
-#define MINI_BROWSER_BROWSER_BROWSER_MAIN_H_
+#ifndef SPROCKET_BROWSER_BROWSER_MAIN_H_
+#define SPROCKET_BROWSER_BROWSER_MAIN_H_
 
 #include "base/memory/scoped_ptr.h"
 
@@ -18,4 +18,4 @@ int BrowserMain(
     const content::MainFunctionParams& parameters,
     const scoped_ptr<content::BrowserMainRunner>& main_runner);
 
-#endif  // MINI_BROWSER_BROWSER_BROWSER_MAIN_H_
+#endif  // SPROCKET_BROWSER_BROWSER_MAIN_H_

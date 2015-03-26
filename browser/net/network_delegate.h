@@ -4,17 +4,17 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef MINI_BROWSER_BROWSER_NET_NETWORK_DELEGATE_H_
-#define MINI_BROWSER_BROWSER_NET_NETWORK_DELEGATE_H_
+#ifndef SPROCKET_BROWSER_NET_NETWORK_DELEGATE_H_
+#define SPROCKET_BROWSER_NET_NETWORK_DELEGATE_H_
 
 #include "base/basictypes.h"
 #include "base/compiler_specific.h"
 #include "net/base/network_delegate_impl.h"
 
-class MiniBrowserNetworkDelegate : public net::NetworkDelegateImpl {
+class SprocketNetworkDelegate : public net::NetworkDelegateImpl {
 public:
-  MiniBrowserNetworkDelegate();
-  ~MiniBrowserNetworkDelegate() override;
+  SprocketNetworkDelegate();
+  ~SprocketNetworkDelegate() override;
 
   static void SetAcceptAllCookies(bool accept);
 
@@ -56,7 +56,7 @@ private:
   bool OnCanThrottleRequest(const net::URLRequest& request) const override;
   bool OnFirstPartyOnlyCookieExperimentEnabled() const override;
 
-  DISALLOW_COPY_AND_ASSIGN(MiniBrowserNetworkDelegate);
+  DISALLOW_COPY_AND_ASSIGN(SprocketNetworkDelegate);
 };
 
-#endif  // MINI_BROWSER_BROWSER_NET_NETWORK_DELEGATE_H_
+#endif  // SPROCKET_BROWSER_NET_NETWORK_DELEGATE_H_

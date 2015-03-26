@@ -4,7 +4,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "minibrowser/browser/ui/minibrowser.h"
+#include "sprocket/browser/ui/web_contents.h"
 
 #include "base/auto_reset.h"
 #include "base/message_loop/message_loop.h"
@@ -14,22 +14,22 @@
 #include "content/public/browser/web_contents.h"
 #include "content/public/browser/web_contents_observer.h"
 #include "content/public/common/renderer_preferences.h"
-#include "minibrowser/browser/browser_main_parts.h"
-#include "minibrowser/browser/content_browser_client.h"
+#include "sprocket/browser/browser_main_parts.h"
+#include "sprocket/browser/content_browser_client.h"
 
 const int kDefaultTestWindowWidthDip = 800;
 const int kDefaultTestWindowHeightDip = 600;
 
-std::vector<MiniBrowser*> MiniBrowser::windows_;
-bool MiniBrowser::quit_message_loop_ = true;
+std::vector<SprocketWebContents*> SprocketWebContents::windows_;
+bool SprocketWebContents::quit_message_loop_ = true;
 
-MiniBrowser::MiniBrowser(content::WebContents* web_contents)
+SprocketWebContents::SprocketWebContents(content::WebContents* web_contents)
     : WebContentsObserver(web_contents),
       window_(NULL) {
   windows_.push_back(this);
 }
 
-MiniBrowser::~MiniBrowser() {
+SprocketWebContents::~SprocketWebContents() {
   PlatformCleanUp();
 
   for (size_t i = 0; i < windows_.size(); ++i) {
@@ -46,48 +46,48 @@ MiniBrowser::~MiniBrowser() {
 }
 
 // static
-MiniBrowser* MiniBrowser::CreateMiniBrowser(content::WebContents* web_contents,
+SprocketWebContents* SprocketWebContents::CreateSprocketWebContents(content::WebContents* web_contents,
                 const gfx::Size& initial_size) {
-  MiniBrowser* minibrowser = new MiniBrowser(web_contents);
-  minibrowser->PlatformCreateWindow(initial_size.width(), initial_size.height());
+  SprocketWebContents* sprocket_web_contents = new SprocketWebContents(web_contents);
+  sprocket_web_contents->PlatformCreateWindow(initial_size.width(), initial_size.height());
 
-  minibrowser->web_contents_.reset(web_contents);
-  web_contents->SetDelegate(minibrowser);
+  sprocket_web_contents->web_contents_.reset(web_contents);
+  web_contents->SetDelegate(sprocket_web_contents);
 
-  minibrowser->PlatformSetContents();
+  sprocket_web_contents->PlatformSetContents();
 
-  minibrowser->PlatformResizeSubViews();
+  sprocket_web_contents->PlatformResizeSubViews();
 
-  return minibrowser;
+  return sprocket_web_contents;
 }
 
 // static
-void MiniBrowser::Initialize() {
-  PlatformInitialize(GetMiniBrowserDefaultSize());
+void SprocketWebContents::Initialize() {
+  PlatformInitialize(GetSprocketWebContentsDefaultSize());
 }
 
 // static
-gfx::Size MiniBrowser::AdjustWindowSize(const gfx::Size& initial_size) {
+gfx::Size SprocketWebContents::AdjustWindowSize(const gfx::Size& initial_size) {
   if (!initial_size.IsEmpty())
     return initial_size;
-  return GetMiniBrowserDefaultSize();
+  return GetSprocketWebContentsDefaultSize();
 }
 
 // static
-MiniBrowser* MiniBrowser::CreateNewWindow(content::BrowserContext* browser_context,
+SprocketWebContents* SprocketWebContents::CreateNewWindow(content::BrowserContext* browser_context,
                               const GURL& url,
                               content::SiteInstance* site_instance,
                               const gfx::Size& initial_size) {
   content::WebContents::CreateParams create_params(browser_context, site_instance);
   create_params.initial_size = AdjustWindowSize(initial_size);
   content::WebContents* web_contents = content::WebContents::Create(create_params);
-  MiniBrowser* minibrowser = CreateMiniBrowser(web_contents, create_params.initial_size);
+  SprocketWebContents* sprocket_web_contents = CreateSprocketWebContents(web_contents, create_params.initial_size);
   if (!url.is_empty())
-    minibrowser->LoadURL(url);
-  return minibrowser;
+    sprocket_web_contents->LoadURL(url);
+  return sprocket_web_contents;
 }
 
-void MiniBrowser::LoadURL(const GURL& url) {
+void SprocketWebContents::LoadURL(const GURL& url) {
   //LoadURLForFrame(url, std::string());
   content::NavigationController::LoadURLParams params(url);
   params.transition_type = ui::PageTransitionFromInt(
@@ -96,52 +96,52 @@ void MiniBrowser::LoadURL(const GURL& url) {
   web_contents_->Focus();
 }
 
-void MiniBrowser::AddNewContents(content::WebContents* source,
+void SprocketWebContents::AddNewContents(content::WebContents* source,
                            content::WebContents* new_contents,
                            WindowOpenDisposition disposition,
                            const gfx::Rect& initial_rect,
                            bool user_gesture,
                            bool* was_blocked) {
-  CreateMiniBrowser(new_contents, AdjustWindowSize(initial_rect.size()));
+  CreateSprocketWebContents(new_contents, AdjustWindowSize(initial_rect.size()));
 }
 
-bool MiniBrowser::CanGoBack() {
+bool SprocketWebContents::CanGoBack() {
   return web_contents_->GetController().CanGoBack();
 }
 
-bool MiniBrowser::CanGoForward() {
+bool SprocketWebContents::CanGoForward() {
   return web_contents_->GetController().CanGoForward();
 }
 
-void MiniBrowser::GoBackOrForward(int offset) {
+void SprocketWebContents::GoBackOrForward(int offset) {
   web_contents_->GetController().GoToOffset(offset);
   web_contents_->Focus();
 }
 
-void MiniBrowser::Reload() {
+void SprocketWebContents::Reload() {
   web_contents_->GetController().Reload(false);
   web_contents_->Focus();
 }
 
-void MiniBrowser::Stop() {
+void SprocketWebContents::Stop() {
   web_contents_->Stop();
   web_contents_->Focus();
 }
 
-void MiniBrowser::UpdateNavigationControls(bool to_different_document) {
+void SprocketWebContents::UpdateNavigationControls(bool to_different_document) {
   PlatformEnableUIControl(BACK_BUTTON, CanGoBack());
   PlatformEnableUIControl(FORWARD_BUTTON, CanGoForward());
   PlatformEnableUIControl(STOP_BUTTON,
       to_different_document && web_contents_->IsLoading());
 }
 
-gfx::NativeView MiniBrowser::GetContentView() {
+gfx::NativeView SprocketWebContents::GetContentView() {
   if (!web_contents_)
     return NULL;
   return web_contents_->GetNativeView();
 }
 
-content::WebContents* MiniBrowser::OpenURLFromTab(content::WebContents* source,
+content::WebContents* SprocketWebContents::OpenURLFromTab(content::WebContents* source,
                                    const content::OpenURLParams& params) {
   // CURRENT_TAB is the only one we implement for now.
   if (params.disposition != CURRENT_TAB)
@@ -165,52 +165,52 @@ content::WebContents* MiniBrowser::OpenURLFromTab(content::WebContents* source,
   return source;
 }
 
-void MiniBrowser::LoadingStateChanged(content::WebContents* source,
+void SprocketWebContents::LoadingStateChanged(content::WebContents* source,
     bool to_different_document) {
   UpdateNavigationControls(to_different_document);
   PlatformSetIsLoading(source->IsLoading());
 }
 
-void MiniBrowser::CloseContents(content::WebContents* source) {
+void SprocketWebContents::CloseContents(content::WebContents* source) {
   Close();
 }
 
-bool MiniBrowser::CanOverscrollContent() const {
+bool SprocketWebContents::CanOverscrollContent() const {
   return true;
 }
 
-void MiniBrowser::DidNavigateMainFramePostCommit(content::WebContents* web_contents) {
+void SprocketWebContents::DidNavigateMainFramePostCommit(content::WebContents* web_contents) {
   PlatformSetAddressBarURL(web_contents->GetLastCommittedURL());
 }
 
-void MiniBrowser::ActivateContents(content::WebContents* contents) {
+void SprocketWebContents::ActivateContents(content::WebContents* contents) {
   contents->GetRenderViewHost()->Focus();
 }
 
-void MiniBrowser::DeactivateContents(content::WebContents* contents) {
+void SprocketWebContents::DeactivateContents(content::WebContents* contents) {
   contents->GetRenderViewHost()->Blur();
 }
 
-bool MiniBrowser::HandleContextMenu(const content::ContextMenuParams& params) {
+bool SprocketWebContents::HandleContextMenu(const content::ContextMenuParams& params) {
   return PlatformHandleContextMenu(params);
 }
 
-void MiniBrowser::WebContentsFocused(content::WebContents* contents) {
+void SprocketWebContents::WebContentsFocused(content::WebContents* contents) {
   PlatformWebContentsFocused(contents);
 }
 
-gfx::Size MiniBrowser::GetMiniBrowserDefaultSize() {
-  static gfx::Size default_minibrowser_size;
-  if (!default_minibrowser_size.IsEmpty())
-    return default_minibrowser_size;
+gfx::Size SprocketWebContents::GetSprocketWebContentsDefaultSize() {
+  static gfx::Size default_sprocket_size;
+  if (!default_sprocket_size.IsEmpty())
+    return default_sprocket_size;
 
-  default_minibrowser_size = gfx::Size(
+  default_sprocket_size = gfx::Size(
     kDefaultTestWindowWidthDip, kDefaultTestWindowHeightDip);
 
-  return default_minibrowser_size;
+  return default_sprocket_size;
 }
 
-void MiniBrowser::TitleWasSet(content::NavigationEntry* entry, bool explicit_set) {
+void SprocketWebContents::TitleWasSet(content::NavigationEntry* entry, bool explicit_set) {
   if (entry)
     PlatformSetTitle(entry->GetTitle());
 }

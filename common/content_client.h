@@ -4,17 +4,17 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef MINI_BROWSER_COMMON_CONTENT_CLIENT_H_
-#define MINI_BROWSER_COMMON_CONTENT_CLIENT_H_
+#ifndef SPROCKET_COMMON_CONTENT_CLIENT_H_
+#define SPROCKET_COMMON_CONTENT_CLIENT_H_
 
 #include <string>
 #include <vector>
 
 #include "content/public/common/content_client.h"
 
-std::string GetMiniBrowserUserAgent();
+std::string GetSprocketUserAgent();
 
-class MiniBrowserContentClient : public content::ContentClient {
+class SprocketContentClient : public content::ContentClient {
 
 public:
 
@@ -28,5 +28,4 @@ public:
   gfx::Image& GetNativeImageNamed(int resource_id) const override;
 };
 
-
-#endif  // MINI_BROWSER_COMMON_CONTENT_CLIENT_H_
+#endif  // SPROCKET_COMMON_CONTENT_CLIENT_H_

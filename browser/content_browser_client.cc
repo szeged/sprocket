@@ -4,7 +4,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "minibrowser/browser/content_browser_client.h"
+#include "sprocket/browser/content_browser_client.h"
 
 #include "base/base_switches.h"
 #include "base/command_line.h"
@@ -12,41 +12,41 @@
 #include "content/public/browser/resource_dispatcher_host.h"
 #include "content/public/common/content_descriptors.h"
 #include "content/public/common/url_constants.h"
-#include "minibrowser/browser/browser_context.h"
-#include "minibrowser/browser/browser_main_parts.h"
+#include "sprocket/browser/browser_context.h"
+#include "sprocket/browser/browser_main_parts.h"
 #include "gin/public/isolate_holder.h"
 #include "net/url_request/url_request_context_getter.h"
 #include "url/gurl.h"
 
 
-MiniBrowserContentBrowserClient::MiniBrowserContentBrowserClient()
+SprocketContentBrowserClient::SprocketContentBrowserClient()
   : v8_natives_fd_(-1),
     v8_snapshot_fd_(-1),
     browser_main_parts_(NULL) {
 }
 
-MiniBrowserContentBrowserClient::~MiniBrowserContentBrowserClient() {
+SprocketContentBrowserClient::~SprocketContentBrowserClient() {
 }
 
 content::BrowserMainParts*
-MiniBrowserContentBrowserClient::CreateBrowserMainParts(
+SprocketContentBrowserClient::CreateBrowserMainParts(
   const content::MainFunctionParams& parameters) {
-  browser_main_parts_ = new MiniBrowserBrowserMainParts(parameters);
+  browser_main_parts_ = new SprocketBrowserMainParts(parameters);
   return browser_main_parts_;
 }
 
 net::URLRequestContextGetter*
-MiniBrowserContentBrowserClient::CreateRequestContext(
+SprocketContentBrowserClient::CreateRequestContext(
   content::BrowserContext* browser_context,
   content::ProtocolHandlerMap* protocol_handlers,
   content::URLRequestInterceptorScopedVector request_interceptors) {
-    MiniBrowserBrowserContext* minibrowser_browser_context =
-      MiniBrowserBrowserContextForBrowserContext(browser_context);
-    return minibrowser_browser_context->CreateRequestContext(
+    SprocketBrowserContext* sprocket_browser_context =
+      SprocketBrowserContextForBrowserContext(browser_context);
+    return sprocket_browser_context->CreateRequestContext(
       protocol_handlers, request_interceptors.Pass());
 }
 
-bool MiniBrowserContentBrowserClient::IsHandledURL(const GURL& url) {
+bool SprocketContentBrowserClient::IsHandledURL(const GURL& url) {
   if (!url.is_valid()) {
     return false;
   }
@@ -65,11 +65,11 @@ bool MiniBrowserContentBrowserClient::IsHandledURL(const GURL& url) {
   return false;
 }
 
-std::string MiniBrowserContentBrowserClient::GetDefaultDownloadName() {
+std::string SprocketContentBrowserClient::GetDefaultDownloadName() {
   return "download";
 }
 
-void MiniBrowserContentBrowserClient::GetAdditionalMappedFilesForChildProcess(
+void SprocketContentBrowserClient::GetAdditionalMappedFilesForChildProcess(
     const base::CommandLine& command_line,
     int child_process_id,
     content::FileDescriptorInfo* mappings) {
@@ -94,18 +94,18 @@ void MiniBrowserContentBrowserClient::GetAdditionalMappedFilesForChildProcess(
   mappings->Share(kV8SnapshotDataDescriptor, v8_snapshot_fd_.get());
 }
 
-MiniBrowserBrowserContext*
-MiniBrowserContentBrowserClient::browser_context() {
+SprocketBrowserContext*
+SprocketContentBrowserClient::browser_context() {
   return browser_main_parts_->browser_context();
 }
 
-MiniBrowserBrowserContext*
-MiniBrowserContentBrowserClient::off_the_record_browser_context() {
+SprocketBrowserContext*
+SprocketContentBrowserClient::off_the_record_browser_context() {
   return browser_main_parts_->off_the_record_browser_context();
 }
 
-MiniBrowserBrowserContext*
-MiniBrowserContentBrowserClient::MiniBrowserBrowserContextForBrowserContext(
+SprocketBrowserContext*
+SprocketContentBrowserClient::SprocketBrowserContextForBrowserContext(
     content::BrowserContext* content_browser_context) {
   if (content_browser_context == browser_context())
     return browser_context();

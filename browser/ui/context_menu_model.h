@@ -4,19 +4,19 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef MINI_BROWSER_BROWSER_UI_CONTEXT_MENU_MODEL_H_
-#define MINI_BROWSER_BROWSER_UI_CONTEXT_MENU_MODEL_H_
+#ifndef SPROCKET_BROWSER_UI_CONTEXT_MENU_MODEL_H_
+#define SPROCKET_BROWSER_UI_CONTEXT_MENU_MODEL_H_
 
-#include "minibrowser/browser/ui/minibrowser.h"
+#include "sprocket/browser/ui/web_contents.h"
 
 #include "content/public/common/context_menu_params.h"
 #include "ui/base/models/simple_menu_model.h"
 
-class MiniBrowserContextMenuModel : public ui::SimpleMenuModel,
+class SprocketContextMenuModel : public ui::SimpleMenuModel,
                                     public ui::SimpleMenuModel::Delegate {
 public:
-  explicit MiniBrowserContextMenuModel(
-      MiniBrowser* minibrowser,
+  explicit SprocketContextMenuModel(
+      SprocketWebContents* sprocket_web_contents,
       const content::ContextMenuParams& params);
 
   // ui::SimpleMenuModel::Delegate:
@@ -33,10 +33,10 @@ private:
     COMMAND_RELOAD
   };
 
-  MiniBrowser* minibrowser_;
+  SprocketWebContents* sprocket_web_contents_;
   content::ContextMenuParams params_;
 
-  DISALLOW_COPY_AND_ASSIGN(MiniBrowserContextMenuModel);
+  DISALLOW_COPY_AND_ASSIGN(SprocketContextMenuModel);
 };
 
-#endif // MINI_BROWSER_BROWSER_UI_CONTEXT_MENU_MODEL_H_
+#endif // SPROCKET_BROWSER_UI_CONTEXT_MENU_MODEL_H_

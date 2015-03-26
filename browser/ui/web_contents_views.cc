@@ -4,7 +4,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "minibrowser/browser/ui/minibrowser.h"
+#include "sprocket/browser/ui/web_contents.h"
 
 #include "base/command_line.h"
 #include "base/strings/utf_string_conversions.h"
@@ -12,7 +12,7 @@
 #include "content/public/browser/render_widget_host_view.h"
 #include "content/public/browser/web_contents.h"
 #include "content/public/common/context_menu_params.h"
-#include "minibrowser/browser/ui/context_menu_model.h"
+#include "sprocket/browser/ui/context_menu_model.h"
 #include "ui/aura/window_tree_host.h"
 #include "ui/aura/client/screen_position_client.h"
 #include "ui/aura/env.h"
@@ -40,13 +40,13 @@
 #include "ui/views/widget/desktop_aura/desktop_screen.h"
 
 namespace {
-// ViewDelegate implementation for aura minibrowser
-class MiniBrowserViewsDelegateAura : public views::DesktopTestViewsDelegate {
+// ViewDelegate implementation for aura sprocket
+class SprocketViewsDelegateAura : public views::DesktopTestViewsDelegate {
 public:
-  MiniBrowserViewsDelegateAura() : use_transparent_windows_(false) {
+  SprocketViewsDelegateAura() : use_transparent_windows_(false) {
   }
 
-  ~MiniBrowserViewsDelegateAura() override {}
+  ~SprocketViewsDelegateAura() override {}
 
   void SetUseTransparentWindows(bool transparent) {
     use_transparent_windows_ = transparent;
@@ -55,11 +55,11 @@ public:
 private:
   bool use_transparent_windows_;
 
-  DISALLOW_COPY_AND_ASSIGN(MiniBrowserViewsDelegateAura);
+  DISALLOW_COPY_AND_ASSIGN(SprocketViewsDelegateAura);
 };
 
-// Maintain the UI controls and web view for minibrowser
-class MiniBrowserWindowDelegateView : public views::WidgetDelegateView,
+// Maintain the UI controls and web view for sprocket
+class SprocketWindowDelegateView : public views::WidgetDelegateView,
                                       public views::TextfieldController,
                                       public views::ButtonListener {
 public:
@@ -69,12 +69,12 @@ public:
     STOP_BUTTON
   };
 
-  MiniBrowserWindowDelegateView(MiniBrowser* minibrowser)
-    : minibrowser_(minibrowser),
+  SprocketWindowDelegateView(SprocketWebContents* sprocket_web_contents)
+    : sprocket_web_contents_(sprocket_web_contents),
       toolbar_view_(new View),
       contents_view_(new View) {
   }
-  ~MiniBrowserWindowDelegateView() override {}
+  ~SprocketWindowDelegateView() override {}
 
   // Update the state of UI controls
   void SetAddressBarURL(const GURL& url) {
@@ -115,7 +115,7 @@ public:
     // Convert from content coordinates to window coordinates.
     // This code copied from chrome_web_contents_view_delegate_views.cc
     aura::Window* web_contents_window =
-        minibrowser_->web_contents()->GetNativeView();
+        sprocket_web_contents_->web_contents()->GetNativeView();
     aura::Window* root_window = web_contents_window->GetRootWindow();
     aura::client::ScreenPositionClient* screen_position_client =
         aura::client::GetScreenPositionClient(root_window);
@@ -124,7 +124,7 @@ public:
                 &screen_point);
     }
 
-    context_menu_model_.reset(new MiniBrowserContextMenuModel(minibrowser_, params));
+    context_menu_model_.reset(new SprocketContextMenuModel(sprocket_web_contents_, params));
     context_menu_runner_.reset(new views::MenuRunner(
         context_menu_model_.get(), views::MenuRunner::CONTEXT_MENU));
 
@@ -144,8 +144,8 @@ public:
   }
 
 private:
-  // Initialize the UI control contained in minibrowser window
-  void InitMiniBrowserWindow() {
+  // Initialize the UI control contained in sprocket window
+  void InitSprocketWindow() {
     set_background(views::Background::CreateStandardPanelBackground());
 
     views::GridLayout* layout = new views::GridLayout(this);
@@ -260,7 +260,7 @@ private:
        url = GURL(std::string("http://") + std::string(text));
        url_entry_->SetText(base::ASCIIToUTF16(url.spec()));
      }
-     minibrowser_->LoadURL(url);
+     sprocket_web_contents_->LoadURL(url);
      return true;
    }
    return false;
@@ -269,13 +269,13 @@ private:
   // Overridden from ButtonListener
   void ButtonPressed(views::Button* sender, const ui::Event& event) override {
     if (sender == back_button_)
-      minibrowser_->GoBackOrForward(-1);
+      sprocket_web_contents_->GoBackOrForward(-1);
     else if (sender == forward_button_)
-      minibrowser_->GoBackOrForward(1);
+      sprocket_web_contents_->GoBackOrForward(1);
     else if (sender == refresh_button_)
-      minibrowser_->Reload();
+      sprocket_web_contents_->Reload();
     else if (sender == stop_button_)
-      minibrowser_->Stop();
+      sprocket_web_contents_->Stop();
   }
 
   // Overridden from WidgetDelegateView
@@ -284,9 +284,9 @@ private:
   bool CanMinimize() const override { return true; }
   base::string16 GetWindowTitle() const override { return title_; }
   void WindowClosing() override {
-    if (minibrowser_) {
-      delete minibrowser_;
-      minibrowser_ = NULL;
+    if (sprocket_web_contents_) {
+      delete sprocket_web_contents_;
+      sprocket_web_contents_ = NULL;
     }
   }
   View* GetContentsView() override { return this; }
@@ -300,7 +300,7 @@ private:
   void ViewHierarchyChanged(
       const ViewHierarchyChangedDetails& details) override {
     if (details.is_add && details.child == this) {
-      InitMiniBrowserWindow();
+      InitSprocketWindow();
     }
   }
 
@@ -308,21 +308,21 @@ private:
   bool AcceleratorPressed(const ui::Accelerator& accelerator) override {
     switch (accelerator.key_code()) {
     case ui::VKEY_F5:
-      minibrowser_->Reload();
+      sprocket_web_contents_->Reload();
       return true;
     case ui::VKEY_BROWSER_BACK:
-      minibrowser_->GoBackOrForward(-1);
+      sprocket_web_contents_->GoBackOrForward(-1);
       return true;
     case ui::VKEY_BROWSER_FORWARD:
-      minibrowser_->GoBackOrForward(1);
+      sprocket_web_contents_->GoBackOrForward(1);
       return true;
     default:
       return views::WidgetDelegateView::AcceleratorPressed(accelerator);
     }
   }
 
-  // Hold a reference of MiniBrowser for deleting it when the window is closing
-  MiniBrowser* minibrowser_;
+  // Hold a reference of Sprocket for deleting it when the window is closing
+  SprocketWebContents* sprocket_web_contents_;
 
   // Window title
   base::string16 title_;
@@ -334,66 +334,66 @@ private:
   views::LabelButton* refresh_button_;
   views::LabelButton* stop_button_;
   views::Textfield* url_entry_;
-  scoped_ptr<MiniBrowserContextMenuModel> context_menu_model_;
+  scoped_ptr<SprocketContextMenuModel> context_menu_model_;
   scoped_ptr<views::MenuRunner> context_menu_runner_;
 
   // Contents view contains the web contents view
   View* contents_view_;
   views::WebView* web_view_;
 
-  DISALLOW_COPY_AND_ASSIGN(MiniBrowserWindowDelegateView);
+  DISALLOW_COPY_AND_ASSIGN(SprocketWindowDelegateView);
 };
 
 }  // namespace
 
-views::ViewsDelegate* MiniBrowser::views_delegate_ = NULL;
+views::ViewsDelegate* SprocketWebContents::views_delegate_ = NULL;
 
 // static
-void MiniBrowser::PlatformInitialize(const gfx::Size& default_window_size) {
+void SprocketWebContents::PlatformInitialize(const gfx::Size& default_window_size) {
   gfx::Screen::SetScreenInstance(
       gfx::SCREEN_TYPE_NATIVE, views::CreateDesktopScreen());
-  views_delegate_ = new MiniBrowserViewsDelegateAura();
+  views_delegate_ = new SprocketViewsDelegateAura();
 }
 
 // static
-void MiniBrowser::PlatformExit() {
+void SprocketWebContents::PlatformExit() {
   delete views_delegate_;
   views_delegate_ = NULL;
   aura::Env::DeleteInstance();
 }
 
-void MiniBrowser::PlatformCleanUp() {
+void SprocketWebContents::PlatformCleanUp() {
 }
 
-void MiniBrowser::PlatformEnableUIControl(UIControl control, bool is_enabled) {
-  MiniBrowserWindowDelegateView* delegate_view =
-    static_cast<MiniBrowserWindowDelegateView*>(window_widget_->widget_delegate());
+void SprocketWebContents::PlatformEnableUIControl(UIControl control, bool is_enabled) {
+  SprocketWindowDelegateView* delegate_view =
+    static_cast<SprocketWindowDelegateView*>(window_widget_->widget_delegate());
   if (control == BACK_BUTTON) {
-    delegate_view->EnableUIControl(MiniBrowserWindowDelegateView::BACK_BUTTON,
+    delegate_view->EnableUIControl(SprocketWindowDelegateView::BACK_BUTTON,
         is_enabled);
   } else if (control == FORWARD_BUTTON) {
-    delegate_view->EnableUIControl(MiniBrowserWindowDelegateView::FORWARD_BUTTON,
+    delegate_view->EnableUIControl(SprocketWindowDelegateView::FORWARD_BUTTON,
         is_enabled);
   } else if (control == STOP_BUTTON) {
-    delegate_view->EnableUIControl(MiniBrowserWindowDelegateView::STOP_BUTTON,
+    delegate_view->EnableUIControl(SprocketWindowDelegateView::STOP_BUTTON,
         is_enabled);
   }
 }
 
-void MiniBrowser::PlatformSetAddressBarURL(const GURL& url) {
-  MiniBrowserWindowDelegateView* delegate_view =
-    static_cast<MiniBrowserWindowDelegateView*>(window_widget_->widget_delegate());
+void SprocketWebContents::PlatformSetAddressBarURL(const GURL& url) {
+  SprocketWindowDelegateView* delegate_view =
+    static_cast<SprocketWindowDelegateView*>(window_widget_->widget_delegate());
   delegate_view->SetAddressBarURL(url);
 }
 
-void MiniBrowser::PlatformSetIsLoading(bool loading) {
+void SprocketWebContents::PlatformSetIsLoading(bool loading) {
 }
 
-void MiniBrowser::PlatformCreateWindow(int width, int height) {
+void SprocketWebContents::PlatformCreateWindow(int width, int height) {
   window_widget_ = new views::Widget;
   views::Widget::InitParams params;
   params.bounds = gfx::Rect(0, 0, width, height);
-  params.delegate = new MiniBrowserWindowDelegateView(this);
+  params.delegate = new SprocketWindowDelegateView(this);
   window_widget_->Init(params);
 
   content_size_ = gfx::Size(width, height);
@@ -405,37 +405,37 @@ void MiniBrowser::PlatformCreateWindow(int width, int height) {
   window_widget_->Show();
 }
 
-void MiniBrowser::PlatformSetContents() {
+void SprocketWebContents::PlatformSetContents() {
   views::WidgetDelegate* widget_delegate = window_widget_->widget_delegate();
-  MiniBrowserWindowDelegateView* delegate_view =
-      static_cast<MiniBrowserWindowDelegateView*>(widget_delegate);
+  SprocketWindowDelegateView* delegate_view =
+      static_cast<SprocketWindowDelegateView*>(widget_delegate);
   delegate_view->SetWebContents(web_contents_.get(), content_size_);
 }
 
-void MiniBrowser::PlatformResizeSubViews() {
+void SprocketWebContents::PlatformResizeSubViews() {
 }
 
-void MiniBrowser::Close() {
+void SprocketWebContents::Close() {
   window_widget_->CloseNow();
 }
 
-void MiniBrowser::PlatformSetTitle(const base::string16& title) {
-  MiniBrowserWindowDelegateView* delegate_view =
-    static_cast<MiniBrowserWindowDelegateView*>(window_widget_->widget_delegate());
+void SprocketWebContents::PlatformSetTitle(const base::string16& title) {
+  SprocketWindowDelegateView* delegate_view =
+    static_cast<SprocketWindowDelegateView*>(window_widget_->widget_delegate());
   delegate_view->SetWindowTitle(title);
   window_widget_->UpdateWindowTitle();
 }
 
-bool MiniBrowser::PlatformHandleContextMenu(
+bool SprocketWebContents::PlatformHandleContextMenu(
     const content::ContextMenuParams& params) {
-  MiniBrowserWindowDelegateView* delegate_view =
-    static_cast<MiniBrowserWindowDelegateView*>(window_widget_->widget_delegate());
+  SprocketWindowDelegateView* delegate_view =
+    static_cast<SprocketWindowDelegateView*>(window_widget_->widget_delegate());
   delegate_view->ShowWebViewContextMenu(params);
   return true;
 }
 
-void MiniBrowser::PlatformWebContentsFocused(content::WebContents* contents) {
-  MiniBrowserWindowDelegateView* delegate_view =
-    static_cast<MiniBrowserWindowDelegateView*>(window_widget_->widget_delegate());
+void SprocketWebContents::PlatformWebContentsFocused(content::WebContents* contents) {
+  SprocketWindowDelegateView* delegate_view =
+    static_cast<SprocketWindowDelegateView*>(window_widget_->widget_delegate());
   delegate_view->OnWebContentsFocused(contents);
 }

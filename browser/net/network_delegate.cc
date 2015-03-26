@@ -4,7 +4,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "minibrowser/browser/net/network_delegate.h"
+#include "sprocket/browser/net/network_delegate.h"
 
 #include "base/command_line.h"
 #include "content/public/common/content_switches.h"
@@ -16,36 +16,36 @@ namespace {
 bool g_accept_all_cookies = true;
 }
 
-MiniBrowserNetworkDelegate::MiniBrowserNetworkDelegate() {
+SprocketNetworkDelegate::SprocketNetworkDelegate() {
 }
 
-MiniBrowserNetworkDelegate::~MiniBrowserNetworkDelegate() {
+SprocketNetworkDelegate::~SprocketNetworkDelegate() {
 }
 
-void MiniBrowserNetworkDelegate::SetAcceptAllCookies(bool accept) {
+void SprocketNetworkDelegate::SetAcceptAllCookies(bool accept) {
   g_accept_all_cookies = accept;
 }
 
-int MiniBrowserNetworkDelegate::OnBeforeURLRequest(
+int SprocketNetworkDelegate::OnBeforeURLRequest(
     net::URLRequest* request,
     const net::CompletionCallback& callback,
     GURL* new_url) {
   return net::OK;
 }
 
-int MiniBrowserNetworkDelegate::OnBeforeSendHeaders(
+int SprocketNetworkDelegate::OnBeforeSendHeaders(
     net::URLRequest* request,
     const net::CompletionCallback& callback,
     net::HttpRequestHeaders* headers) {
   return net::OK;
 }
 
-void MiniBrowserNetworkDelegate::OnSendHeaders(
+void SprocketNetworkDelegate::OnSendHeaders(
     net::URLRequest* request,
     const net::HttpRequestHeaders& headers) {
 }
 
-int MiniBrowserNetworkDelegate::OnHeadersReceived(
+int SprocketNetworkDelegate::OnHeadersReceived(
     net::URLRequest* request,
     const net::CompletionCallback& callback,
     const net::HttpResponseHeaders* original_response_headers,
@@ -54,28 +54,28 @@ int MiniBrowserNetworkDelegate::OnHeadersReceived(
   return net::OK;
 }
 
-void MiniBrowserNetworkDelegate::OnBeforeRedirect(net::URLRequest* request,
+void SprocketNetworkDelegate::OnBeforeRedirect(net::URLRequest* request,
                                             const GURL& new_location) {
 }
 
-void MiniBrowserNetworkDelegate::OnResponseStarted(net::URLRequest* request) {
+void SprocketNetworkDelegate::OnResponseStarted(net::URLRequest* request) {
 }
 
-void MiniBrowserNetworkDelegate::OnRawBytesRead(const net::URLRequest& request,
+void SprocketNetworkDelegate::OnRawBytesRead(const net::URLRequest& request,
                                           int bytes_read) {
 }
 
-void MiniBrowserNetworkDelegate::OnCompleted(net::URLRequest* request, bool started) {
+void SprocketNetworkDelegate::OnCompleted(net::URLRequest* request, bool started) {
 }
 
-void MiniBrowserNetworkDelegate::OnURLRequestDestroyed(net::URLRequest* request) {
+void SprocketNetworkDelegate::OnURLRequestDestroyed(net::URLRequest* request) {
 }
 
-void MiniBrowserNetworkDelegate::OnPACScriptError(int line_number,
+void SprocketNetworkDelegate::OnPACScriptError(int line_number,
                                             const base::string16& error) {
 }
 
-MiniBrowserNetworkDelegate::AuthRequiredResponse MiniBrowserNetworkDelegate::OnAuthRequired(
+SprocketNetworkDelegate::AuthRequiredResponse SprocketNetworkDelegate::OnAuthRequired(
     net::URLRequest* request,
     const net::AuthChallengeInfo& auth_info,
     const AuthCallback& callback,
@@ -83,7 +83,7 @@ MiniBrowserNetworkDelegate::AuthRequiredResponse MiniBrowserNetworkDelegate::OnA
   return AUTH_REQUIRED_RESPONSE_NO_ACTION;
 }
 
-bool MiniBrowserNetworkDelegate::OnCanGetCookies(const net::URLRequest& request,
+bool SprocketNetworkDelegate::OnCanGetCookies(const net::URLRequest& request,
                                            const net::CookieList& cookie_list) {
   net::StaticCookiePolicy::Type policy_type = g_accept_all_cookies ?
       net::StaticCookiePolicy::ALLOW_ALL_COOKIES :
@@ -94,7 +94,7 @@ bool MiniBrowserNetworkDelegate::OnCanGetCookies(const net::URLRequest& request,
   return rv == net::OK;
 }
 
-bool MiniBrowserNetworkDelegate::OnCanSetCookie(const net::URLRequest& request,
+bool SprocketNetworkDelegate::OnCanSetCookie(const net::URLRequest& request,
                                           const std::string& cookie_line,
                                           net::CookieOptions* options) {
   net::StaticCookiePolicy::Type policy_type = g_accept_all_cookies ?
@@ -106,17 +106,17 @@ bool MiniBrowserNetworkDelegate::OnCanSetCookie(const net::URLRequest& request,
   return rv == net::OK;
 }
 
-bool MiniBrowserNetworkDelegate::OnCanAccessFile(const net::URLRequest& request,
+bool SprocketNetworkDelegate::OnCanAccessFile(const net::URLRequest& request,
                                            const base::FilePath& path) const {
   return true;
 }
 
-bool MiniBrowserNetworkDelegate::OnCanThrottleRequest(
+bool SprocketNetworkDelegate::OnCanThrottleRequest(
     const net::URLRequest& request) const {
   return false;
 }
 
-bool MiniBrowserNetworkDelegate::OnFirstPartyOnlyCookieExperimentEnabled() const {
+bool SprocketNetworkDelegate::OnFirstPartyOnlyCookieExperimentEnabled() const {
   return base::CommandLine::ForCurrentProcess()->HasSwitch(
       switches::kEnableExperimentalWebPlatformFeatures);
 }

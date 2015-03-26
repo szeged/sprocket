@@ -4,33 +4,33 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "minibrowser/minibrowser_main_delegate.h"
+#include "sprocket/main_delegate.h"
 
 #include "base/files/file.h"
 #include "base/files/file_path.h"
 #include "base/path_service.h"
 #include "content/public/browser/browser_main_runner.h"
-#include "minibrowser/browser/browser_main.h"
-#include "minibrowser/browser/content_browser_client.h"
+#include "sprocket/browser/browser_main.h"
+#include "sprocket/browser/content_browser_client.h"
 #include "ui/base/resource/resource_bundle.h"
 
 
-MiniBrowserMainDelegate::MiniBrowserMainDelegate() {
+SprocketMainDelegate::SprocketMainDelegate() {
 }
 
-MiniBrowserMainDelegate::~MiniBrowserMainDelegate() {
+SprocketMainDelegate::~SprocketMainDelegate() {
 }
 
-bool MiniBrowserMainDelegate::BasicStartupComplete(int* exit_code) {
+bool SprocketMainDelegate::BasicStartupComplete(int* exit_code) {
   content::SetContentClient(&content_client_);
   return false;
 }
 
-void MiniBrowserMainDelegate::PreSandboxStartup() {
+void SprocketMainDelegate::PreSandboxStartup() {
   InitializeResourceBundle();
 }
 
-int MiniBrowserMainDelegate::RunProcess(
+int SprocketMainDelegate::RunProcess(
     const std::string& process_type,
     const content::MainFunctionParams& main_function_params) {
 
@@ -44,17 +44,17 @@ int MiniBrowserMainDelegate::RunProcess(
 }
 
 content::ContentBrowserClient*
-MiniBrowserMainDelegate::CreateContentBrowserClient() {
-  browser_client_.reset(new MiniBrowserContentBrowserClient);
+SprocketMainDelegate::CreateContentBrowserClient() {
+  browser_client_.reset(new SprocketContentBrowserClient);
   return browser_client_.get();
 }
 
 // static
-void MiniBrowserMainDelegate::InitializeResourceBundle() {
+void SprocketMainDelegate::InitializeResourceBundle() {
   base::FilePath pak_file;
   base::FilePath pak_dir;
 
   PathService::Get(base::DIR_MODULE, &pak_dir);
-  pak_file = pak_dir.Append(FILE_PATH_LITERAL("minibrowser.pak"));
+  pak_file = pak_dir.Append(FILE_PATH_LITERAL("sprocket.pak"));
   ui::ResourceBundle::InitSharedInstanceWithPakPath(pak_file);
 }

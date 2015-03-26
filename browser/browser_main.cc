@@ -4,7 +4,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "minibrowser/browser/browser_main.h"
+#include "sprocket/browser/browser_main.h"
 
 #include "base/memory/scoped_ptr.h"
 #include "content/public/browser/browser_main_runner.h"

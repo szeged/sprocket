@@ -4,19 +4,19 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef MINI_BROWSER_BROWSER_BROWSER_CONTEXT_H_
-#define MINI_BROWSER_BROWSER_BROWSER_CONTEXT_H_
+#ifndef SPROCKET_BROWSER_BROWSER_CONTEXT_H_
+#define SPROCKET_BROWSER_BROWSER_CONTEXT_H_
 
 #include "base/files/file_path.h"
 #include "content/public/browser/browser_context.h"
 #include "content/public/browser/content_browser_client.h"
 #include "content/public/browser/resource_context.h"
-#include "minibrowser/browser/net/url_request_context_getter.h"
+#include "sprocket/browser/net/url_request_context_getter.h"
 
-class MiniBrowserBrowserContext : public content::BrowserContext {
+class SprocketBrowserContext : public content::BrowserContext {
 public:
-  MiniBrowserBrowserContext(bool off_the_record);
-  ~MiniBrowserBrowserContext() override;
+  SprocketBrowserContext(bool off_the_record);
+  ~SprocketBrowserContext() override;
 
   // BrowserContext implementation.
   base::FilePath GetPath() const override;
@@ -44,41 +44,41 @@ public:
 
 protected:
   // Contains URLRequestContextGetter required for resource loading.
-  class MiniBrowserResourceContext : public content::ResourceContext {
+  class SprocketResourceContext : public content::ResourceContext {
   public:
-    MiniBrowserResourceContext();
-    ~MiniBrowserResourceContext() override;
+    SprocketResourceContext();
+    ~SprocketResourceContext() override;
 
     // ResourceContext implementation:
     net::HostResolver* GetHostResolver() override;
     net::URLRequestContext* GetRequestContext() override;
 
-    void set_url_request_context_getter(MiniBrowserURLRequestContextGetter* getter) {
+    void set_url_request_context_getter(SprocketURLRequestContextGetter* getter) {
     getter_ = getter;
   }
 
   private:
-    MiniBrowserURLRequestContextGetter* getter_;
+    SprocketURLRequestContextGetter* getter_;
 
-    DISALLOW_COPY_AND_ASSIGN(MiniBrowserResourceContext);
+    DISALLOW_COPY_AND_ASSIGN(SprocketResourceContext);
   };
 
-  MiniBrowserURLRequestContextGetter* url_request_context_getter() {
+  SprocketURLRequestContextGetter* url_request_context_getter() {
     return url_request_getter_.get();
   }
 
-  // Used by MiniBrowserBrowserContext to initiate and set different types of
+  // Used by SprocketBrowserContext to initiate and set different types of
   // URLRequestContextGetter.
-  virtual MiniBrowserURLRequestContextGetter* CreateURLRequestContextGetter(
+  virtual SprocketURLRequestContextGetter* CreateURLRequestContextGetter(
     content::ProtocolHandlerMap* protocol_handlers,
     content::URLRequestInterceptorScopedVector request_interceptors);
-  void set_url_request_context_getter(MiniBrowserURLRequestContextGetter* getter) {
+  void set_url_request_context_getter(SprocketURLRequestContextGetter* getter) {
     url_request_getter_ = getter;
   }
 
   bool ignore_certificate_errors() const { return ignore_certificate_errors_; }
 
-  scoped_ptr<MiniBrowserResourceContext> resource_context_;
+  scoped_ptr<SprocketResourceContext> resource_context_;
   bool ignore_certificate_errors_;
 
 private:
@@ -86,10 +86,9 @@ private:
 
   bool off_the_record_;
   base::FilePath path_;
-  scoped_refptr<MiniBrowserURLRequestContextGetter> url_request_getter_;
+  scoped_refptr<SprocketURLRequestContextGetter> url_request_getter_;
 
-  DISALLOW_COPY_AND_ASSIGN(MiniBrowserBrowserContext);
+  DISALLOW_COPY_AND_ASSIGN(SprocketBrowserContext);
 };
 
-
-#endif // MINI_BROWSER_BROWSER_BROWSER_CONTEXT_H_
+#endif // SPROCKET_BROWSER_BROWSER_CONTEXT_H_

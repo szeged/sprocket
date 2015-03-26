@@ -4,7 +4,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "minibrowser/browser/browser_context.h"
+#include "sprocket/browser/browser_context.h"
 
 #include "base/command_line.h"
 #include "base/environment.h"
@@ -15,40 +15,40 @@
 #include "content/public/browser/storage_partition.h"
 #include "content/public/common/content_switches.h"
 
-MiniBrowserBrowserContext::MiniBrowserResourceContext::MiniBrowserResourceContext()
+SprocketBrowserContext::SprocketResourceContext::SprocketResourceContext()
     : getter_(NULL) {
 }
 
-MiniBrowserBrowserContext::MiniBrowserResourceContext::~MiniBrowserResourceContext() {
+SprocketBrowserContext::SprocketResourceContext::~SprocketResourceContext() {
 }
 
 net::HostResolver*
-MiniBrowserBrowserContext::MiniBrowserResourceContext::GetHostResolver() {
+SprocketBrowserContext::SprocketResourceContext::GetHostResolver() {
   CHECK(getter_);
   return getter_->host_resolver();
 }
 
 net::URLRequestContext*
-MiniBrowserBrowserContext::MiniBrowserResourceContext::GetRequestContext() {
+SprocketBrowserContext::SprocketResourceContext::GetRequestContext() {
   CHECK(getter_);
   return getter_->GetURLRequestContext();
 }
 
-MiniBrowserBrowserContext::MiniBrowserBrowserContext(bool off_the_record)
-  : resource_context_(new MiniBrowserResourceContext),
+SprocketBrowserContext::SprocketBrowserContext(bool off_the_record)
+  : resource_context_(new SprocketResourceContext),
     ignore_certificate_errors_(false),
     off_the_record_(off_the_record) {
   InitWhileIOAllowed();
 }
 
-MiniBrowserBrowserContext::~MiniBrowserBrowserContext() {
+SprocketBrowserContext::~SprocketBrowserContext() {
   if (resource_context_) {
     content::BrowserThread::DeleteSoon(
       content::BrowserThread::IO, FROM_HERE, resource_context_.release());
   }
 }
 
-void MiniBrowserBrowserContext::InitWhileIOAllowed() {
+void SprocketBrowserContext::InitWhileIOAllowed() {
   base::CommandLine* cmd_line = base::CommandLine::ForCurrentProcess();
   if (cmd_line->HasSwitch(switches::kIgnoreCertificateErrors))
     ignore_certificate_errors_ = true;
@@ -58,89 +58,89 @@ void MiniBrowserBrowserContext::InitWhileIOAllowed() {
     base::nix::GetXDGDirectory(env.get(),
                    base::nix::kXdgConfigHomeEnvVar,
                    base::nix::kDotConfigDir));
-  path_ = config_dir.Append("minibrowser");
+  path_ = config_dir.Append("sprocket");
   if (!base::PathExists(path_))
     base::CreateDirectory(path_);
 }
 
-base::FilePath MiniBrowserBrowserContext::GetPath() const {
+base::FilePath SprocketBrowserContext::GetPath() const {
   return path_;
 }
 
 scoped_ptr<content::ZoomLevelDelegate>
-MiniBrowserBrowserContext::CreateZoomLevelDelegate(
+SprocketBrowserContext::CreateZoomLevelDelegate(
   const base::FilePath& partition_path) {
     return scoped_ptr<content::ZoomLevelDelegate>();
 }
 
-bool MiniBrowserBrowserContext::IsOffTheRecord() const {
+bool SprocketBrowserContext::IsOffTheRecord() const {
   return off_the_record_;
 }
 
 net::URLRequestContextGetter*
-MiniBrowserBrowserContext::GetRequestContext() {
+SprocketBrowserContext::GetRequestContext() {
   return GetDefaultStoragePartition(this)->GetURLRequestContext();
 }
 
 net::URLRequestContextGetter*
-MiniBrowserBrowserContext::GetRequestContextForRenderProcess(
+SprocketBrowserContext::GetRequestContextForRenderProcess(
   int renderer_child_id) {
     return GetRequestContext();
 }
 
 net::URLRequestContextGetter*
-MiniBrowserBrowserContext::GetMediaRequestContext() {
+SprocketBrowserContext::GetMediaRequestContext() {
   return GetRequestContext();
 }
 
 net::URLRequestContextGetter*
-MiniBrowserBrowserContext::GetMediaRequestContextForRenderProcess(
+SprocketBrowserContext::GetMediaRequestContextForRenderProcess(
   int renderer_child_id) {
     return GetRequestContext();
 }
 
 net::URLRequestContextGetter*
-MiniBrowserBrowserContext::GetMediaRequestContextForStoragePartition(
+SprocketBrowserContext::GetMediaRequestContextForStoragePartition(
   const base::FilePath& partition_path,
   bool in_memory) {
     return GetRequestContext();
 }
 
 content::ResourceContext*
-MiniBrowserBrowserContext::GetResourceContext() {
+SprocketBrowserContext::GetResourceContext() {
   return resource_context_.get();
 }
 
 content::DownloadManagerDelegate*
-MiniBrowserBrowserContext::GetDownloadManagerDelegate() {
+SprocketBrowserContext::GetDownloadManagerDelegate() {
   return NULL;
 }
 
 content::BrowserPluginGuestManager*
-MiniBrowserBrowserContext::GetGuestManager() {
+SprocketBrowserContext::GetGuestManager() {
   return NULL;
 }
 
 storage::SpecialStoragePolicy*
-MiniBrowserBrowserContext::GetSpecialStoragePolicy() {
+SprocketBrowserContext::GetSpecialStoragePolicy() {
   return NULL;
 }
 
 content::PushMessagingService*
-MiniBrowserBrowserContext::GetPushMessagingService() {
+SprocketBrowserContext::GetPushMessagingService() {
   return NULL;
 }
 
 content::SSLHostStateDelegate*
-MiniBrowserBrowserContext::GetSSLHostStateDelegate() {
+SprocketBrowserContext::GetSSLHostStateDelegate() {
   return NULL;
 }
 
-MiniBrowserURLRequestContextGetter*
-MiniBrowserBrowserContext::CreateURLRequestContextGetter(
+SprocketURLRequestContextGetter*
+SprocketBrowserContext::CreateURLRequestContextGetter(
     content::ProtocolHandlerMap* protocol_handlers,
     content::URLRequestInterceptorScopedVector request_interceptors) {
-  return new MiniBrowserURLRequestContextGetter(
+  return new SprocketURLRequestContextGetter(
       ignore_certificate_errors_,
       GetPath(),
       content::BrowserThread::UnsafeGetMessageLoopForThread(content::BrowserThread::IO),
@@ -150,7 +150,7 @@ MiniBrowserBrowserContext::CreateURLRequestContextGetter(
 }
 
 net::URLRequestContextGetter*
-MiniBrowserBrowserContext::CreateRequestContext(
+SprocketBrowserContext::CreateRequestContext(
     content::ProtocolHandlerMap* protocol_handlers,
     content::URLRequestInterceptorScopedVector request_interceptors) {
   url_request_getter_ = CreateURLRequestContextGetter(

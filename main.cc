@@ -5,10 +5,10 @@
 // found in the LICENSE file.
 
 #include "content/public/app/content_main.h"
-#include "minibrowser/minibrowser_main_delegate.h"
+#include "sprocket/main_delegate.h"
 
 int main(int argc, const char** argv) {
-  MiniBrowserMainDelegate delegate;
+  SprocketMainDelegate delegate;
   content::ContentMainParams params(&delegate);
   params.argc = argc;
   params.argv = argv;

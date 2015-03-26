@@ -4,22 +4,22 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef MINI_BROWSER_BROWSER_CONTENT_BROWSER_CLIENT_H_
-#define MINI_BROWSER_BROWSER_CONTENT_BROWSER_CLIENT_H_
+#ifndef SPROCKET_BROWSER_CONTENT_BROWSER_CLIENT_H_
+#define SPROCKET_BROWSER_CONTENT_BROWSER_CLIENT_H_
 
 #include <string>
 
 #include "base/memory/scoped_ptr.h"
 #include "content/public/browser/content_browser_client.h"
 
-class MiniBrowserBrowserContext;
-class MiniBrowserBrowserMainParts;
+class SprocketBrowserContext;
+class SprocketBrowserMainParts;
 
-class MiniBrowserContentBrowserClient : public content::ContentBrowserClient {
+class SprocketContentBrowserClient : public content::ContentBrowserClient {
 public:
 
-  MiniBrowserContentBrowserClient();
-  ~MiniBrowserContentBrowserClient() override;
+  SprocketContentBrowserClient();
+  ~SprocketContentBrowserClient() override;
 
   // ContentBrowserClient overrides.
   content::BrowserMainParts* CreateBrowserMainParts(
@@ -35,21 +35,21 @@ public:
     int child_process_id,
     content::FileDescriptorInfo* mappings) override;
 
-  MiniBrowserBrowserContext* browser_context();
-  MiniBrowserBrowserContext* off_the_record_browser_context();
+  SprocketBrowserContext* browser_context();
+  SprocketBrowserContext* off_the_record_browser_context();
 
-  MiniBrowserBrowserMainParts* browser_main_parts() {
+  SprocketBrowserMainParts* browser_main_parts() {
     return browser_main_parts_;
   }
 
 private:
-  MiniBrowserBrowserContext* MiniBrowserBrowserContextForBrowserContext(
+  SprocketBrowserContext* SprocketBrowserContextForBrowserContext(
     content::BrowserContext* content_browser_context);
 
   base::ScopedFD v8_natives_fd_;
   base::ScopedFD v8_snapshot_fd_;
 
-  MiniBrowserBrowserMainParts* browser_main_parts_;
+  SprocketBrowserMainParts* browser_main_parts_;
 };
 
-#endif  // MINI_BROWSER_BROWSER_CONTENT_BROWSER_CLIENT_H_
+#endif  // SPROCKET_BROWSER_CONTENT_BROWSER_CLIENT_H_

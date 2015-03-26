@@ -4,7 +4,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#include "minibrowser/browser/browser_main_parts.h"
+#include "sprocket/browser/browser_main_parts.h"
 
 #include "base/base_switches.h"
 #include "base/bind.h"
@@ -13,8 +13,8 @@
 #include "base/message_loop/message_loop.h"
 #include "content/public/common/main_function_params.h"
 #include "content/public/common/url_constants.h"
-#include "minibrowser/browser/ui/minibrowser.h"
-#include "minibrowser/browser/browser_context.h"
+#include "sprocket/browser/ui/web_contents.h"
+#include "sprocket/browser/browser_context.h"
 #include "net/base/filename_util.h"
 #include "net/base/net_module.h"
 #include "net/grit/net_resources.h"
@@ -51,53 +51,53 @@ base::StringPiece NetResourceProvider(int key) {
 } // namespace
 
 
-MiniBrowserBrowserMainParts::MiniBrowserBrowserMainParts(
+SprocketBrowserMainParts::SprocketBrowserMainParts(
   const content::MainFunctionParams& parameters)
   : parameters_(parameters),
     run_message_loop_(true) {
 }
 
-MiniBrowserBrowserMainParts::~MiniBrowserBrowserMainParts() {
+SprocketBrowserMainParts::~SprocketBrowserMainParts() {
 }
 
-void MiniBrowserBrowserMainParts::PreMainMessageLoopStart() {
+void SprocketBrowserMainParts::PreMainMessageLoopStart() {
 }
 
-void MiniBrowserBrowserMainParts::PostMainMessageLoopStart() {
+void SprocketBrowserMainParts::PostMainMessageLoopStart() {
 }
 
-void MiniBrowserBrowserMainParts::PreEarlyInitialization() {
+void SprocketBrowserMainParts::PreEarlyInitialization() {
   ui::InitializeInputMethodForTesting();
 }
 
-void MiniBrowserBrowserMainParts::InitializeBrowserContexts() {
-  set_browser_context(new MiniBrowserBrowserContext(false));
+void SprocketBrowserMainParts::InitializeBrowserContexts() {
+  set_browser_context(new SprocketBrowserContext(false));
   set_off_the_record_browser_context(
-    new MiniBrowserBrowserContext(true));
+    new SprocketBrowserContext(true));
 }
 
-void MiniBrowserBrowserMainParts::InitializeMessageLoopContext() {
-  MiniBrowser::CreateNewWindow(browser_context_.get(),
+void SprocketBrowserMainParts::InitializeMessageLoopContext() {
+  SprocketWebContents::CreateNewWindow(browser_context_.get(),
                GetStartupURL(),
                NULL,
                gfx::Size());
 }
 
-void MiniBrowserBrowserMainParts::PreMainMessageLoopRun() {
+void SprocketBrowserMainParts::PreMainMessageLoopRun() {
   InitializeBrowserContexts();
 
-  MiniBrowser::Initialize();
+  SprocketWebContents::Initialize();
 
   net::NetModule::SetResourceProvider(NetResourceProvider);
 
   InitializeMessageLoopContext();
 }
 
-bool MiniBrowserBrowserMainParts::MainMessageLoopRun(int* result_code)  {
+bool SprocketBrowserMainParts::MainMessageLoopRun(int* result_code)  {
   return !run_message_loop_;
 }
 
-void MiniBrowserBrowserMainParts::PostMainMessageLoopRun() {
+void SprocketBrowserMainParts::PostMainMessageLoopRun() {
   browser_context_.reset();
   off_the_record_browser_context_.reset();
 }

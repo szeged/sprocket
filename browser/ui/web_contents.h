@@ -4,8 +4,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef MINI_BROWSER_BROWSER_UI_MINI_BROWSER_H_
-#define MINI_BROWSER_BROWSER_UI_MINI_BROWSER_H_
+#ifndef SPROCKET_BROWSER_UI_WEB_CONTENTS_H_
+#define SPROCKET_BROWSER_UI_WEB_CONTENTS_H_
 
 
 #include "base/callback_forward.h"
@@ -27,17 +27,17 @@ class WebContents;
 }
 
 class GURL;
-class MiniBrowserPlatformDataAura;
+class SprocketPlatformDataAura;
 
-// This represents one window of the MiniBrowser, i.e. all the UI including
+// This represents one window of the SprocketWebContents, i.e. all the UI including
 // buttons and url bar, as well as the web content area.
 
-class MiniBrowser : public content::WebContentsDelegate,
+class SprocketWebContents : public content::WebContentsDelegate,
           public content::WebContentsObserver {
 
 public:
 
-  ~MiniBrowser() override;
+  ~SprocketWebContents() override;
 
   void LoadURL(const GURL& url);
   bool CanGoBack();
@@ -49,12 +49,12 @@ public:
   void Close();
 
   static void Initialize();
-  static MiniBrowser* CreateNewWindow(content::BrowserContext* browser_context,
+  static SprocketWebContents* CreateNewWindow(content::BrowserContext* browser_context,
                   const GURL& url,
                   content::SiteInstance* site_instance,
                   const gfx::Size& initial_size);
 
-  static std::vector<MiniBrowser*>& windows() { return windows_; }
+  static std::vector<SprocketWebContents*>& windows() { return windows_; }
   content::WebContents* web_contents() const { return web_contents_.get(); }
   gfx::NativeWindow window() { return window_; }
 
@@ -78,7 +78,7 @@ public:
   bool HandleContextMenu(const content::ContextMenuParams& params) override;
   void WebContentsFocused(content::WebContents* contents) override;
 
-  static gfx::Size GetMiniBrowserDefaultSize();
+  static gfx::Size GetSprocketWebContentsDefaultSize();
 private:
   enum UIControl {
     BACK_BUTTON,
@@ -86,9 +86,9 @@ private:
     STOP_BUTTON
   };
 
-  explicit MiniBrowser(content::WebContents* web_contents);
+  explicit SprocketWebContents(content::WebContents* web_contents);
 
-  static MiniBrowser* CreateMiniBrowser(content::WebContents* web_contents,
+  static SprocketWebContents* CreateSprocketWebContents(content::WebContents* web_contents,
                 const gfx::Size& initial_size);
   // Helper for one time initialization of application
   static void PlatformInitialize(const gfx::Size& default_window_size);
@@ -98,7 +98,7 @@ private:
   static gfx::Size AdjustWindowSize(const gfx::Size& initial_size);
 
   // All the methods that begin with Platform need to be implemented by the
-  // platform specific MiniBrowser implementation.
+  // platform specific SprocketWebContents implementation.
   // Called from the destructor to let each platform do any necessary cleanup.
   void PlatformCleanUp();
   // Creates the main window GUI.
@@ -133,11 +133,11 @@ private:
   static views::ViewsDelegate* views_delegate_;
   views::Widget* window_widget_;
 
-  static std::vector<MiniBrowser*> windows_;
+  static std::vector<SprocketWebContents*> windows_;
 
-  // True if the destructur of MiniBrowser should post a quit closure on the current
-  // message loop if the destructed MiniBrowser object was the last one.
+  // True if the destructur of SprocketWebContents should post a quit closure on the current
+  // message loop if the destructed SprocketWebContents object was the last one.
   static bool quit_message_loop_;
 };
 
-#endif // MINI_BROWSER_BROWSER_UI_MINI_BROWSER_H_
+#endif // SPROCKET_BROWSER_UI_WEB_CONTENTS_H_
