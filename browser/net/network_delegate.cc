@@ -115,8 +115,3 @@ bool SprocketNetworkDelegate::OnCanThrottleRequest(
     const net::URLRequest& request) const {
   return false;
 }
-
-bool SprocketNetworkDelegate::OnFirstPartyOnlyCookieExperimentEnabled() const {
-  return base::CommandLine::ForCurrentProcess()->HasSwitch(
-      switches::kEnableExperimentalWebPlatformFeatures);
-}
