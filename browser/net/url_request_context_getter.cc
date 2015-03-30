@@ -6,7 +6,6 @@
 
 #include "sprocket/browser/net/url_request_context_getter.h"
 
-#include "base/command_line.h"
 #include "base/logging.h"
 #include "base/strings/string_number_conversions.h"
 #include "base/strings/string_split.h"
@@ -103,9 +102,6 @@ net::URLRequestContext* SprocketURLRequestContextGetter::GetURLRequestContext() 
   DCHECK(content::BrowserThread::CurrentlyOn(content::BrowserThread::IO));
 
   if (!url_request_context_) {
-    const base::CommandLine& command_line =
-        *base::CommandLine::ForCurrentProcess();
-
     url_request_context_.reset(new net::URLRequestContext());
     network_delegate_.reset(CreateNetworkDelegate());
     url_request_context_->set_network_delegate(network_delegate_.get());
@@ -163,25 +159,6 @@ net::URLRequestContext* SprocketURLRequestContextGetter::GetURLRequestContext() 
         url_request_context_->net_log();*/
     network_session_params.ignore_certificate_errors =
         ignore_certificate_errors_;
-    if (command_line.HasSwitch(switches::kTestingFixedHttpPort)) {
-      int value;
-      base::StringToInt(command_line.GetSwitchValueASCII(
-          switches::kTestingFixedHttpPort), &value);
-      network_session_params.testing_fixed_http_port = value;
-    }
-    if (command_line.HasSwitch(switches::kTestingFixedHttpsPort)) {
-      int value;
-      base::StringToInt(command_line.GetSwitchValueASCII(
-          switches::kTestingFixedHttpsPort), &value);
-      network_session_params.testing_fixed_https_port = value;
-    }
-    if (command_line.HasSwitch(switches::kHostResolverRules)) {
-      scoped_ptr<net::MappedHostResolver> mapped_host_resolver(
-          new net::MappedHostResolver(host_resolver.Pass()));
-      mapped_host_resolver->SetRulesFromString(
-          command_line.GetSwitchValueASCII(switches::kHostResolverRules));
-      host_resolver = mapped_host_resolver.Pass();
-    }
 
     // Give |storage_| ownership at the end in case it's |mapped_host_resolver|.
     storage_->set_host_resolver(host_resolver.Pass());
