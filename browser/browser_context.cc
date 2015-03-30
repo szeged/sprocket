@@ -12,6 +12,7 @@
 #include "base/path_service.h"
 #include "base/nix/xdg_util.h"
 #include "content/public/browser/browser_thread.h"
+#include "content/public/browser/permission_manager.h"
 #include "content/public/browser/storage_partition.h"
 #include "content/public/common/content_switches.h"
 
@@ -133,6 +134,10 @@ SprocketBrowserContext::GetPushMessagingService() {
 
 content::SSLHostStateDelegate*
 SprocketBrowserContext::GetSSLHostStateDelegate() {
+  return NULL;
+}
+
+content::PermissionManager* SprocketBrowserContext::GetPermissionManager() {
   return NULL;
 }
 
