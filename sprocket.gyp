@@ -1,5 +1,8 @@
 {
   'variables': {
+    'pkg-config': 'pkg-config',
+    'chromium_code': 1,
+    'grit_out_dir': '<(SHARED_INTERMEDIATE_DIR)/sprocket',
     'sprocket_version': '0.1.0.0',
   },
   'targets': [
@@ -10,69 +13,33 @@
       'variables': {
         'chromium_code': 1,
       },
-      'dependencies': [
-        '../content/app/resources/content_resources.gyp:content_resources',
-        '../content/app/strings/content_strings.gyp:content_strings',
-        '../content/content.gyp:content_app_both',
-        '../content/content.gyp:content_browser',
-        '../content/content.gyp:content_common',
-        '../content/content.gyp:content_gpu',
-        '../content/content.gyp:content_plugin',
-        '../content/content.gyp:content_ppapi_plugin',
-        '../content/content.gyp:content_renderer',
-        '../content/content.gyp:content_resources',
-        '../content/content.gyp:content_utility',
-        'sprocket_resources',
-        '../base/base.gyp:base',
-        '../base/base.gyp:base_static',
-        '../base/third_party/dynamic_annotations/dynamic_annotations.gyp:dynamic_annotations',
-        '../cc/blink/cc_blink.gyp:cc_blink',
-        '../cc/cc.gyp:cc',
-        '../components/components.gyp:crash_component',
-        '../components/components.gyp:web_cache_renderer',
-        '../device/bluetooth/bluetooth.gyp:device_bluetooth',
-        '../gin/gin.gyp:gin',
-        '../gpu/gpu.gyp:gpu',
-        '../ipc/ipc.gyp:ipc',
-        '../media/blink/media_blink.gyp:media_blink',
-        '../media/media.gyp:media',
-        '../net/net.gyp:net',
-        '../net/net.gyp:net_resources',
-        '../skia/skia.gyp:skia',
-        '../storage/storage_browser.gyp:storage',
-        '../third_party/WebKit/public/blink.gyp:blink',
-        '../third_party/WebKit/public/blink.gyp:blink_test_support',
-        '../ui/base/ime/ui_base_ime.gyp:ui_base_ime',
-        '../ui/base/ui_base.gyp:ui_base',
-        '../ui/events/events.gyp:events_base',
-        '../ui/gfx/gfx.gyp:gfx',
-        '../ui/gfx/gfx.gyp:gfx_geometry',
-        '../ui/gfx/ipc/gfx_ipc.gyp:gfx_ipc',
-        '../ui/gl/gl.gyp:gl',
-        '../url/url.gyp:url_lib',
-        '../v8/tools/gyp/v8.gyp:v8',
-        '../ui/events/devices/events_devices.gyp:events_devices',
-        '../tools/xdisplaycheck/xdisplaycheck.gyp:xdisplaycheck',
-        '../base/allocator/allocator.gyp:allocator',
-        '../ui/aura/aura.gyp:aura',
-        '../ui/aura/aura.gyp:aura_test_support',
-        '../ui/events/events.gyp:events',
-        '../ui/strings/ui_strings.gyp:ui_strings',
-        '../ui/wm/wm.gyp:wm',
-        '../third_party/mojo/mojo_edk.gyp:mojo_system_impl',
-        '../third_party/mojo/mojo_public.gyp:mojo_application_bindings',
-        '../third_party/mojo/mojo_public.gyp:mojo_cpp_bindings',
-        '../ui/resources/ui_resources.gyp:ui_resources',
-        '../ui/views/controls/webview/webview.gyp:webview',
-        '../ui/views/views.gyp:views',
-        '../ui/views/views.gyp:views_test_support',
-      ],
-      'export_dependent_settings' : [
-        '../third_party/mojo/mojo_public.gyp:mojo_application_bindings',
-        '../third_party/mojo/mojo_public.gyp:mojo_cpp_bindings',
-      ],
       'include_dirs': [
-        '..',
+        '.',
+        '<(DEPTH)/third_party/WebKit/public/platform',
+        '<(DEPTH)/third_party/WebKit/public/web',
+        '<(grit_out_dir)',
+        '<(SHARED_INTERMEDIATE_DIR)/ui/resources',
+        '<(SHARED_INTERMEDIATE_DIR)/ui/strings',
+        '<(SHARED_INTERMEDIATE_DIR)/webkit',
+      ],
+      'dependencies': [
+        # Content dependencies
+        '<(DEPTH)/content/content.gyp:content_app_both',
+        '<(DEPTH)/content/content.gyp:content_common',
+        '<(DEPTH)/content/content.gyp:content_gpu',
+        '<(DEPTH)/content/content.gyp:content_plugin',
+        '<(DEPTH)/content/content.gyp:content_ppapi_plugin',
+        '<(DEPTH)/content/content.gyp:content_renderer',
+        '<(DEPTH)/content/content.gyp:content_resources',
+        '<(DEPTH)/content/content.gyp:content_utility',
+        '<(DEPTH)/content/content.gyp:content_browser',
+        # Fix mojo include error.
+        '<(DEPTH)/content/content_common_mojo_bindings.gyp:content_common_mojo_bindings_mojom',
+        # UI dependencies
+        '<(DEPTH)/ui/views/controls/webview/webview.gyp:webview',
+        '<(DEPTH)/ui/views/views.gyp:views',
+        '<(DEPTH)/ui/views/views.gyp:views_test_support',
+        'sprocket_pak',
       ],
       'sources': [
         'browser/browser_context.cc',
@@ -102,9 +69,6 @@
     {
       'target_name': 'sprocket_resources',
       'type': 'none',
-      'variables': {
-        'grit_out_dir': '<(SHARED_INTERMEDIATE_DIR)/sprocket',
-      },
       'actions': [
         {
           'action_name': 'generate_sprocket_resources',
@@ -119,26 +83,23 @@
         {
           'destination': '<(PRODUCT_DIR)',
           'files': [
-            '<(SHARED_INTERMEDIATE_DIR)/sprocket/sprocket_resources.pak'
+            '<(grit_out_dir)/sprocket_resources.pak'
           ],
         },
       ],
     },
     {
-      # We build a minimal set of resources so WebKit in content_shell has
-      # access to necessary resources.
       'target_name': 'sprocket_pak',
       'type': 'none',
       'dependencies': [
-        '../content/app/resources/content_resources.gyp:content_resources',
-        '../content/app/strings/content_strings.gyp:content_strings',
-        #'browser/tracing/tracing_resources.gyp:tracing_resources',
-        '../content/content.gyp:content_resources',
+        '<(DEPTH)/content/app/resources/content_resources.gyp:content_resources',
+        '<(DEPTH)/content/app/strings/content_strings.gyp:content_strings',
+        '<(DEPTH)/content/content.gyp:content_resources',
         'sprocket_resources',
         '<(DEPTH)/net/net.gyp:net_resources',
-        '<(DEPTH)/third_party/WebKit/public/blink_resources.gyp:blink_resources',
         '<(DEPTH)/ui/resources/ui_resources.gyp:ui_resources',
         '<(DEPTH)/ui/strings/ui_strings.gyp:ui_strings',
+        'sprocket_resources',
       ],
       'actions': [
         {
@@ -166,19 +127,11 @@
     {
       'target_name': 'sprocket',
       'type': 'executable',
-      'variables': {
-        'chromium_code': 1,
-      },
       'dependencies': [
         'sprocket_lib',
-        'sprocket_pak',
-        '../third_party/mesa/mesa.gyp:osmesa',
-        '../tools/imagediff/image_diff.gyp:image_diff',
-        '../build/linux/system.gyp:x11',
-        '../build/linux/system.gyp:xext',
       ],
       'include_dirs': [
-        '..',
+        '.',
       ],
       'sources': [
         'main.cc',
