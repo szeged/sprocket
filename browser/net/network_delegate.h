@@ -11,6 +11,7 @@
 #include "base/compiler_specific.h"
 #include "net/base/network_delegate_impl.h"
 
+// TODO: Cleanup!
 class SprocketNetworkDelegate : public net::NetworkDelegateImpl {
 public:
   SprocketNetworkDelegate();

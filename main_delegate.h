@@ -13,6 +13,7 @@
 
 class SprocketContentBrowserClient;
 
+// The embedder has a chance to customize startup using the ContentMainDelegate interface.
 class SprocketMainDelegate : public content::ContentMainDelegate {
 
 public:
@@ -21,15 +22,32 @@ public:
 
 protected:
   // content::ContentMainDelegate implementation:
+
+  // Tells the embedder that the absolute basic startup has been done, i.e.
+  // it's now safe to create singletons and check the command line. Return true
+  // if the process should exit afterwards, and if so, |exit_code| should be
+  // set. This is the place for embedder to do the things that must happen at
+  // the start. Most of its startup code should be in the methods below.
   bool BasicStartupComplete(int* exit_code) override;
+
+  // Asks the embedder to start a process. Return -1 for the default behavior.
   int RunProcess(
     const std::string& process_type,
     const content::MainFunctionParams& main_function_params) override;
+
+  // Called once per relevant process type to allow the embedder to customize
+  // content. If an embedder wants the default (empty) implementation, don't
+  // override this.
   content::ContentBrowserClient* CreateContentBrowserClient() override;
+  // content::ContentPluginClient* CreateContentPluginClient() override;
+  // content::ContentRendererClient* CreateContentRendererClient() override;
+  // content::ContentUtilityClient* CreateContentUtilityClient() override;
 
   static void InitializeResourceBundle();
 private:
+  // The embedder API for participating in browser logic.
   scoped_ptr<SprocketContentBrowserClient> browser_client_;
+
   SprocketContentClient content_client_;
 
   DISALLOW_COPY_AND_ASSIGN(SprocketMainDelegate);

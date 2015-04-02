@@ -13,7 +13,8 @@
 #include "net/url_request/url_request.h"
 
 namespace {
-bool g_accept_all_cookies = true;
+  // TODO: This could be a member.
+  bool g_accept_all_cookies = true;
 }
 
 SprocketNetworkDelegate::SprocketNetworkDelegate() {

@@ -18,13 +18,22 @@ class SprocketContentClient : public content::ContentClient {
 
 public:
 
+  // Returns the user agent.
   std::string GetUserAgent() const override;
+
+  // Returns a string resource given its id.
   base::string16 GetLocalizedString(int message_id) const override;
+
+  // Return the contents of a resource in a StringPiece given the resource id.
   base::StringPiece GetDataResource(
       int resource_id,
       ui::ScaleFactor scale_factor) const override;
+
+  // Returns the raw bytes of a scale independent data resource.
   base::RefCountedStaticMemory* GetDataResourceBytes(
       int resource_id) const override;
+
+  // Returns a native image given its id.
   gfx::Image& GetNativeImageNamed(int resource_id) const override;
 };
 

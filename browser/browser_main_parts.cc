@@ -60,12 +60,6 @@ SprocketBrowserMainParts::SprocketBrowserMainParts(
 SprocketBrowserMainParts::~SprocketBrowserMainParts() {
 }
 
-void SprocketBrowserMainParts::PreMainMessageLoopStart() {
-}
-
-void SprocketBrowserMainParts::PostMainMessageLoopStart() {
-}
-
 void SprocketBrowserMainParts::PreEarlyInitialization() {
   ui::InitializeInputMethodForTesting();
 }

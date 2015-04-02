@@ -30,6 +30,7 @@ class ProxyService;
 class URLRequestContextStorage;
 }
 
+// URLRequestContextGetter: Interface for retrieving an net::URLRequestContext.
 class SprocketURLRequestContextGetter : public net::URLRequestContextGetter {
  public:
   SprocketURLRequestContextGetter(
@@ -41,15 +42,23 @@ class SprocketURLRequestContextGetter : public net::URLRequestContextGetter {
       content::URLRequestInterceptorScopedVector request_interceptors);
 
   // net::URLRequestContextGetter implementation.
+
   net::URLRequestContext* GetURLRequestContext() override;
+
+  // Returns a SingleThreadTaskRunner corresponding to the thread on
+  // which the network IO happens (the thread on which the returned
+  // net::URLRequestContext may be used).
   scoped_refptr<base::SingleThreadTaskRunner> GetNetworkTaskRunner()
       const override;
+
+
 
   net::HostResolver* host_resolver();
 
  protected:
   ~SprocketURLRequestContextGetter() override;
 
+  // TODO: ?????
   // Used by subclasses to create their own implementation of NetworkDelegate
   // and net::ProxyService.
   virtual net::NetworkDelegate* CreateNetworkDelegate();

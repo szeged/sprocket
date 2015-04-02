@@ -14,6 +14,8 @@ class BrowserMainRunner;
 struct MainFunctionParams;
 }
 
+
+// TODO: Do we really need this? We should check on Android.
 int BrowserMain(
     const content::MainFunctionParams& parameters,
     const scoped_ptr<content::BrowserMainRunner>& main_runner);

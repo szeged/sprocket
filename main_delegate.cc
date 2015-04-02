@@ -25,10 +25,13 @@ SprocketMainDelegate::~SprocketMainDelegate() {
 
 bool SprocketMainDelegate::BasicStartupComplete(int* exit_code) {
   base::CommandLine* command_line = base::CommandLine::ForCurrentProcess();
+
+  // We do not support the sandbox for now.
   command_line->AppendSwitch(switches::kNoSandbox);
 
   InitializeResourceBundle();
 
+  // The client should be set early, before any content code is called.
   content::SetContentClient(&content_client_);
   return false;
 }
@@ -37,7 +40,9 @@ int SprocketMainDelegate::RunProcess(
     const std::string& process_type,
     const content::MainFunctionParams& main_function_params) {
 
-  if (!process_type.empty())
+    // When |process_type| is empty, that means we should start a browser process.
+    // We use the default behavior in the case of other types of processes.
+    if (!process_type.empty())
       return -1;
 
     scoped_ptr<content::BrowserMainRunner> browser_runner_;

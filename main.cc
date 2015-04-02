@@ -8,9 +8,14 @@
 #include "sprocket/main_delegate.h"
 
 int main(int argc, const char** argv) {
+  // The embedder can also pass in NULL for |delegate| if they don't want to
+  // override default startup.
   SprocketMainDelegate delegate;
   content::ContentMainParams params(&delegate);
   params.argc = argc;
   params.argv = argv;
+
+  // ContentMain should be called from the embedder's main() function to do the
+  // initial setup for every process.
   return content::ContentMain(params);
 }
