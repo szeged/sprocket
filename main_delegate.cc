@@ -6,10 +6,12 @@
 
 #include "sprocket/main_delegate.h"
 
+#include "base/command_line.h"
 #include "base/files/file.h"
 #include "base/files/file_path.h"
 #include "base/path_service.h"
 #include "content/public/browser/browser_main_runner.h"
+#include "content/public/common/content_switches.h"
 #include "sprocket/browser/browser_main.h"
 #include "sprocket/browser/content_browser_client.h"
 #include "ui/base/resource/resource_bundle.h"
@@ -22,6 +24,9 @@ SprocketMainDelegate::~SprocketMainDelegate() {
 }
 
 bool SprocketMainDelegate::BasicStartupComplete(int* exit_code) {
+  base::CommandLine* command_line = base::CommandLine::ForCurrentProcess();
+  command_line->AppendSwitch(switches::kNoSandbox);
+
   content::SetContentClient(&content_client_);
   return false;
 }
