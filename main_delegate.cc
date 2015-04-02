@@ -27,12 +27,10 @@ bool SprocketMainDelegate::BasicStartupComplete(int* exit_code) {
   base::CommandLine* command_line = base::CommandLine::ForCurrentProcess();
   command_line->AppendSwitch(switches::kNoSandbox);
 
+  InitializeResourceBundle();
+
   content::SetContentClient(&content_client_);
   return false;
-}
-
-void SprocketMainDelegate::PreSandboxStartup() {
-  InitializeResourceBundle();
 }
 
 int SprocketMainDelegate::RunProcess(

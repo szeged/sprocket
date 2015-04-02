@@ -22,7 +22,6 @@ public:
 protected:
   // content::ContentMainDelegate implementation:
   bool BasicStartupComplete(int* exit_code) override;
-  void PreSandboxStartup() override;
   int RunProcess(
     const std::string& process_type,
     const content::MainFunctionParams& main_function_params) override;
