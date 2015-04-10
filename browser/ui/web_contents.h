@@ -11,7 +11,6 @@
 #include "base/callback_forward.h"
 #include "base/memory/scoped_ptr.h"
 #include "content/public/browser/web_contents_delegate.h"
-#include "content/public/browser/web_contents_observer.h"
 #include "ui/gfx/geometry/size.h"
 #include "ui/gfx/native_widget_types.h"
 
@@ -35,18 +34,7 @@ class SprocketPlatformDataAura;
 // WebContentsDelegate: Objects implement this interfacee to get notified about
 // changes in the WebContents and to provide necessary functionality.
 
-// TODO: Do we really need the WebContentsObserver override?
-
-// WebContentsObserver: An observer API implemented by classes which are interested
-// in various page load events from WebContents.  They also get a chance to filter
-// IPC messages.
-// Since a WebContents can be a delegate to almost arbitrarily many RenderViewHosts,
-// it is important to check in those WebContentsObserver methods which take a
-// RenderViewHost that the event came from the RenderViewHost the observer cares
-// about. Usually, observers should only care about the current RenderViewHost as
-// returned by GetRenderViewHost().
-class SprocketWebContents : public content::WebContentsDelegate,
-          public content::WebContentsObserver {
+class SprocketWebContents : public content::WebContentsDelegate {
 
 public:
 
@@ -80,6 +68,12 @@ public:
   content::WebContents* OpenURLFromTab(
     content::WebContents* source,
     const content::OpenURLParams& params) override;
+
+  // Called to inform the delegate that the WebContents's navigation state
+  // changed. The |changed_flags| indicates the parts of the navigation state
+  // that have been updated.
+  void NavigationStateChanged(content::WebContents* source,
+            content::InvalidateTypes changed_flags) override;
 
   // Creates a new tab with the already-created WebContents 'new_contents'.
   // The window for the added contents should be reparented correctly when this
@@ -171,9 +165,6 @@ private:
 
   gfx::NativeView GetContentView();
 
-  // content::WebContentsObserver overrides.
-  // TODO: This could be replaced by WebContentsDelegate::NavigationStateChanged.
-  void TitleWasSet(content::NavigationEntry* entry, bool explicit_set) override;
 
   scoped_ptr<content::WebContents> web_contents_;
 

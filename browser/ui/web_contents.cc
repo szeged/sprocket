@@ -12,7 +12,6 @@
 #include "content/public/browser/navigation_entry.h"
 #include "content/public/browser/render_view_host.h"
 #include "content/public/browser/web_contents.h"
-#include "content/public/browser/web_contents_observer.h"
 #include "content/public/common/renderer_preferences.h"
 #include "sprocket/browser/browser_main_parts.h"
 #include "sprocket/browser/content_browser_client.h"
@@ -24,8 +23,7 @@ std::vector<SprocketWebContents*> SprocketWebContents::windows_;
 bool SprocketWebContents::quit_message_loop_ = true;
 
 SprocketWebContents::SprocketWebContents(content::WebContents* web_contents)
-    : WebContentsObserver(web_contents),
-      window_(NULL) {
+    : window_(NULL) {
   windows_.push_back(this);
 }
 
@@ -165,6 +163,11 @@ content::WebContents* SprocketWebContents::OpenURLFromTab(content::WebContents* 
   return source;
 }
 
+void SprocketWebContents::NavigationStateChanged(content::WebContents* source, content::InvalidateTypes changed_flags) {
+  if (changed_flags & content::INVALIDATE_TYPE_TITLE)
+    PlatformSetTitle(source->GetTitle());
+}
+
 void SprocketWebContents::LoadingStateChanged(content::WebContents* source,
     bool to_different_document) {
   UpdateNavigationControls(to_different_document);
@@ -208,9 +211,4 @@ gfx::Size SprocketWebContents::GetSprocketWebContentsDefaultSize() {
     kDefaultTestWindowWidthDip, kDefaultTestWindowHeightDip);
 
   return default_sprocket_size;
-}
-
-void SprocketWebContents::TitleWasSet(content::NavigationEntry* entry, bool explicit_set) {
-  if (entry)
-    PlatformSetTitle(entry->GetTitle());
 }
