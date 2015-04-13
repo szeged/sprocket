@@ -15,6 +15,8 @@
 #include "content/public/browser/permission_manager.h"
 #include "content/public/browser/storage_partition.h"
 #include "content/public/common/content_switches.h"
+#include "net/url_request/url_request_context.h"
+
 
 SprocketBrowserContext::SprocketResourceContext::SprocketResourceContext()
     : getter_(NULL) {
@@ -26,7 +28,7 @@ SprocketBrowserContext::SprocketResourceContext::~SprocketResourceContext() {
 net::HostResolver*
 SprocketBrowserContext::SprocketResourceContext::GetHostResolver() {
   CHECK(getter_);
-  return getter_->host_resolver();
+  return getter_->GetURLRequestContext()->host_resolver();
 }
 
 net::URLRequestContext*
@@ -141,25 +143,12 @@ content::PermissionManager* SprocketBrowserContext::GetPermissionManager() {
   return NULL;
 }
 
-SprocketURLRequestContextGetter*
-SprocketBrowserContext::CreateURLRequestContextGetter(
-    content::ProtocolHandlerMap* protocol_handlers,
-    content::URLRequestInterceptorScopedVector request_interceptors) {
-  return new SprocketURLRequestContextGetter(
+net::URLRequestContextGetter*
+SprocketBrowserContext::CreateRequestContext(content::ProtocolHandlerMap* protocol_handlers) {
+  url_request_getter_ = new SprocketURLRequestContextGetter(
       ignore_certificate_errors_,
       GetPath(),
-      content::BrowserThread::UnsafeGetMessageLoopForThread(content::BrowserThread::IO),
-      content::BrowserThread::UnsafeGetMessageLoopForThread(content::BrowserThread::FILE),
-      protocol_handlers,
-      request_interceptors.Pass());
-}
-
-net::URLRequestContextGetter*
-SprocketBrowserContext::CreateRequestContext(
-    content::ProtocolHandlerMap* protocol_handlers,
-    content::URLRequestInterceptorScopedVector request_interceptors) {
-  url_request_getter_ = CreateURLRequestContextGetter(
-    protocol_handlers, request_interceptors.Pass());
+      protocol_handlers);
   resource_context_->set_url_request_context_getter(url_request_getter_.get());
   return url_request_getter_.get();
 }

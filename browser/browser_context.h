@@ -88,9 +88,7 @@ public:
 
 
   // Used by SprocketContentBrowserClient.
-  net::URLRequestContextGetter* CreateRequestContext(
-    content::ProtocolHandlerMap* protocol_handlers,
-    content::URLRequestInterceptorScopedVector request_interceptors);
+  net::URLRequestContextGetter* CreateRequestContext(content::ProtocolHandlerMap* protocol_handlers);
 
 protected:
 
@@ -108,8 +106,8 @@ protected:
     net::URLRequestContext* GetRequestContext() override;
 
     void set_url_request_context_getter(SprocketURLRequestContextGetter* getter) {
-    getter_ = getter;
-  }
+      getter_ = getter;
+    }
 
   private:
     SprocketURLRequestContextGetter* getter_;
@@ -121,16 +119,13 @@ protected:
     return url_request_getter_.get();
   }
 
-  // Used by SprocketBrowserContext to initiate and set different types of
-  // URLRequestContextGetter.
-  virtual SprocketURLRequestContextGetter* CreateURLRequestContextGetter(
-    content::ProtocolHandlerMap* protocol_handlers,
-    content::URLRequestInterceptorScopedVector request_interceptors);
   void set_url_request_context_getter(SprocketURLRequestContextGetter* getter) {
     url_request_getter_ = getter;
   }
 
-  bool ignore_certificate_errors() const { return ignore_certificate_errors_; }
+  bool ignore_certificate_errors() const {
+    return ignore_certificate_errors_;
+  }
 
   scoped_ptr<SprocketResourceContext> resource_context_;
   bool ignore_certificate_errors_;

@@ -36,10 +36,7 @@ class SprocketURLRequestContextGetter : public net::URLRequestContextGetter {
   SprocketURLRequestContextGetter(
       bool ignore_certificate_errors,
       const base::FilePath& base_path,
-      base::MessageLoop* io_loop,
-      base::MessageLoop* file_loop,
-      content::ProtocolHandlerMap* protocol_handlers,
-      content::URLRequestInterceptorScopedVector request_interceptors);
+      content::ProtocolHandlerMap* protocol_handlers);
 
   // net::URLRequestContextGetter implementation.
 
@@ -52,31 +49,18 @@ class SprocketURLRequestContextGetter : public net::URLRequestContextGetter {
       const override;
 
 
-
-  net::HostResolver* host_resolver();
-
  protected:
   ~SprocketURLRequestContextGetter() override;
-
-  // TODO: ?????
-  // Used by subclasses to create their own implementation of NetworkDelegate
-  // and net::ProxyService.
-  virtual net::NetworkDelegate* CreateNetworkDelegate();
-  virtual net::ProxyConfigService* GetProxyConfigService();
-  virtual net::ProxyService* GetProxyService();
 
  private:
   bool ignore_certificate_errors_;
   base::FilePath base_path_;
-  base::MessageLoop* io_loop_;
-  base::MessageLoop* file_loop_;
 
   scoped_ptr<net::ProxyConfigService> proxy_config_service_;
   scoped_ptr<net::NetworkDelegate> network_delegate_;
   scoped_ptr<net::URLRequestContextStorage> storage_;
   scoped_ptr<net::URLRequestContext> url_request_context_;
   content::ProtocolHandlerMap protocol_handlers_;
-  content::URLRequestInterceptorScopedVector request_interceptors_;
 
   DISALLOW_COPY_AND_ASSIGN(SprocketURLRequestContextGetter);
 };

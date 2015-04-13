@@ -40,10 +40,8 @@ SprocketContentBrowserClient::CreateRequestContext(
   content::BrowserContext* browser_context,
   content::ProtocolHandlerMap* protocol_handlers,
   content::URLRequestInterceptorScopedVector request_interceptors) {
-    SprocketBrowserContext* sprocket_browser_context =
-      SprocketBrowserContextForBrowserContext(browser_context);
-    return sprocket_browser_context->CreateRequestContext(
-      protocol_handlers, request_interceptors.Pass());
+    SprocketBrowserContext* sprocket_browser_context = SprocketBrowserContextForBrowserContext(browser_context);
+    return sprocket_browser_context->CreateRequestContext(protocol_handlers);
 }
 
 bool SprocketContentBrowserClient::IsHandledURL(const GURL& url) {
