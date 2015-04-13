@@ -15,9 +15,9 @@
 #include "content/public/browser/browser_thread.h"
 #include "content/public/browser/cookie_store_factory.h"
 #include "content/public/common/content_switches.h"
-#include "sprocket/browser/net/network_delegate.h"
 #include "sprocket/common/content_client.h"
 #include "net/base/cache_type.h"
+#include "net/base/network_delegate_impl.h"
 #include "net/cert/cert_verifier.h"
 #include "net/cookies/cookie_monster.h"
 #include "net/dns/host_resolver.h"
@@ -84,7 +84,7 @@ SprocketURLRequestContextGetter::~SprocketURLRequestContextGetter() {
 }
 
 net::NetworkDelegate* SprocketURLRequestContextGetter::CreateNetworkDelegate() {
-  return new SprocketNetworkDelegate;
+  return new net::NetworkDelegateImpl;
 }
 
 net::ProxyConfigService* SprocketURLRequestContextGetter::GetProxyConfigService() {
