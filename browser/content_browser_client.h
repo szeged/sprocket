@@ -57,8 +57,16 @@ public:
     int child_process_id,
     content::FileDescriptorInfo* mappings) override;
 
+  // If content creates the WebContentsView implementation, it will ask the
+  // embedder to return an (optional) delegate to customize it. The view will
+  // own the delegate.
   content::WebContentsViewDelegate* GetWebContentsViewDelegate(
       content::WebContents* web_contents) override;
+
+  // Create and return a new quota permission context.
+  content::QuotaPermissionContext* CreateQuotaPermissionContext() override;
+
+
 
   SprocketBrowserContext* browser_context();
   SprocketBrowserContext* off_the_record_browser_context();

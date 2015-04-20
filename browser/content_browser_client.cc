@@ -10,6 +10,7 @@
 #include "base/command_line.h"
 #include "base/path_service.h"
 #include "content/public/browser/resource_dispatcher_host.h"
+#include "content/public/browser/quota_permission_context.h"
 #include "content/public/common/content_descriptors.h"
 #include "content/public/common/url_constants.h"
 #include "sprocket/browser/browser_context.h"
@@ -32,6 +33,21 @@ SprocketContentBrowserClient* g_browser_client;
 SprocketContentBrowserClient* SprocketContentBrowserClient::Get() {
   return g_browser_client;
 }
+
+class SprocketQuotaPermissionContext : public content::QuotaPermissionContext {
+public:
+  void RequestQuotaPermission(
+    const content::StorageQuotaParams& params,
+    int render_process_id,
+    const PermissionCallback& callback) override
+  {
+    callback.Run(QUOTA_PERMISSION_RESPONSE_DISALLOW);
+  }
+
+private:
+  ~SprocketQuotaPermissionContext() override {}
+};
+
 
 SprocketContentBrowserClient::SprocketContentBrowserClient()
   : v8_natives_fd_(-1),
@@ -125,6 +141,11 @@ content::WebContentsViewDelegate* SprocketContentBrowserClient::GetWebContentsVi
 #else
   return NULL;
 #endif
+}
+
+content::QuotaPermissionContext* SprocketContentBrowserClient::CreateQuotaPermissionContext() {
+  // The browser crashes on quota permission requests if this returns NULL.
+  return new SprocketQuotaPermissionContext;
 }
 
 SprocketBrowserContext*
