@@ -1,17 +1,17 @@
-![](android/java/res/mipmap-xxxhdpi/app_icon.png) Sprocket
+![](android/java/res/mipmap-hdpi/app_icon.png) Sprocket
 ========
 The browser is based on Chromium's Content API.
 Supported platforms: Linux, Android
 Build steps
 -------------
 #### Getting the Chromium source code
-[LKGR](https://github.com/szeged/sprocket/blob/master/LKGR "Last Known Good Revision"): The Last Known Good Revision, which will certainly work with Sprocket.
+[LKGR](https://github.com/szeged/sprocket/blob/master/LKGR "Last Known Good Revision"): The Last Known Good Revision which will certainly work with Sprocket.
 
-[Linux offcial guide](http://dev.chromium.org/developers/how-tos/get-the-code "Get the code")
+[Linux official guide](http://dev.chromium.org/developers/how-tos/get-the-code "Get the code")
 
 [Android official guide](https://code.google.com/p/chromium/wiki/AndroidBuildInstructions "Android Instructions")
 #### Sprocket code
-Inside Chromium's 'src' directory, run the following commands.
+Inside Chromium's 'src' directory, run the following commands:
 ```shell
 # make a work branch
 git checkout -b sprocket
@@ -21,6 +21,7 @@ git clone https://github.com/szeged/sprocket.git sprocket
 git reset --hard "$(< sprocket/LKGR)" && gclient sync --nohooks --no-history
 git apply sprocket/patch/gritsettings.patch
 ```
+Next, run the selected platform's commands.
 ##### Linux/PC
 ```shell
 # run the config
