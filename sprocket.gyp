@@ -33,12 +33,6 @@
         '<(DEPTH)/content/content.gyp:content_resources',
         '<(DEPTH)/content/content.gyp:content_utility',
         '<(DEPTH)/content/content.gyp:content_browser',
-        # Fix mojo include error.
-        '<(DEPTH)/content/content_common_mojo_bindings.gyp:content_common_mojo_bindings_mojom',
-        # UI dependencies
-        '<(DEPTH)/ui/views/controls/webview/webview.gyp:webview',
-        '<(DEPTH)/ui/views/views.gyp:views',
-        '<(DEPTH)/ui/views/views.gyp:views_test_support',
         'sprocket_pak',
       ],
       'sources': [
@@ -52,16 +46,46 @@
         'browser/content_browser_client.h',
         'browser/net/url_request_context_getter.h',
         'browser/net/url_request_context_getter.cc',
-        'browser/ui/context_menu_model.cc',
-        'browser/ui/context_menu_model.h',
         'browser/ui/web_contents.cc',
         'browser/ui/web_contents.h',
-        'browser/ui/web_contents_views.cc',
         'common/content_client.cc',
         'common/content_client.h',
+        'main_delegate.cc',
+        'main_delegate.h',
       ],
       'cflags': [
         '-g',
+      ],
+      'conditions': [
+        ['OS=="android"', {
+          'dependencies': [
+            'sprocket_jni_headers',
+          ],
+          'sources': [
+            'android/jni_registrar.cc',
+            'android/jni_registrar.h',
+            'android/web_contents_manager.cc',
+            'android/web_contents_manager.h',
+            'browser/ui/web_contents_android.cc',
+            'browser/ui/web_contents_view_delegate_android.cc'
+          ],
+        }],  # OS=="android"
+        ['use_aura==1', {
+          'dependencies': [
+            '<(DEPTH)/ui/views/controls/webview/webview.gyp:webview',
+            '<(DEPTH)/ui/views/views.gyp:views',
+            '<(DEPTH)/ui/views/views.gyp:views_test_support',
+          ],
+          'sources': [
+            'browser/ui/web_contents_views.cc',
+            'browser/ui/context_menu_model.cc',
+            'browser/ui/context_menu_model.h',
+          ],
+        },{
+          'sources': [
+            'browser/ui/web_contents_view_delegate.h',
+          ],
+        }],  # use_aura==1
       ],
     },
     {
@@ -99,15 +123,27 @@
         '<(DEPTH)/ui/strings/ui_strings.gyp:ui_strings',
         'sprocket_resources',
       ],
+      'conditions': [
+        ['OS=="android"', {
+          'copies': [
+            {
+              'destination': '<(PRODUCT_DIR)',
+              'files': [
+                '<(PRODUCT_DIR)/sprocket/assets/sprocket.pak'
+              ],
+            },
+          ],
+        }],
+      ],
       'actions': [
         {
           'action_name': 'repack_sprocket_pack',
           'variables': {
             'pak_inputs': [
-              '<(SHARED_INTERMEDIATE_DIR)/blink/public/resources/blink_resources_100_percent.pak',
+              '<(SHARED_INTERMEDIATE_DIR)/blink/public/resources/blink_resources.pak',
+              '<(SHARED_INTERMEDIATE_DIR)/blink/public/resources/blink_image_resources_100_percent.pak',
               '<(SHARED_INTERMEDIATE_DIR)/content/app/resources/content_resources_100_percent.pak',
               '<(SHARED_INTERMEDIATE_DIR)/content/app/strings/content_strings_en-US.pak',
-              '<(SHARED_INTERMEDIATE_DIR)/content/browser/tracing/tracing_resources.pak',
               '<(SHARED_INTERMEDIATE_DIR)/content/content_resources.pak',
               '<(SHARED_INTERMEDIATE_DIR)/net/net_resources.pak',
               '<(SHARED_INTERMEDIATE_DIR)/ui/resources/ui_resources_100_percent.pak',
@@ -116,6 +152,13 @@
               '<(SHARED_INTERMEDIATE_DIR)/ui/strings/ui_strings_en-US.pak',
             ],
             'pak_output': '<(PRODUCT_DIR)/sprocket.pak',
+            'conditions': [
+              ['OS!="android"', {
+                'pak_output': '<(PRODUCT_DIR)/sprocket.pak',
+              }, {
+                'pak_output': '<(PRODUCT_DIR)/sprocket/assets/sprocket.pak',
+              }],
+            ],
           },
           'includes': [ '../build/repack_action.gypi' ],
         },
@@ -132,8 +175,154 @@
       ],
       'sources': [
         'main.cc',
-        'main_delegate.cc',
-        'main_delegate.h',
       ],
-    }]
+    }],
+    'conditions': [
+      ['OS=="android"', {
+      'targets': [
+        {
+          # TODO(jrg): Update this action and other jni generators to only
+          # require specifying the java directory and generate the rest.
+          'target_name': 'sprocket_jni_headers',
+          'type': 'none',
+          'sources': [
+            'android/java/src/hu/uszeged/sprocket/SprocketManager.java',
+            'android/java/src/hu/uszeged/sprocket/SprocketWebContents.java',
+          ],
+          'variables': {
+            'jni_gen_package': 'sprocket',
+          },
+          'includes': [ '../build/jni_generator.gypi' ],
+        },
+        {
+          'target_name': 'libsprocket_content_view',
+          'type': 'shared_library',
+          'dependencies': [
+            'sprocket_jni_headers',
+            'sprocket_lib',
+            'sprocket_pak',
+            # Skia is necessary to ensure the dependencies needed by
+            # WebContents are included.
+            '<(DEPTH)/skia/skia.gyp:skia',
+            '<(DEPTH)/media/media.gyp:player_android',
+          ],
+          'sources': [
+            'android/library_loader.cc',
+          ],
+        },
+        {
+          'target_name': 'sprocket_java',
+          'type': 'none',
+          'dependencies': [
+            '<(DEPTH)/content/content.gyp:content_java',
+          ],
+          'variables': {
+            'java_in_dir': 'android/java',
+            'has_java_resources': 1,
+            'R_package': 'hu.uszeged.sprocket',
+            'R_package_relpath': 'hu/uszeged/sprocket',
+          },
+          'includes': [ '../build/java.gypi' ],
+        },
+        {
+          # sprocket_apk creates a .jar as a side effect. Any java targets
+          # that need that .jar in their classpath should depend on this target,
+          # sprocket_apk_java. Dependents of sprocket_apk receive its
+          # jar path in the variable 'apk_output_jar_path'. This target should
+          # only be used by targets which instrument sprocket_apk.
+          'target_name': 'sprocket_apk_java',
+          'type': 'none',
+          'dependencies': [
+            'sprocket_apk',
+          ],
+          'includes': [ '../build/apk_fake_jar.gypi' ],
+        },
+        {
+          'target_name': 'sprocket_manifest',
+          'type': 'none',
+          'variables': {
+            'jinja_inputs': ['android/sprocket_apk/AndroidManifest.xml.jinja2'],
+            'jinja_output': '<(SHARED_INTERMEDIATE_DIR)/sprocket_manifest/AndroidManifest.xml',
+          },
+          'includes': [ '../build/android/jinja_template.gypi' ],
+        },
+        {
+          'target_name': 'sprocket_apk',
+          'type': 'none',
+          'dependencies': [
+            'sprocket_icudata',
+            'sprocket_v8_external_data',
+            'sprocket_java',
+            'libsprocket_content_view',
+            '<(DEPTH)/content/content.gyp:content_java',
+            '<(DEPTH)/base/base.gyp:base_java',
+            '<(DEPTH)/media/media.gyp:media_java',
+            '<(DEPTH)/net/net.gyp:net_java',
+            '<(DEPTH)/third_party/mesa/mesa.gyp:osmesa_in_lib_dir',
+            '<(DEPTH)/tools/android/forwarder/forwarder.gyp:forwarder',
+            '<(DEPTH)/tools/imagediff/image_diff.gyp:image_diff#host',
+            '<(DEPTH)/ui/android/ui_android.gyp:ui_java',
+          ],
+          'variables': {
+            'apk_name': 'Sprocket',
+            'manifest_package_name': 'hu.uszeged.sprocket_apk',
+            'android_manifest_path': '<(SHARED_INTERMEDIATE_DIR)/sprocket_manifest/AndroidManifest.xml',
+            'java_in_dir': 'android/sprocket_apk',
+            'resource_dir': 'android/sprocket_apk/res',
+            'native_lib_target': 'libsprocket_content_view',
+            'additional_input_paths': ['<(PRODUCT_DIR)/sprocket/assets/sprocket.pak'],
+            'asset_location': '<(PRODUCT_DIR)/sprocket/assets',
+            'extra_native_libs': ['<(SHARED_LIB_DIR)/libosmesa.so'],
+            'conditions': [
+              ['icu_use_data_file_flag==1', {
+                'additional_input_paths': [
+                  '<(PRODUCT_DIR)/icudtl.dat',
+                ],
+              }],
+              ['v8_use_external_startup_data==1', {
+                'additional_input_paths': [
+                  '<(PRODUCT_DIR)/natives_blob.bin',
+                  '<(PRODUCT_DIR)/snapshot_blob.bin',
+                ],
+              }],
+            ],
+          },
+          'includes': [ '../build/java_apk.gypi' ],
+        },
+        {
+          'target_name': 'sprocket_icudata',
+          'type': 'none',
+          'conditions': [
+            ['icu_use_data_file_flag==1', {
+              'copies': [
+                {
+                  'destination': '<(PRODUCT_DIR)/sprocket/assets',
+                  'files': [
+                    '<(PRODUCT_DIR)/icudtl.dat',
+                  ],
+                },
+              ],
+            }],
+          ],
+        },
+        {
+          'target_name': 'sprocket_v8_external_data',
+          'type': 'none',
+          'conditions': [
+            ['v8_use_external_startup_data==1', {
+              'copies': [
+                {
+                  'destination': '<(PRODUCT_DIR)/sprocket/assets',
+                  'files': [
+                    '<(PRODUCT_DIR)/natives_blob.bin',
+                    '<(PRODUCT_DIR)/snapshot_blob.bin',
+                  ],
+                },
+              ],
+            }],
+          ],
+        },
+      ],
+    }]  # OS=="android"
+    ]
 }

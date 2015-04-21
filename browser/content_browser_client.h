@@ -21,6 +21,8 @@ class SprocketBrowserMainParts;
 class SprocketContentBrowserClient : public content::ContentBrowserClient {
 public:
 
+  static SprocketContentBrowserClient* Get();
+
   SprocketContentBrowserClient();
   ~SprocketContentBrowserClient() override;
 
@@ -55,7 +57,8 @@ public:
     int child_process_id,
     content::FileDescriptorInfo* mappings) override;
 
-
+  content::WebContentsViewDelegate* GetWebContentsViewDelegate(
+      content::WebContents* web_contents) override;
 
   SprocketBrowserContext* browser_context();
   SprocketBrowserContext* off_the_record_browser_context();

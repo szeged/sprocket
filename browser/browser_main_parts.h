@@ -51,6 +51,8 @@ public:
 
   void PreEarlyInitialization() override;
 
+  void PostMainMessageLoopStart() override;
+
   // This is called just before the main message loop is run.  The
   // various browser threads have all been created at this point.
   void PreMainMessageLoopRun() override;

@@ -138,11 +138,6 @@ public:
     }
   }
 
-  void OnWebContentsFocused(content::WebContents* web_contents) {
-    if (web_view_->GetWebContents() == web_contents)
-      web_view_->OnWebContentsFocused(web_contents);
-  }
-
 private:
   // Initialize the UI control contained in sprocket window
   void InitSprocketWindow() {
@@ -432,10 +427,4 @@ bool SprocketWebContents::PlatformHandleContextMenu(
     static_cast<SprocketWindowDelegateView*>(window_widget_->widget_delegate());
   delegate_view->ShowWebViewContextMenu(params);
   return true;
-}
-
-void SprocketWebContents::PlatformWebContentsFocused(content::WebContents* contents) {
-  SprocketWindowDelegateView* delegate_view =
-    static_cast<SprocketWindowDelegateView*>(window_widget_->widget_delegate());
-  delegate_view->OnWebContentsFocused(contents);
 }

@@ -13,6 +13,12 @@
 
 class SprocketContentBrowserClient;
 
+#if defined(OS_ANDROID)
+namespace content {
+class BrowserMainRunner;
+}
+#endif
+
 // The embedder has a chance to customize startup using the ContentMainDelegate interface.
 class SprocketMainDelegate : public content::ContentMainDelegate {
 
@@ -49,6 +55,10 @@ private:
   scoped_ptr<SprocketContentBrowserClient> browser_client_;
 
   SprocketContentClient content_client_;
+
+#if defined(OS_ANDROID)
+  scoped_ptr<content::BrowserMainRunner> browser_runner_;
+#endif
 
   DISALLOW_COPY_AND_ASSIGN(SprocketMainDelegate);
 };

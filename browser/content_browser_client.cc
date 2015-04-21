@@ -14,18 +14,35 @@
 #include "content/public/common/url_constants.h"
 #include "sprocket/browser/browser_context.h"
 #include "sprocket/browser/browser_main_parts.h"
-#include "gin/public/isolate_holder.h"
+#include "gin/v8_initializer.h"
 #include "net/url_request/url_request_context_getter.h"
 #include "url/gurl.h"
 
+#if !defined(USE_AURA)
+#include "sprocket/browser/ui/web_contents_view_delegate.h"
+#endif
+
+#if defined(OS_ANDROID)
+#include "base/android/path_utils.h"
+#include "sprocket/android/descriptors.h"
+#endif
+
+SprocketContentBrowserClient* g_browser_client;
+
+SprocketContentBrowserClient* SprocketContentBrowserClient::Get() {
+  return g_browser_client;
+}
 
 SprocketContentBrowserClient::SprocketContentBrowserClient()
   : v8_natives_fd_(-1),
     v8_snapshot_fd_(-1),
     browser_main_parts_(NULL) {
+  DCHECK(!g_browser_client);
+  g_browser_client = this;
 }
 
 SprocketContentBrowserClient::~SprocketContentBrowserClient() {
+  g_browser_client = NULL;
 }
 
 content::BrowserMainParts*
@@ -72,24 +89,42 @@ void SprocketContentBrowserClient::GetAdditionalMappedFilesForChildProcess(
     int child_process_id,
     content::FileDescriptorInfo* mappings) {
   if (v8_snapshot_fd_.get() == -1 && v8_natives_fd_.get() == -1) {
-    base::FilePath v8_data_path;
-    PathService::Get(gin::IsolateHolder::kV8SnapshotBasePathKey, &v8_data_path);
-    DCHECK(!v8_data_path.empty());
-
-    int file_flags = base::File::FLAG_OPEN | base::File::FLAG_READ;
-    base::FilePath v8_natives_data_path =
-        v8_data_path.AppendASCII(gin::IsolateHolder::kNativesFileName);
-    base::FilePath v8_snapshot_data_path =
-        v8_data_path.AppendASCII(gin::IsolateHolder::kSnapshotFileName);
-    base::File v8_natives_data_file(v8_natives_data_path, file_flags);
-    base::File v8_snapshot_data_file(v8_snapshot_data_path, file_flags);
-    DCHECK(v8_natives_data_file.IsValid());
-    DCHECK(v8_snapshot_data_file.IsValid());
-    v8_natives_fd_.reset(v8_natives_data_file.TakePlatformFile());
-    v8_snapshot_fd_.reset(v8_snapshot_data_file.TakePlatformFile());
+ int v8_natives_fd = -1;
+    int v8_snapshot_fd = -1;
+    if (gin::V8Initializer::OpenV8FilesForChildProcesses(&v8_natives_fd,
+                                                         &v8_snapshot_fd)) {
+      v8_natives_fd_.reset(v8_natives_fd);
+      v8_snapshot_fd_.reset(v8_snapshot_fd);
+    }
   }
   mappings->Share(kV8NativesDataDescriptor, v8_natives_fd_.get());
   mappings->Share(kV8SnapshotDataDescriptor, v8_snapshot_fd_.get());
+
+#if defined(OS_ANDROID)
+  int flags = base::File::FLAG_OPEN | base::File::FLAG_READ;
+  base::FilePath pak_file;
+  bool r = PathService::Get(base::DIR_ANDROID_APP_DATA, &pak_file);
+  CHECK(r);
+  pak_file = pak_file.Append(FILE_PATH_LITERAL("paks"));
+  pak_file = pak_file.Append(FILE_PATH_LITERAL("sprocket.pak"));
+
+  base::File f(pak_file, flags);
+  if (!f.IsValid()) {
+    NOTREACHED() << "Failed to open file when creating renderer process: "
+                 << "sprocket.pak";
+  }
+
+  mappings->Transfer(kSprocketPakDescriptor, base::ScopedFD(f.TakePlatformFile()));
+#endif
+}
+
+content::WebContentsViewDelegate* SprocketContentBrowserClient::GetWebContentsViewDelegate(
+    content::WebContents* web_contents) {
+#if !defined(USE_AURA)
+  return CreateSprocketWebContentsViewDelegate(web_contents);
+#else
+  return NULL;
+#endif
 }
 
 SprocketBrowserContext*

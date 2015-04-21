@@ -14,10 +14,14 @@
 #include "ui/gfx/geometry/size.h"
 #include "ui/gfx/native_widget_types.h"
 
+#if defined(OS_ANDROID)
+#include "base/android/scoped_java_ref.h"
+#elif defined(USE_AURA)
 namespace views {
 class Widget;
 class ViewsDelegate;
 }
+#endif
 
 namespace content {
 class BrowserContext;
@@ -26,8 +30,10 @@ class WebContents;
 }
 
 class GURL;
-class SprocketPlatformDataAura;
 
+#if defined(USE_AURA)
+class SprocketPlatformDataAura;
+#endif
 // This represents one window of the SprocketWebContents, i.e. all the UI including
 // buttons and url bar, as well as the web content area.
 
@@ -58,6 +64,11 @@ public:
   static std::vector<SprocketWebContents*>& windows() { return windows_; }
   content::WebContents* web_contents() const { return web_contents_.get(); }
   gfx::NativeWindow window() { return window_; }
+
+#if defined(OS_ANDROID)
+  // Registers the Android Java to native methods.
+  static bool Register(JNIEnv* env);
+#endif
 
   // content::WebContentsDelegate overrides.
 
@@ -96,6 +107,14 @@ public:
   void LoadingStateChanged(content::WebContents* source,
               bool to_different_document) override;
 
+#if defined(OS_ANDROID)
+  void LoadProgressChanged(content::WebContents* source, double progress) override;
+#endif
+  void EnterFullscreenModeForTab(content::WebContents* web_contents,
+                                 const GURL& origin) override;
+  void ExitFullscreenModeForTab(content::WebContents* web_contents) override;
+  bool IsFullscreenForTabOrPending(
+      const content::WebContents* web_contents) const override;
   // Request the delegate to close this web contents, and do whatever cleanup
   // it needs to do.
   void CloseContents(content::WebContents* source) override;
@@ -116,9 +135,6 @@ public:
 
   // Returns true if the context menu operation was handled by the delegate.
   bool HandleContextMenu(const content::ContextMenuParams& params) override;
-
-  // Notification that |contents| has gained focus.
-  void WebContentsFocused(content::WebContents* contents) override;
 
   // TODO: This should not be a member.
   static gfx::Size GetSprocketWebContentsDefaultSize();
@@ -160,19 +176,31 @@ private:
   void PlatformSetTitle(const base::string16& title);
   // User right-clicked on the web view
   bool PlatformHandleContextMenu(const content::ContextMenuParams& params);
-
-  void PlatformWebContentsFocused(content::WebContents* contents);
+#if defined(OS_ANDROID)
+  void PlatformToggleFullscreenModeForTab(content::WebContents* web_contents,
+                                          bool enter_fullscreen);
+  bool PlatformIsFullscreenForTabOrPending(
+      const content::WebContents* web_contents) const;
+#endif
 
   gfx::NativeView GetContentView();
 
+  void ToggleFullscreenModeForTab(content::WebContents* web_contents,
+                                  bool enter_fullscreen);
 
   scoped_ptr<content::WebContents> web_contents_;
+
+  bool is_fullscreen_;
 
   gfx::NativeWindow window_;
   gfx::Size content_size_;
 
+#if defined(OS_ANDROID)
+  base::android::ScopedJavaGlobalRef<jobject> java_object_;
+#elif defined(USE_AURA)
   static views::ViewsDelegate* views_delegate_;
   views::Widget* window_widget_;
+#endif
 
   static std::vector<SprocketWebContents*> windows_;
 

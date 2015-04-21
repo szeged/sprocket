@@ -9,6 +9,10 @@
 #include "base/memory/scoped_ptr.h"
 #include "content/public/browser/browser_main_runner.h"
 
+#if defined(OS_ANDROID)
+#include "base/run_loop.h"
+#endif
+
 // Main routine for running as the Browser process.
 int BrowserMain(
     const content::MainFunctionParams& parameters,
@@ -18,9 +22,11 @@ int BrowserMain(
   if (exit_code >= 0)
     return exit_code;
 
+#if !defined(OS_ANDROID)
   exit_code = main_runner->Run();
 
   main_runner->Shutdown();
+#endif
 
   return exit_code;
 }

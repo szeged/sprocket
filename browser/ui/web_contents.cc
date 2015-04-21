@@ -23,7 +23,8 @@ std::vector<SprocketWebContents*> SprocketWebContents::windows_;
 bool SprocketWebContents::quit_message_loop_ = true;
 
 SprocketWebContents::SprocketWebContents(content::WebContents* web_contents)
-    : window_(NULL) {
+    : is_fullscreen_(false),
+      window_(NULL) {
   windows_.push_back(this);
 }
 
@@ -174,12 +175,44 @@ void SprocketWebContents::LoadingStateChanged(content::WebContents* source,
   PlatformSetIsLoading(source->IsLoading());
 }
 
+void SprocketWebContents::EnterFullscreenModeForTab(content::WebContents* web_contents,
+                                      const GURL& origin) {
+  ToggleFullscreenModeForTab(web_contents, true);
+}
+
+void SprocketWebContents::ExitFullscreenModeForTab(content::WebContents* web_contents) {
+  ToggleFullscreenModeForTab(web_contents, false);
+}
+
+void SprocketWebContents::ToggleFullscreenModeForTab(content::WebContents* web_contents,
+                                       bool enter_fullscreen) {
+#if defined(OS_ANDROID)
+  PlatformToggleFullscreenModeForTab(web_contents, enter_fullscreen);
+#endif
+  if (is_fullscreen_ != enter_fullscreen) {
+    is_fullscreen_ = enter_fullscreen;
+    web_contents->GetRenderViewHost()->WasResized();
+  }
+}
+
+bool SprocketWebContents::IsFullscreenForTabOrPending(const content::WebContents* web_contents) const {
+#if defined(OS_ANDROID)
+  return PlatformIsFullscreenForTabOrPending(web_contents);
+#else
+  return is_fullscreen_;
+#endif
+}
+
 void SprocketWebContents::CloseContents(content::WebContents* source) {
   Close();
 }
 
 bool SprocketWebContents::CanOverscrollContent() const {
+#if defined(USE_AURA)
   return true;
+#else
+  return false;
+#endif
 }
 
 void SprocketWebContents::DidNavigateMainFramePostCommit(content::WebContents* web_contents) {
@@ -196,10 +229,6 @@ void SprocketWebContents::DeactivateContents(content::WebContents* contents) {
 
 bool SprocketWebContents::HandleContextMenu(const content::ContextMenuParams& params) {
   return PlatformHandleContextMenu(params);
-}
-
-void SprocketWebContents::WebContentsFocused(content::WebContents* contents) {
-  PlatformWebContentsFocused(contents);
 }
 
 gfx::Size SprocketWebContents::GetSprocketWebContentsDefaultSize() {

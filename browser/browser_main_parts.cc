@@ -18,15 +18,28 @@
 #include "net/base/filename_util.h"
 #include "net/base/net_module.h"
 #include "net/grit/net_resources.h"
-#include "ui/base/ime/input_method_initializer.h"
 #include "ui/base/resource/resource_bundle.h"
 #include "url/gurl.h"
+
+#if defined(OS_ANDROID)
+#include "net/android/network_change_notifier_factory_android.h"
+#include "net/base/network_change_notifier.h"
+#endif
+
+#if defined(USE_AURA) && defined(OS_LINUX)
+#include "ui/base/ime/input_method_initializer.h"
+#endif
 
 namespace {
 
 GURL GetStartupURL() {
   base::CommandLine* command_line = base::CommandLine::ForCurrentProcess();
   const base::CommandLine::StringVector& args = command_line->GetArgs();
+
+#if defined(OS_ANDROID)
+  // Delay renderer creation on Android until surface is ready.
+  return GURL();
+#endif
 
   if (args.empty())
     return GURL("https://www.google.com/");
@@ -61,7 +74,19 @@ SprocketBrowserMainParts::~SprocketBrowserMainParts() {
 }
 
 void SprocketBrowserMainParts::PreEarlyInitialization() {
+#if defined(USE_AURA) && defined(OS_LINUX)
   ui::InitializeInputMethodForTesting();
+#endif
+#if defined(OS_ANDROID)
+  net::NetworkChangeNotifier::SetFactory(
+      new net::NetworkChangeNotifierFactoryAndroid());
+#endif
+}
+
+void SprocketBrowserMainParts::PostMainMessageLoopStart() {
+#if defined(OS_ANDROID)
+  base::MessageLoopForUI::current()->Start();
+#endif
 }
 
 void SprocketBrowserMainParts::InitializeBrowserContexts() {

@@ -56,12 +56,18 @@ void SprocketBrowserContext::InitWhileIOAllowed() {
   if (cmd_line->HasSwitch(switches::kIgnoreCertificateErrors))
     ignore_certificate_errors_ = true;
 
+#if defined(OS_ANDROID)
+  CHECK(PathService::Get(base::DIR_ANDROID_APP_DATA, &path_));
+  path_ = path_.Append(FILE_PATH_LITERAL("sprocket"));
+#else
   scoped_ptr<base::Environment> env(base::Environment::Create());
   base::FilePath config_dir(
     base::nix::GetXDGDirectory(env.get(),
                    base::nix::kXdgConfigHomeEnvVar,
                    base::nix::kDotConfigDir));
   path_ = config_dir.Append("sprocket");
+#endif
+
   if (!base::PathExists(path_))
     base::CreateDirectory(path_);
 }

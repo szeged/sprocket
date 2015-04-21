@@ -101,7 +101,11 @@ net::URLRequestContext* SprocketURLRequestContextGetter::GetURLRequestContext() 
     net::HttpCache::DefaultBackend* main_backend =
         new net::HttpCache::DefaultBackend(
             net::DISK_CACHE,
+#if defined(OS_ANDROID)
+            net::CACHE_BACKEND_SIMPLE,
+#else
             net::CACHE_BACKEND_DEFAULT,
+#endif
             cache_path,
             0,    // If |max_bytes| is  zero, a default value will be calculated automatically.
             content::BrowserThread::GetMessageLoopProxyForThread(content::BrowserThread::CACHE));
@@ -135,7 +139,7 @@ net::URLRequestContext* SprocketURLRequestContextGetter::GetURLRequestContext() 
     scoped_ptr<net::URLRequestJobFactoryImpl> job_factory(new net::URLRequestJobFactoryImpl());
 
     bool set_protocol = false;
-    // Keep ProtocolHandlers added in sync with ShellContentBrowserClient::IsHandledURL().
+    // Keep ProtocolHandlers added in sync with SprocketContentBrowserClient::IsHandledURL().
     for (auto it = protocol_handlers_.begin(); it != protocol_handlers_.end(); ++it) {
       set_protocol = job_factory->SetProtocolHandler(it->first, it->second.release());
       DCHECK(set_protocol);
