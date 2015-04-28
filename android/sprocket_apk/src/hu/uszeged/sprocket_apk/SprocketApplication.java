@@ -45,7 +45,7 @@ public class SprocketApplication extends ContentApplication {
     @Override
     protected void initializeLibraryDependencies() {
         ResourceExtractor.setMandatoryPaksToExtract(MANDATORY_PAK_FILES);
-        PathUtils.setPrivateDataDirectorySuffix(PRIVATE_DATA_DIRECTORY_SUFFIX);
+        PathUtils.setPrivateDataDirectorySuffix(PRIVATE_DATA_DIRECTORY_SUFFIX, this);
     }
 
     @Override

@@ -289,7 +289,7 @@ public class SprocketWebContents extends LinearLayout {
     private void initFromNativeTabContents(WebContents webContents) {
         Context context = getContext();
         mContentViewCore = new ContentViewCore(context);
-        ContentView cv = ContentView.newInstance(context, mContentViewCore);
+        ContentView cv = new ContentView(context, mContentViewCore);
         mContentViewCore.initialize(cv, cv, webContents, mWindow);
         mContentViewCore.setContentViewClient(mContentViewClient);
         mWebContents = mContentViewCore.getWebContents();
