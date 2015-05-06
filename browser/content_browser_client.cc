@@ -15,7 +15,6 @@
 #include "content/public/common/url_constants.h"
 #include "sprocket/browser/browser_context.h"
 #include "sprocket/browser/browser_main_parts.h"
-#include "gin/v8_initializer.h"
 #include "net/url_request/url_request_context_getter.h"
 #include "url/gurl.h"
 
@@ -50,9 +49,7 @@ private:
 
 
 SprocketContentBrowserClient::SprocketContentBrowserClient()
-  : v8_natives_fd_(-1),
-    v8_snapshot_fd_(-1),
-    browser_main_parts_(NULL) {
+  : browser_main_parts_(NULL) {
   DCHECK(!g_browser_client);
   g_browser_client = this;
 }
@@ -85,7 +82,6 @@ bool SprocketContentBrowserClient::IsHandledURL(const GURL& url) {
   static const char* const kProtocolList[] = {
     url::kBlobScheme,
     url::kFileSystemScheme,
-    content::kChromeUIScheme,
     url::kDataScheme,
     url::kFileScheme,
   };
@@ -100,23 +96,11 @@ std::string SprocketContentBrowserClient::GetDefaultDownloadName() {
   return "download";
 }
 
+#if defined(OS_ANDROID)
 void SprocketContentBrowserClient::GetAdditionalMappedFilesForChildProcess(
     const base::CommandLine& command_line,
     int child_process_id,
     content::FileDescriptorInfo* mappings) {
-  if (v8_snapshot_fd_.get() == -1 && v8_natives_fd_.get() == -1) {
- int v8_natives_fd = -1;
-    int v8_snapshot_fd = -1;
-    if (gin::V8Initializer::OpenV8FilesForChildProcesses(&v8_natives_fd,
-                                                         &v8_snapshot_fd)) {
-      v8_natives_fd_.reset(v8_natives_fd);
-      v8_snapshot_fd_.reset(v8_snapshot_fd);
-    }
-  }
-  mappings->Share(kV8NativesDataDescriptor, v8_natives_fd_.get());
-  mappings->Share(kV8SnapshotDataDescriptor, v8_snapshot_fd_.get());
-
-#if defined(OS_ANDROID)
   int flags = base::File::FLAG_OPEN | base::File::FLAG_READ;
   base::FilePath pak_file;
   bool r = PathService::Get(base::DIR_ANDROID_APP_DATA, &pak_file);
@@ -131,8 +115,8 @@ void SprocketContentBrowserClient::GetAdditionalMappedFilesForChildProcess(
   }
 
   mappings->Transfer(kSprocketPakDescriptor, base::ScopedFD(f.TakePlatformFile()));
-#endif
 }
+#endif
 
 content::WebContentsViewDelegate* SprocketContentBrowserClient::GetWebContentsViewDelegate(
     content::WebContents* web_contents) {

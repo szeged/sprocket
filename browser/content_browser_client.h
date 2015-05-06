@@ -42,7 +42,6 @@ public:
 
   // Returns whether a specified URL is handled by the embedder's internal
   // protocol handlers.
-  // TODO: Do we really need this?
   bool IsHandledURL(const GURL& url) override;
 
   // Returns the default filename used in downloads when we have no idea what
@@ -51,11 +50,12 @@ public:
 
   // Populates |mappings| with all files that need to be mapped before launching
   // a child process.
-  // TODO: Do we really need this?
+  #if defined(OS_ANDROID)
   void GetAdditionalMappedFilesForChildProcess(
     const base::CommandLine& command_line,
     int child_process_id,
     content::FileDescriptorInfo* mappings) override;
+  #endif
 
   // If content creates the WebContentsView implementation, it will ask the
   // embedder to return an (optional) delegate to customize it. The view will
@@ -78,10 +78,6 @@ public:
 private:
   SprocketBrowserContext* SprocketBrowserContextForBrowserContext(
     content::BrowserContext* content_browser_context);
-
-  // TODO: Do we really need this?
-  base::ScopedFD v8_natives_fd_;
-  base::ScopedFD v8_snapshot_fd_;
 
   SprocketBrowserMainParts* browser_main_parts_;
 };
