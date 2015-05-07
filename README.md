@@ -5,7 +5,7 @@ Supported platforms: Linux, Android
 Build steps
 -------------
 #### Getting the Chromium source code
-[LKGR](https://github.com/szeged/sprocket/blob/master/LKGR "Last Known Good Revision"): The Last Known Good Revision which will certainly work with Sprocket.
+NOTE: Do NOT use --no-history command line switch when cloning Chromium repository. If the most recent revision is not compatible with Sprocket, you have to reset to the [Last Known Good Revision](https://github.com/szeged/sprocket/blob/master/LKGR "Last Known Good Revision").
 
 [Linux official guide](http://dev.chromium.org/developers/how-tos/get-the-code "Get the code")
 
@@ -18,7 +18,7 @@ git checkout -b sprocket
 # get the code
 git clone https://github.com/szeged/sprocket.git sprocket
 # use a stable revision
-git reset --hard "$(< sprocket/LKGR)" && gclient sync --nohooks --no-history
+git reset --hard "$(< sprocket/LKGR)" && gclient sync --nohooks
 git apply sprocket/patch/gritsettings.patch
 ```
 Next, run the selected platform's commands.
