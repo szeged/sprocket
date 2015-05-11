@@ -10,7 +10,7 @@
 #include "content/public/app/content_main.h"
 #include "content/public/browser/android/compositor.h"
 #include "sprocket/android/jni_registrar.h"
-#include "sprocket/main_delegate.h"
+#include "sprocket/app/main_delegate.h"
 
 namespace {
 

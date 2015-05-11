@@ -8,7 +8,7 @@
 
 #include "base/android/jni_android.h"
 #include "base/android/jni_registrar.h"
-#include "sprocket/android/web_contents_manager.h"
+#include "sprocket/android/manager.h"
 #include "sprocket/browser/ui/web_contents.h"
 
 namespace {

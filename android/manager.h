@@ -4,8 +4,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef SPROCKET_ANDROID_WEB_CONTENTS_MANAGER_H_
-#define SPROCKET_ANDROID_WEB_CONTENTS_MANAGER_H_
+#ifndef SPROCKET_ANDROID_MANAGER_H_
+#define SPROCKET_ANDROID_MANAGER_H_
 
 #include <jni.h>
 

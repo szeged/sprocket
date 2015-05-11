@@ -15,7 +15,7 @@
 #include "base/strings/string_piece.h"
 #include "content/public/browser/web_contents.h"
 #include "content/public/common/content_switches.h"
-#include "sprocket/android/web_contents_manager.h"
+#include "sprocket/android/manager.h"
 #include "jni/SprocketWebContents_jni.h"
 
 using base::android::AttachCurrentThread;

@@ -4,8 +4,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef SPROCKET_MAIN_DELEGATE_H_
-#define SPROCKET_MAIN_DELEGATE_H_
+#ifndef SPROCKET_APP_MAIN_DELEGATE_H_
+#define SPROCKET_APP_MAIN_DELEGATE_H_
 
 #include "base/memory/scoped_ptr.h"
 #include "content/public/app/content_main_delegate.h"
@@ -63,4 +63,4 @@ private:
   DISALLOW_COPY_AND_ASSIGN(SprocketMainDelegate);
 };
 
-#endif  // SPROCKET_MAIN_DELEGATE_H_
+#endif  // SPROCKET_APP_MAIN_DELEGATE_H_

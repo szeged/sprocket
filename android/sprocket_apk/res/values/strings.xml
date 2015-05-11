@@ -8,5 +8,6 @@
  -->
 
 <resources>
+	<string name="app_name">Sprocket</string>
     <string name="browser_process_initialization_failed">Initialization failed.</string>
 </resources>

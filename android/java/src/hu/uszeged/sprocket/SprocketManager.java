@@ -25,7 +25,7 @@ import org.chromium.content.browser.ContentViewRenderView;
 import org.chromium.ui.base.WindowAndroid;
 
 /**
- * Container and generator of SprocketViews.
+ * Container and generator of SprocketWebContentViews.
  */
 //@JNINamespace("content")
 public class SprocketManager extends FrameLayout {

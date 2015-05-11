@@ -5,7 +5,7 @@
 // found in the LICENSE file.
 
 #include "content/public/app/content_main.h"
-#include "sprocket/main_delegate.h"
+#include "sprocket/app/main_delegate.h"
 
 int main(int argc, const char** argv) {
   // The embedder can also pass in NULL for |delegate| if they don't want to

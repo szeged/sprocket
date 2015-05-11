@@ -49,7 +49,6 @@ public class SprocketActivity extends Activity {
     @SuppressFBWarnings("DM_EXIT")
     protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        System.out.println("onCreate start");
         // Initializing the command line must occur before loading the library.
         if (!CommandLine.isInitialized()) {
             ContentApplication.initCommandLine(this);

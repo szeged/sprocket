@@ -36,6 +36,8 @@
         'sprocket_pak',
       ],
       'sources': [
+        'app/main_delegate.cc',
+        'app/main_delegate.h',
         'browser/browser_context.cc',
         'browser/browser_context.h',
         'browser/browser_main.cc',
@@ -50,8 +52,6 @@
         'browser/ui/web_contents.h',
         'common/content_client.cc',
         'common/content_client.h',
-        'main_delegate.cc',
-        'main_delegate.h',
       ],
       'cflags': [
         '-g',
@@ -64,8 +64,8 @@
           'sources': [
             'android/jni_registrar.cc',
             'android/jni_registrar.h',
-            'android/web_contents_manager.cc',
-            'android/web_contents_manager.h',
+            'android/manager.cc',
+            'android/manager.h',
             'browser/ui/web_contents_android.cc',
             'browser/ui/web_contents_view_delegate_android.cc'
           ],
@@ -174,7 +174,7 @@
         '.',
       ],
       'sources': [
-        'main.cc',
+        'app/main.cc',
       ],
     }],
     'conditions': [
