@@ -52,6 +52,8 @@
         'browser/ui/web_contents.h',
         'common/content_client.cc',
         'common/content_client.h',
+        'common/switches.cc',
+        'common/switches.h',
       ],
       'cflags': [
         '-g',
@@ -162,6 +164,13 @@
           },
           'includes': [ '../build/repack_action.gypi' ],
         },
+      ],
+    },
+    {
+      'target_name': 'chrome_sandbox',
+      'type': 'none',
+      'dependencies': [
+        '<(DEPTH)/sandbox/sandbox.gyp:chrome_sandbox',
       ],
     },
     {

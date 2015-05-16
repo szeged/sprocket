@@ -50,6 +50,18 @@ ninja -C out/Release sprocket_apk
 # install the apk
 ./build/android/adb_install_apk.py --apk Sprocket.apk --release
 ```
+##### Sandbox (Linux)
+[Official guide](https://code.google.com/p/chromium/wiki/LinuxSUIDSandboxDevelopment "Sandbox")
+```shell
+# build the sandbox
+ninja -C out/Release chrome_sandbox
+# install it
+BUILDTYPE=Release build/update-linux-sandbox.sh
+# set the env
+export CHROME_DEVEL_SANDBOX=/usr/local/sbin/chrome-devel-sandbox
+# run sprocket with sandbox
+./out/Release/sprocket --use-sandbox
+```
 Additional info
 ---------------
 [How to build a Web Browser](https://docs.google.com/document/d/1Uwvjy5Mj_CMIoLPbKo_kcdVVyrF9waocZQ1vJMuIj54 "How to build a Web Browser")

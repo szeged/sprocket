@@ -15,6 +15,7 @@
 #include "content/public/common/content_switches.h"
 #include "sprocket/browser/browser_main.h"
 #include "sprocket/browser/content_browser_client.h"
+#include "sprocket/common/switches.h"
 #include "ui/base/resource/resource_bundle.h"
 
 #if defined(OS_ANDROID)
@@ -37,8 +38,11 @@ bool SprocketMainDelegate::BasicStartupComplete(int* exit_code) {
 
   base::CommandLine* command_line = base::CommandLine::ForCurrentProcess();
 
-  // We do not support the sandbox for now.
-  command_line->AppendSwitch(switches::kNoSandbox);
+  std::string process_type = command_line->GetSwitchValueASCII(switches::kProcessType);
+  if (process_type == switches::kBrowserProcess &&
+     !command_line->HasSwitch(switches::kUseSandbox)) {
+    command_line->AppendSwitch(switches::kNoSandbox);
+  }
 
   // TODO: Do we really need this?
 #if defined(OS_ANDROID)
