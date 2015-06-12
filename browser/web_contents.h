@@ -4,47 +4,37 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef SPROCKET_BROWSER_UI_WEB_CONTENTS_H_
-#define SPROCKET_BROWSER_UI_WEB_CONTENTS_H_
+#ifndef SPROCKET_BROWSER_WEB_CONTENTS_H_
+#define SPROCKET_BROWSER_WEB_CONTENTS_H_
 
-
-#include "base/callback_forward.h"
-#include "base/memory/scoped_ptr.h"
+#include "content/public/browser/web_contents.h"
 #include "content/public/browser/web_contents_delegate.h"
-#include "ui/gfx/geometry/size.h"
-#include "ui/gfx/native_widget_types.h"
 
-#if defined(OS_ANDROID)
-#include "base/android/scoped_java_ref.h"
-#elif defined(USE_AURA)
-namespace views {
-class Widget;
-class ViewsDelegate;
-}
-#endif
+class SprocketWindow;
 
 namespace content {
-class BrowserContext;
-class SiteInstance;
-class WebContents;
+  class BrowserContext;
+  class SiteInstance;
 }
 
-class GURL;
-
-#if defined(USE_AURA)
-class SprocketPlatformDataAura;
-#endif
-// This represents one window of the SprocketWebContents, i.e. all the UI including
-// buttons and url bar, as well as the web content area.
-
-// WebContentsDelegate: Objects implement this interfacee to get notified about
+// WebContentsDelegate: Objects implement this interface to get notified about
 // changes in the WebContents and to provide necessary functionality.
 
 class SprocketWebContents : public content::WebContentsDelegate {
 
 public:
+  ~SprocketWebContents() { }
 
-  ~SprocketWebContents() override;
+  static SprocketWebContents* CreateSprocketWebContents(
+    SprocketWindow* window,
+    content::BrowserContext* browser_context,
+    const GURL& url,
+    const gfx::Size& initial_size);
+  static SprocketWebContents* AdoptWebContents(
+    SprocketWindow* window,
+    content::WebContents* web_contents);
+
+  SprocketWindow* Window() { return window_; }
 
   void LoadURL(const GURL& url);
   bool CanGoBack();
@@ -54,21 +44,6 @@ public:
   void Stop();
   void UpdateNavigationControls(bool to_different_document);
   void Close();
-
-  static void Initialize();
-  static SprocketWebContents* CreateNewWindow(content::BrowserContext* browser_context,
-                  const GURL& url,
-                  content::SiteInstance* site_instance,
-                  const gfx::Size& initial_size);
-
-  static std::vector<SprocketWebContents*>& windows() { return windows_; }
-  content::WebContents* web_contents() const { return web_contents_.get(); }
-  gfx::NativeWindow window() { return window_; }
-
-#if defined(OS_ANDROID)
-  // Registers the Android Java to native methods.
-  static bool Register(JNIEnv* env);
-#endif
 
   // content::WebContentsDelegate overrides.
 
@@ -107,14 +82,17 @@ public:
   void LoadingStateChanged(content::WebContents* source,
               bool to_different_document) override;
 
-#if defined(OS_ANDROID)
+  // Notifies the delegate that the page has made some progress loading.
+  // |progress| is a value between 0.0 (nothing loaded) to 1.0 (page fully
+  // loaded).
   void LoadProgressChanged(content::WebContents* source, double progress) override;
-#endif
+
   void EnterFullscreenModeForTab(content::WebContents* web_contents,
                                  const GURL& origin) override;
   void ExitFullscreenModeForTab(content::WebContents* web_contents) override;
   bool IsFullscreenForTabOrPending(
       const content::WebContents* web_contents) const override;
+
   // Request the delegate to close this web contents, and do whatever cleanup
   // it needs to do.
   void CloseContents(content::WebContents* source) override;
@@ -136,77 +114,21 @@ public:
   // Returns true if the context menu operation was handled by the delegate.
   bool HandleContextMenu(const content::ContextMenuParams& params) override;
 
-  // TODO: This should not be a member.
-  static gfx::Size GetSprocketWebContentsDefaultSize();
+
+
+  content::WebContents* web_contents() const { return web_contents_.get(); }
+
 private:
-  enum UIControl {
-    BACK_BUTTON,
-    FORWARD_BUTTON,
-    STOP_BUTTON
-  };
-
-  explicit SprocketWebContents(content::WebContents* web_contents);
-
-  static SprocketWebContents* CreateSprocketWebContents(content::WebContents* web_contents,
-                const gfx::Size& initial_size);
-  // Helper for one time initialization of application
-  static void PlatformInitialize(const gfx::Size& default_window_size);
-  // Helper for one time deinitialization of platform specific state.
-  static void PlatformExit();
-
-  static gfx::Size AdjustWindowSize(const gfx::Size& initial_size);
-
-  // All the methods that begin with Platform need to be implemented by the
-  // platform specific SprocketWebContents implementation.
-  // Called from the destructor to let each platform do any necessary cleanup.
-  void PlatformCleanUp();
-  // Creates the main window GUI.
-  void PlatformCreateWindow(int width, int height);
-  // Links the WebContents into the newly created window.
-  void PlatformSetContents();
-  // Resize the content area and GUI.
-  void PlatformResizeSubViews();
-  // Enable/disable a button.
-  void PlatformEnableUIControl(UIControl control, bool is_enabled);
-  // Updates the url in the url bar.
-  void PlatformSetAddressBarURL(const GURL& url);
-  // Sets whether the spinner is spinning.
-  void PlatformSetIsLoading(bool loading);
-  // Set the title of window
-  void PlatformSetTitle(const base::string16& title);
-  // User right-clicked on the web view
-  bool PlatformHandleContextMenu(const content::ContextMenuParams& params);
-#if defined(OS_ANDROID)
-  void PlatformToggleFullscreenModeForTab(content::WebContents* web_contents,
-                                          bool enter_fullscreen);
-  bool PlatformIsFullscreenForTabOrPending(
-      const content::WebContents* web_contents) const;
-#endif
-
-  gfx::NativeView GetContentView();
+  explicit SprocketWebContents(SprocketWindow* window,
+                               content::WebContents* web_contents);
 
   void ToggleFullscreenModeForTab(content::WebContents* web_contents,
                                   bool enter_fullscreen);
 
   scoped_ptr<content::WebContents> web_contents_;
+  SprocketWindow* window_;
 
   bool is_fullscreen_;
-
-  gfx::NativeWindow window_;
-  gfx::Size content_size_;
-
-#if defined(OS_ANDROID)
-  base::android::ScopedJavaGlobalRef<jobject> java_object_;
-#elif defined(USE_AURA)
-  static views::ViewsDelegate* views_delegate_;
-  views::Widget* window_widget_;
-#endif
-
-  static std::vector<SprocketWebContents*> windows_;
-
-  // True if the destructur of SprocketWebContents should post a quit closure on the current
-  // message loop if the destructed SprocketWebContents object was the last one.
-  static bool quit_message_loop_;
 };
 
 #endif // SPROCKET_BROWSER_UI_WEB_CONTENTS_H_

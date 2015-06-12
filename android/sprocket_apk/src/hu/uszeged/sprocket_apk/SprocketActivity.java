@@ -29,11 +29,11 @@ import org.chromium.content.common.ContentSwitches;
 import org.chromium.content_public.browser.WebContents;
 import org.chromium.ui.base.ActivityWindowAndroid;
 import org.chromium.ui.base.WindowAndroid;
-import hu.uszeged.sprocket.SprocketWebContents;
+import hu.uszeged.sprocket.SprocketWindow;
 import hu.uszeged.sprocket.SprocketManager;
 
 /**
- * Activity for managing the SprocketWebContents.
+ * Activity for managing the SprocketWindow.
  */
 public class SprocketActivity extends Activity {
 
@@ -83,7 +83,7 @@ public class SprocketActivity extends Activity {
 
         String startupUrl = getUrlFromIntent(getIntent());
         if (!TextUtils.isEmpty(startupUrl)) {
-            mSprocketManager.setStartupUrl(SprocketWebContents.sanitizeUrl(startupUrl));
+            mSprocketManager.setStartupUrl(SprocketWindow.sanitizeUrl(startupUrl));
         }
 
         try {
@@ -112,7 +112,7 @@ public class SprocketActivity extends Activity {
                 && savedInstanceState.containsKey(ACTIVE_SPROCKET_URL_KEY)) {
             sprocketUrl = savedInstanceState.getString(ACTIVE_SPROCKET_URL_KEY);
         }
-        mSprocketManager.launchSprocketWebContents(sprocketUrl);
+        mSprocketManager.launchSprocketWindow(sprocketUrl);
     }
 
     private void initializationFailed() {
@@ -166,7 +166,7 @@ public class SprocketActivity extends Activity {
 
         String url = getUrlFromIntent(intent);
         if (!TextUtils.isEmpty(url)) {
-            SprocketWebContents activeView = getActiveSprocketWebContents();
+            SprocketWindow activeView = getActiveSprocketWindow();
             if (activeView != null) {
                 activeView.loadUrl(url);
             }
@@ -204,27 +204,27 @@ public class SprocketActivity extends Activity {
     }
 
     /**
-     * @return The currently visible {@link SprocketWebContents} or null if one is not showing.
+     * @return The currently visible {@link SprocketWindow} or null if one is not showing.
      */
-    public SprocketWebContents getActiveSprocketWebContents() {
-        return mSprocketManager != null ? mSprocketManager.getActiveSprocketWebContents() : null;
+    public SprocketWindow getActiveSprocketWindow() {
+        return mSprocketManager != null ? mSprocketManager.getActiveSprocketWindow() : null;
     }
 
     /**
-     * @return The {@link ContentViewCore} owned by the currently visible {@link SprocketWebContents} or null if
+     * @return The {@link ContentViewCore} owned by the currently visible {@link SprocketWindow} or null if
      *         one is not showing.
      */
     public ContentViewCore getActiveContentViewCore() {
-        SprocketWebContents sprocket = getActiveSprocketWebContents();
+        SprocketWindow sprocket = getActiveSprocketWindow();
         return sprocket != null ? sprocket.getContentViewCore() : null;
     }
 
     /**
-     * @return The {@link WebContents} owned by the currently visible {@link SprocketWebContents} or null if
+     * @return The {@link WebContents} owned by the currently visible {@link SprocketWindow} or null if
      *         one is not showing.
      */
     public WebContents getActiveWebContents() {
-        SprocketWebContents sprocket = getActiveSprocketWebContents();
+        SprocketWindow sprocket = getActiveSprocketWindow();
         return sprocket != null ? sprocket.getWebContents() : null;
     }
 

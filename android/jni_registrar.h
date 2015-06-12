@@ -10,6 +10,6 @@
 #include <jni.h>
 
 // Register all JNI bindings necessary for sprocket.
-bool RegisterSprocketWebContentsJni(JNIEnv* env);
+bool RegisterSprocketWindowJni(JNIEnv* env);
 
 #endif  // SPROCKET_ANDROID_JNI_REGISTRAR_H_

@@ -7,7 +7,7 @@
 #ifndef SPROCKET_BROWSER_UI_CONTEXT_MENU_MODEL_H_
 #define SPROCKET_BROWSER_UI_CONTEXT_MENU_MODEL_H_
 
-#include "sprocket/browser/ui/web_contents.h"
+#include "sprocket/browser/web_contents.h"
 
 #include "content/public/common/context_menu_params.h"
 #include "ui/base/models/simple_menu_model.h"

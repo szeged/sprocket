@@ -13,7 +13,8 @@
 #include "base/message_loop/message_loop.h"
 #include "content/public/common/main_function_params.h"
 #include "content/public/common/url_constants.h"
-#include "sprocket/browser/ui/web_contents.h"
+#include "sprocket/browser/web_contents.h"
+#include "sprocket/browser/ui/window.h"
 #include "sprocket/browser/browser_context.h"
 #include "net/base/filename_util.h"
 #include "net/base/net_module.h"
@@ -96,16 +97,17 @@ void SprocketBrowserMainParts::InitializeBrowserContexts() {
 }
 
 void SprocketBrowserMainParts::InitializeMessageLoopContext() {
-  SprocketWebContents::CreateNewWindow(browser_context_.get(),
-               GetStartupURL(),
-               NULL,
-               gfx::Size());
+  SprocketWindow* window = SprocketWindow::CreateNewWindow(gfx::Size());
+  SprocketWebContents::CreateSprocketWebContents(window,
+            browser_context_.get(),
+            GetStartupURL(),
+            gfx::Size());
 }
 
 void SprocketBrowserMainParts::PreMainMessageLoopRun() {
   InitializeBrowserContexts();
 
-  SprocketWebContents::Initialize();
+  SprocketWindow::Initialize();
 
   net::NetModule::SetResourceProvider(NetResourceProvider);
 
@@ -117,6 +119,7 @@ bool SprocketBrowserMainParts::MainMessageLoopRun(int* result_code)  {
 }
 
 void SprocketBrowserMainParts::PostMainMessageLoopRun() {
+  SprocketWindow::Deinitialize();
   browser_context_.reset();
   off_the_record_browser_context_.reset();
 }

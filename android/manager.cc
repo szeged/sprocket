@@ -12,9 +12,10 @@
 #include "base/bind.h"
 #include "base/lazy_instance.h"
 #include "content/public/browser/web_contents.h"
-#include "sprocket/browser/ui/web_contents.h"
 #include "sprocket/browser/browser_context.h"
 #include "sprocket/browser/content_browser_client.h"
+#include "sprocket/browser/web_contents.h"
+#include "sprocket/browser/ui/window.h"
 #include "jni/SprocketManager_jni.h"
 #include "url/gurl.h"
 
@@ -31,19 +32,19 @@ base::LazyInstance<GlobalState> g_global_state = LAZY_INSTANCE_INITIALIZER;
 
 }  // namespace
 
-jobject CreateSprocketWebContentsView(SprocketWebContents* sprocket_web_contents) {
+jobject CreateSprocketWindow(SprocketWindow* sprocket_window) {
   JNIEnv* env = base::android::AttachCurrentThread();
   jobject j_sprocket_manager = g_global_state.Get().j_sprocket_manager.obj();
-  return Java_SprocketManager_createSprocketWebContents(
+  return Java_SprocketManager_createSprocketWindow(
       env,
       j_sprocket_manager,
-      reinterpret_cast<intptr_t>(sprocket_web_contents)).Release();
+      reinterpret_cast<intptr_t>(sprocket_window)).Release();
 }
 
-void RemoveSprocketWebContentsView(jobject sprocket_web_contents_view) {
+void RemoveSprocketWindow(jobject sprocket_window) {
   JNIEnv* env = base::android::AttachCurrentThread();
   jobject j_sprocket_manager = g_global_state.Get().j_sprocket_manager.obj();
-  Java_SprocketManager_removeSprocketWebContents(env, j_sprocket_manager, sprocket_web_contents_view);
+  Java_SprocketManager_removeSprocketWindow(env, j_sprocket_manager, sprocket_window);
 }
 
 // Register native methods
@@ -56,12 +57,14 @@ static void Init(JNIEnv* env, jclass clazz, jobject obj) {
       base::android::ScopedJavaLocalRef<jobject>(env, obj));
 }
 
-void LaunchSprocketWebContents(JNIEnv* env, jclass clazz, jstring jurl) {
+void LaunchSprocketWindow(JNIEnv* env, jclass clazz, jstring jurl) {
   SprocketBrowserContext* browserContext =
       SprocketContentBrowserClient::Get()->browser_context();
   GURL url(base::android::ConvertJavaStringToUTF8(env, jurl));
-  SprocketWebContents::CreateNewWindow(browserContext,
-                         url,
-                         NULL,
-                         gfx::Size());
+  SprocketWindow* window = SprocketWindow::CreateNewWindow(gfx::Size());
+  SprocketWebContents::CreateSprocketWebContents(
+          window,
+          browserContext,
+          url,
+          gfx::Size());
 }

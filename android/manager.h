@@ -12,25 +12,25 @@
 #include "base/android/jni_android.h"
 #include "base/android/scoped_java_ref.h"
 
-class SprocketWebContents;
+class SprocketWindow;
 
 namespace blink {
 class WebLayer;
 }
 
-// Creates an Android specific sprocket view, which is our version of a sprocket
-// window.  This view holds the controls and content views necessary to
-// render a sprocket window.  Returns the java object representing the sprocket view.
+// Creates an Android specific Sprocket view, which is our version of a Sprocket
+// window. This view holds the controls and content views necessary to
+// render a Sprocket window. Returns the java object representing the sprocket view
 // object.
-jobject CreateSprocketWebContentsView(SprocketWebContents* sprocket_web_contents);
+jobject CreateSprocketWindow(SprocketWindow* sprocket_window);
 
 // Removes a previously created sprocket view.
-void RemoveSprocketWebContentsView(jobject sprocket_web_contents_view);
+void RemoveSprocketWindow(jobject sprocket_window);
 
 // Registers the SprocketManager native methods.
 bool RegisterSprocketManager(JNIEnv* env);
 
-void SprocketWebContentsAttachLayer(blink::WebLayer* layer);
-void SprocketWebContentsRemoveLayer(blink::WebLayer* layer);
+void SprocketWindowAttachLayer(blink::WebLayer* layer);
+void SprocketWindowRemoveLayer(blink::WebLayer* layer);
 
 #endif  // SPROCKET_ANDROID_WEB_CONTENTS_MANAGER_H_

@@ -46,10 +46,12 @@
         'browser/browser_main_parts.h',
         'browser/content_browser_client.cc',
         'browser/content_browser_client.h',
+        'browser/web_contents.cc',
+        'browser/web_contents.h',
         'browser/net/url_request_context_getter.h',
         'browser/net/url_request_context_getter.cc',
-        'browser/ui/web_contents.cc',
-        'browser/ui/web_contents.h',
+        'browser/ui/window.cc',
+        'browser/ui/window.h',
         'common/content_client.cc',
         'common/content_client.h',
         'common/switches.cc',
@@ -68,7 +70,7 @@
             'android/jni_registrar.h',
             'android/manager.cc',
             'android/manager.h',
-            'browser/ui/web_contents_android.cc',
+            'browser/ui/window_android.cc',
             'browser/ui/web_contents_view_delegate_android.cc'
           ],
         }],  # OS=="android"
@@ -79,9 +81,9 @@
             '<(DEPTH)/ui/views/views.gyp:views_test_support',
           ],
           'sources': [
-            'browser/ui/web_contents_views.cc',
             'browser/ui/context_menu_model.cc',
             'browser/ui/context_menu_model.h',
+            'browser/ui/window_aura.cc'
           ],
         },{
           'sources': [
@@ -196,7 +198,7 @@
           'type': 'none',
           'sources': [
             'android/java/src/hu/uszeged/sprocket/SprocketManager.java',
-            'android/java/src/hu/uszeged/sprocket/SprocketWebContents.java',
+            'android/java/src/hu/uszeged/sprocket/SprocketWindow.java',
           ],
           'variables': {
             'jni_gen_package': 'sprocket',

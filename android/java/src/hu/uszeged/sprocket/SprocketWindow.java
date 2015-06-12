@@ -37,7 +37,7 @@ import org.chromium.ui.base.WindowAndroid;
  * Container for the various UI components that make up a sprocket window.
  */
 //@JNINamespace("content")
-public class SprocketWebContents extends LinearLayout {
+public class SprocketWindow extends LinearLayout {
 
     private static final long COMPLETED_PROGRESS_TIMEOUT_MS = 200;
 
@@ -59,7 +59,7 @@ public class SprocketWebContents extends LinearLayout {
 
     private ClipDrawable mProgressDrawable;
 
-    private long mNativeSprocketWebContents;
+    private long mNativeSprocketWindow;
     private ContentViewRenderView mContentViewRenderView;
     private WindowAndroid mWindow;
 
@@ -69,7 +69,7 @@ public class SprocketWebContents extends LinearLayout {
     /**
      * Constructor for inflating via XML.
      */
-    public SprocketWebContents(Context context, AttributeSet attrs) {
+    public SprocketWindow(Context context, AttributeSet attrs) {
         super(context, attrs);
     }
 
@@ -92,45 +92,45 @@ public class SprocketWebContents extends LinearLayout {
     }
 
     /**
-     * Initializes the SprocketWebContents for use.
+     * Initializes the SprocketWindow for use.
      *
-     * @param nativeSprocketWebContents The pointer to the native SprocketWebContents object.
-     * @param window The owning window for this SprocketWebContents.
+     * @param nativeSprocketWindow The pointer to the native SprocketWindow object.
+     * @param window The owning window for this SprocketWindow.
      * @param client The {@link ContentViewClient} to be bound to any current or new
-     *               {@link ContentViewCore}s associated with this SprocketWebContents.
+     *               {@link ContentViewCore}s associated with this SprocketWindow.
      */
-    public void initialize(long nativeSprocketWebContents, WindowAndroid window, ContentViewClient client) {
-        mNativeSprocketWebContents = nativeSprocketWebContents;
+    public void initialize(long nativeSprocketWindow, WindowAndroid window, ContentViewClient client) {
+        mNativeSprocketWindow = nativeSprocketWindow;
         mWindow = window;
         mContentViewClient = client;
     }
 
     /**
-     * Closes the SprocketWebContents and cleans up the native instance, which will handle destroying all
+     * Closes the SprocketWindow and cleans up the native instance, which will handle destroying all
      * dependencies.
      */
     public void close() {
-        if (mNativeSprocketWebContents == 0) return;
-        nativeCloseSprocketWebContents(mNativeSprocketWebContents);
+        if (mNativeSprocketWindow == 0) return;
+        nativeCloseSprocketWindow(mNativeSprocketWindow);
     }
 
     @CalledByNative
     private void onNativeDestroyed() {
         mWindow = null;
-        mNativeSprocketWebContents = 0;
+        mNativeSprocketWindow = 0;
         mContentViewCore.destroy();
     }
 
     /**
-     * @return Whether the SprocketWebContents has been destroyed.
+     * @return Whether the SprocketWindow has been destroyed.
      * @see #onNativeDestroyed()
      */
     public boolean isDestroyed() {
-        return mNativeSprocketWebContents == 0;
+        return mNativeSprocketWindow == 0;
     }
 
     /**
-     * @return Whether or not the SprocketWebContents is loading content.
+     * @return Whether or not the SprocketWindow is loading content.
      */
     public boolean isLoading() {
         return mLoading;
@@ -189,7 +189,7 @@ public class SprocketWebContents extends LinearLayout {
      * Loads an URL.  This will perform minimal amounts of sanitizing of the URL to attempt to
      * make it valid.
      *
-     * @param url The URL to be loaded by the SprocketWebContents.
+     * @param url The URL to be loaded by the SprocketWindow.
      */
     public void loadUrl(String url) {
         if (url == null) return;
@@ -322,21 +322,21 @@ public class SprocketWebContents extends LinearLayout {
     }
 
     /**
-     * @return The {@link ViewGroup} currently shown by this SprocketWebContents.
+     * @return The {@link ViewGroup} currently shown by this SprocketWindow.
      */
     public ViewGroup getContentView() {
         return mContentViewCore.getContainerView();
     }
 
     /**
-     * @return The {@link ContentViewCore} currently managing the view shown by this SprocketWebContents.
+     * @return The {@link ContentViewCore} currently managing the view shown by this SprocketWindow.
      */
     public ContentViewCore getContentViewCore() {
         return mContentViewCore;
     }
 
      /**
-     * @return The {@link WebContents} currently managing the content shown by this SprocketWebContents.
+     * @return The {@link WebContents} currently managing the content shown by this SprocketWindow.
      */
     public WebContents getWebContents() {
         return mWebContents;
@@ -352,5 +352,5 @@ public class SprocketWebContents extends LinearLayout {
         }
     }
 
-    private static native void nativeCloseSprocketWebContents(long sprocketWebContentsPtr);
+    private static native void nativeCloseSprocketWindow(long sprocketWindowPtr);
 }
