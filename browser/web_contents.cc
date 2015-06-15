@@ -45,6 +45,9 @@ SprocketWebContents::SprocketWebContents(
   web_contents->SetDelegate(this);
 }
 
+SprocketWebContents::~SprocketWebContents() {
+}
+
 void SprocketWebContents::LoadURL(const GURL& url) {
   content::NavigationController::LoadURLParams params(url);
   params.transition_type = ui::PageTransitionFromInt(

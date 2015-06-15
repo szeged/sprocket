@@ -23,7 +23,7 @@ namespace content {
 class SprocketWebContents : public content::WebContentsDelegate {
 
 public:
-  ~SprocketWebContents() { }
+  ~SprocketWebContents() override;
 
   static SprocketWebContents* CreateSprocketWebContents(
     SprocketWindow* window,
