@@ -28,7 +28,6 @@ import org.chromium.content.browser.DeviceUtils;
 import org.chromium.content.common.ContentSwitches;
 import org.chromium.content_public.browser.WebContents;
 import org.chromium.ui.base.ActivityWindowAndroid;
-import org.chromium.ui.base.WindowAndroid;
 import hu.uszeged.sprocket.SprocketWindow;
 import hu.uszeged.sprocket.SprocketManager;
 
@@ -43,7 +42,8 @@ public class SprocketActivity extends Activity {
     public static final String COMMAND_LINE_ARGS_KEY = "commandLineArgs";
 
     private SprocketManager mSprocketManager;
-    private WindowAndroid mWindowAndroid;
+    private ActivityWindowAndroid mWindowAndroid;
+    private Intent mLastSentIntent;
 
     @Override
     @SuppressFBWarnings("DM_EXIT")
@@ -185,6 +185,16 @@ public class SprocketActivity extends Activity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         mWindowAndroid.onActivityResult(requestCode, resultCode, data);
+    }
+
+    @Override
+    public void startActivity(Intent i) {
+        mLastSentIntent = i;
+        super.startActivity(i);
+    }
+
+    public Intent getLastSentIntent() {
+        return mLastSentIntent;
     }
 
     private static String getUrlFromIntent(Intent intent) {
