@@ -9,6 +9,7 @@
 #include "base/strings/utf_string_conversions.h"
 #include "content/public/browser/web_contents.h"
 #include "sprocket/browser/ui/context_menu_model.h"
+#include "sprocket/browser/ui/views_delegate_aura.h"
 #include "ui/aura/client/screen_position_client.h"
 #include "ui/aura/env.h"
 #include "ui/aura/window_tree_host.h"
@@ -20,7 +21,6 @@
 #include "ui/views/controls/webview/webview.h"
 #include "ui/views/layout/fill_layout.h"
 #include "ui/views/layout/grid_layout.h"
-#include "ui/views/test/desktop_test_views_delegate.h"
 #include "ui/views/widget/desktop_aura/desktop_screen.h"
 #include "ui/views/widget/widget_delegate.h"
 
@@ -323,8 +323,7 @@ views::ViewsDelegate* SprocketWindow::views_delegate_ = NULL;
 // static
 void SprocketWindow::PlatformInitialize() {
   gfx::Screen::SetScreenInstance(gfx::SCREEN_TYPE_NATIVE, views::CreateDesktopScreen());
-  // TODO: Do we really need this?
-  views_delegate_ = new views::DesktopTestViewsDelegate;
+  views_delegate_ = new SprocketViewsDelegateAura;
 }
 
 // static

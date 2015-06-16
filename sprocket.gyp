@@ -83,6 +83,8 @@
           'sources': [
             'browser/ui/context_menu_model.cc',
             'browser/ui/context_menu_model.h',
+            'browser/ui/views_delegate_aura.cc',
+            'browser/ui/views_delegate_aura.h',
             'browser/ui/window_aura.cc'
           ],
         },{
