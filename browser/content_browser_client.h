@@ -19,7 +19,7 @@ class SprocketBrowserMainParts;
 // by the client of the content browser. The methods are assumed to be called
 // on the UI thread unless otherwise specified.
 class SprocketContentBrowserClient : public content::ContentBrowserClient {
-public:
+ public:
 
   static SprocketContentBrowserClient* Get();
 
@@ -31,14 +31,14 @@ public:
   // Allows the embedder to set any number of custom BrowserMainParts
   // implementations for the browser startup code.
   content::BrowserMainParts* CreateBrowserMainParts(
-    const content::MainFunctionParams& parameters) override;
+      const content::MainFunctionParams& parameters) override;
 
   // Creates the main net::URLRequestContextGetter. Should only be called once
   // per SprocketContentBrowserClient object.
   net::URLRequestContextGetter* CreateRequestContext(
-    content::BrowserContext* browser_context,
-    content::ProtocolHandlerMap* protocol_handlers,
-    content::URLRequestInterceptorScopedVector request_interceptors) override;
+      content::BrowserContext* browser_context,
+      content::ProtocolHandlerMap* protocol_handlers,
+      content::URLRequestInterceptorScopedVector request_interceptors) override;
 
   // Returns whether a specified URL is handled by the embedder's internal
   // protocol handlers.
@@ -56,9 +56,9 @@ public:
   // Populates |mappings| with all files that need to be mapped before launching
   // a child process.
   void GetAdditionalMappedFilesForChildProcess(
-    const base::CommandLine& command_line,
-    int child_process_id,
-    content::FileDescriptorInfo* mappings) override;
+      const base::CommandLine& command_line,
+      int child_process_id,
+      content::FileDescriptorInfo* mappings) override;
 
   // If content creates the WebContentsView implementation, it will ask the
   // embedder to return an (optional) delegate to customize it. The view will
@@ -71,16 +71,14 @@ public:
 
 
 
-  SprocketBrowserContext* browser_context();
-  SprocketBrowserContext* off_the_record_browser_context();
+  SprocketBrowserContext* BrowserContext();
+  SprocketBrowserContext* OffTheRecordBrowserContext();
 
-  SprocketBrowserMainParts* browser_main_parts() {
-    return browser_main_parts_;
-  }
+  SprocketBrowserMainParts* browser_main_parts() { return browser_main_parts_; }
 
-private:
+ private:
   SprocketBrowserContext* SprocketBrowserContextForBrowserContext(
-    content::BrowserContext* content_browser_context);
+      content::BrowserContext* content_browser_context);
 
   base::ScopedFD v8_natives_fd_;
   base::ScopedFD v8_snapshot_fd_;

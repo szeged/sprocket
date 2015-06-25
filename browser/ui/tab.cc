@@ -27,14 +27,14 @@ const char Tab::kEmptyTab[] = "Empty tab";
 Tab::Tab(TabbedPane* tabbed_pane, SprocketWebContents* sprocket_web_contents, views::View* contents)
     : tabbed_pane_(tabbed_pane),
       title_(new views::Label(base::UTF8ToUTF16(kEmptyTab),
-                       ui::ResourceBundle::GetSharedInstance().GetFontList(
-                           ui::ResourceBundle::BoldFont))),
+                              ui::ResourceBundle::GetSharedInstance().GetFontList(
+                              ui::ResourceBundle::BoldFont))),
       tab_state_(TAB_ACTIVE),
       contents_(contents),
       sprocket_web_contents_(sprocket_web_contents) {
   // Calculate this now while the font list is guaranteed to be bold.
   preferred_title_size_ = title_->GetPreferredSize();
-  sprocket_web_contents_->SetTab(this);
+  sprocket_web_contents_->set_tab(this);
   SetState(TAB_INACTIVE);
   AddChildView(title_);
 

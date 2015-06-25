@@ -25,9 +25,8 @@ gfx::ImageSkia* SprocketViewsDelegateAura::GetDefaultWindowIcon() const {
 void SprocketViewsDelegateAura::OnBeforeWidgetInit(
     views::Widget::InitParams* params,
     views::internal::NativeWidgetDelegate* delegate) {
-  if (params->opacity == views::Widget::InitParams::INFER_OPACITY) {
+  if (params->opacity == views::Widget::InitParams::INFER_OPACITY)
     params->opacity = views::Widget::InitParams::OPAQUE_WINDOW;
-  }
 
   if (!params->native_widget)
     params->native_widget = new views::DesktopNativeWidgetAura(delegate);

@@ -32,9 +32,9 @@ class TabbedPane : public views::View,
   ~TabbedPane() override;
 
   TabbedPaneListener* listener() const { return listener_; }
-  void SetListener(TabbedPaneListener* listener) { listener_ = listener; }
+  void set_listener(TabbedPaneListener* listener) { listener_ = listener; }
 
-  int SelectedTabIndex() const { return selected_tab_index_; }
+  int selected_tab_index() const { return selected_tab_index_; }
 
   // Returns the number of tabs.
   int GetTabCount() const;

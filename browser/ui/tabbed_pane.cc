@@ -54,9 +54,11 @@ class TabStrip : public views::View {
 // static
 const char TabStrip::kViewClassName[] = "TabStrip";
 
-TabStrip::TabStrip(TabbedPane* tabbed_pane) : tabbed_pane_(tabbed_pane) {}
+TabStrip::TabStrip(TabbedPane* tabbed_pane) : tabbed_pane_(tabbed_pane) {
+}
 
-TabStrip::~TabStrip() {}
+TabStrip::~TabStrip() {
+}
 
 gfx::Size TabStrip::GetPreferredSize() const {
   gfx::Size size;
@@ -91,7 +93,7 @@ void TabStrip::OnPaint(gfx::Canvas* canvas) {
   paint.setStrokeWidth(kTabBorderThickness);
   SkScalar line_y = SkIntToScalar(height()) - (kTabBorderThickness / 2);
   SkScalar line_end = SkIntToScalar(width());
-  int selected_tab_index = tabbed_pane_->SelectedTabIndex();
+  int selected_tab_index = tabbed_pane_->selected_tab_index();
   if (selected_tab_index >= 0) {
     Tab* selected_tab = tabbed_pane_->GetTabAt(selected_tab_index);
     SkPath path;
@@ -118,10 +120,10 @@ void TabStrip::OnPaint(gfx::Canvas* canvas) {
 }
 
 TabbedPane::TabbedPane()
-  : tab_strip_(new TabStrip(this)),
-    contents_(new views::View()),
-    tab_scroll_view_(new views::ScrollView),
-    selected_tab_index_(-1) {
+    : tab_strip_(new TabStrip(this)),
+      contents_(new views::View()),
+      tab_scroll_view_(new views::ScrollView),
+      selected_tab_index_(-1) {
   SetFocusable(true);
   tab_scroll_view_->SetContents(tab_strip_);
   tab_scroll_view_->set_hide_horizontal_scrollbar(false);
@@ -144,8 +146,8 @@ int TabbedPane::GetTabCount() const {
 }
 
 Tab* TabbedPane::GetSelectedTab() {
-  return SelectedTabIndex() < 0 ?
-      NULL : GetTabAt(SelectedTabIndex());
+  return selected_tab_index() < 0 ?
+      NULL : GetTabAt(selected_tab_index());
 }
 
 void TabbedPane::AddTab(SprocketWebContents* sprocket_web_contents, views::WebView* contents) {
@@ -160,7 +162,7 @@ void TabbedPane::AddTabAtIndex(int index,
 
   tab_strip_->AddChildViewAt(new Tab(this, sprocket_web_contents, contents), index);
   contents_->AddChildViewAt(contents, index);
-  if (SelectedTabIndex() < 0)
+  if (selected_tab_index() < 0)
     SelectTabAt(index);
 
   PreferredSizeChanged();
@@ -169,8 +171,8 @@ void TabbedPane::AddTabAtIndex(int index,
 void TabbedPane::SelectTabAt(int index) {
   DCHECK(index >= 0 && index < GetTabCount());
 
-  if (SelectedTabIndex() >= 0 && SelectedTabIndex() < GetTabCount())
-    GetTabAt(SelectedTabIndex())->SetSelected(false);
+  if (selected_tab_index() >= 0 && selected_tab_index() < GetTabCount())
+    GetTabAt(selected_tab_index())->SetSelected(false);
   selected_tab_index_ = index;
   Tab* tab = GetTabAt(index);
   tab->SetSelected(true);
@@ -195,7 +197,7 @@ void TabbedPane::SelectTab(Tab* tab) {
 
 void TabbedPane::CloseTab(Tab* tab) {
   if (GetTabCount() > 1) {
-    int selected_index = SelectedTabIndex();
+    int selected_index = selected_tab_index();
     int delete_index = tab_strip_->GetIndexOf(tab);
     contents_->RemoveChildView(tab->contents());
     tab_strip_->RemoveChildView(tab);
@@ -215,9 +217,8 @@ void TabbedPane::CloseTab(Tab* tab) {
 gfx::Size TabbedPane::GetPreferredSize() const {
   gfx::Size size;
 
-  if (SelectedTabIndex() >= 0 && SelectedTabIndex() < GetTabCount()) {
-    size = contents_->child_at(SelectedTabIndex())->GetPreferredSize();
-  }
+  if (selected_tab_index() >= 0 && selected_tab_index() < GetTabCount())
+    size = contents_->child_at(selected_tab_index())->GetPreferredSize();
 
   size.Enlarge(0, tab_strip_->GetPreferredSize().height());
   return size;
@@ -230,7 +231,7 @@ Tab* TabbedPane::GetTabAt(int index) {
 
 void TabbedPane::InitAccelerators() {
   AddAccelerator(ui::Accelerator(ui::VKEY_TAB,
-    ui::EF_CONTROL_DOWN | ui::EF_SHIFT_DOWN));
+      ui::EF_CONTROL_DOWN | ui::EF_SHIFT_DOWN));
   AddAccelerator(ui::Accelerator(ui::VKEY_TAB, ui::EF_CONTROL_DOWN));
   AddAccelerator(ui::Accelerator(ui::VKEY_T, ui::EF_CONTROL_DOWN));
 }
@@ -244,10 +245,13 @@ void TabbedPane::AddNewTabButton() {
 
 void TabbedPane::Layout() {
   const gfx::Size size = tab_strip_->GetPreferredSize();
-  const int tabstrip_width = std::max(parent()->width(), size.width()) + tab_scroll_view_->GetScrollBarWidth();
+  const int tabstrip_width = std::max(parent()->width(), size.width()) +
+      tab_scroll_view_->GetScrollBarWidth();
   tab_strip_->SetBounds(0, 0, tabstrip_width, size.height());
-  const int scroll_view_height = width() < size.width() ?  size.height() + tab_scroll_view_->GetScrollBarWidth() : size.height();
-  const int scroll_view_width = width() < size.width() ? parent()->width() : parent()->width()  + tab_scroll_view_->GetScrollBarWidth() ;
+  const int scroll_view_height = width() < size.width() ?  size.height() +
+      tab_scroll_view_->GetScrollBarWidth() : size.height();
+  const int scroll_view_width = width() < size.width() ? parent()->width() :
+      parent()->width()  + tab_scroll_view_->GetScrollBarWidth() ;
   tab_scroll_view_->SetBounds(0, 0, scroll_view_width, scroll_view_height);
   tab_scroll_view_->Layout();
 
@@ -264,7 +268,7 @@ bool TabbedPane::AcceleratorPressed(const ui::Accelerator& accelerator) {
     if (tab_count <= 1)
       return false;
     const int increment = accelerator.IsShiftDown() ? -1 : 1;
-    int next_tab_index = (SelectedTabIndex() + increment) % tab_count;
+    int next_tab_index = (selected_tab_index() + increment) % tab_count;
     // Wrap around.
     if (next_tab_index < 0)
       next_tab_index += tab_count;
@@ -297,4 +301,3 @@ void TabbedPane::ButtonPressed(views::Button* sender, const ui::Event&) {
   else if (sender != new_tab_button_)
     CloseTab(static_cast<Tab*>(sender->parent()));
 }
-

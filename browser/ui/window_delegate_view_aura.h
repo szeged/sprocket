@@ -33,7 +33,7 @@ class SprocketWindowDelegateView : public views::WidgetDelegateView,
                                    public views::TextfieldController,
                                    public views::ButtonListener,
                                    public TabbedPaneListener {
-public:
+ public:
   SprocketWindowDelegateView();
 
   ~SprocketWindowDelegateView() override;
@@ -58,7 +58,7 @@ public:
   void LastTabClosed() override;
   void OpenNewEmptyTab() override;
 
-private:
+ private:
   // Initialize the UI control contained in sprocket window
   void InitSprocketWindow();
 

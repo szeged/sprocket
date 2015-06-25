@@ -40,14 +40,14 @@ bool SprocketMainDelegate::BasicStartupComplete(int* exit_code) {
 
   std::string process_type = command_line->GetSwitchValueASCII(switches::kProcessType);
   if (process_type == switches::kBrowserProcess &&
-     !command_line->HasSwitch(switches::kUseSandbox)) {
+      !command_line->HasSwitch(switches::kUseSandbox)) {
     command_line->AppendSwitch(switches::kNoSandbox);
   }
 
   // TODO: Do we really need this?
 #if defined(OS_ANDROID)
-    command_line->AppendSwitch(
-        switches::kDisableGestureRequirementForMediaPlayback);
+  command_line->AppendSwitch(
+      switches::kDisableGestureRequirementForMediaPlayback);
 #endif
 
   InitializeResourceBundle();
@@ -60,11 +60,10 @@ bool SprocketMainDelegate::BasicStartupComplete(int* exit_code) {
 int SprocketMainDelegate::RunProcess(
     const std::string& process_type,
     const content::MainFunctionParams& main_function_params) {
-
-    // When |process_type| is empty, that means we should start a browser process.
-    // We use the default behavior in the case of other types of processes.
-    if (!process_type.empty())
-      return -1;
+  // When |process_type| is empty, that means we should start a browser process.
+  // We use the default behavior in the case of other types of processes.
+  if (!process_type.empty())
+    return -1;
 
 #if !defined(OS_ANDROID)
   // Android stores the BrowserMainRunner instance as a scoped member pointer
@@ -72,13 +71,12 @@ int SprocketMainDelegate::RunProcess(
   scoped_ptr<content::BrowserMainRunner> browser_runner_;
 #endif
 
-    browser_runner_.reset(content::BrowserMainRunner::Create());
+  browser_runner_.reset(content::BrowserMainRunner::Create());
 
-    return BrowserMain(main_function_params, browser_runner_);
+  return BrowserMain(main_function_params, browser_runner_);
 }
 
-content::ContentBrowserClient*
-SprocketMainDelegate::CreateContentBrowserClient() {
+content::ContentBrowserClient* SprocketMainDelegate::CreateContentBrowserClient() {
   browser_client_.reset(new SprocketContentBrowserClient);
   return browser_client_.get();
 }

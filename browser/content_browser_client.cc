@@ -39,24 +39,23 @@ SprocketContentBrowserClient* SprocketContentBrowserClient::Get() {
 }
 
 class SprocketQuotaPermissionContext : public content::QuotaPermissionContext {
-public:
+ public:
   void RequestQuotaPermission(
-    const content::StorageQuotaParams& params,
-    int render_process_id,
-    const PermissionCallback& callback) override
-  {
+      const content::StorageQuotaParams& params,
+      int render_process_id,
+      const PermissionCallback& callback) override {
     callback.Run(QUOTA_PERMISSION_RESPONSE_DISALLOW);
   }
 
-private:
+ private:
   ~SprocketQuotaPermissionContext() override {}
 };
 
 
 SprocketContentBrowserClient::SprocketContentBrowserClient()
-  : v8_natives_fd_(-1),
-    v8_snapshot_fd_(-1),
-    browser_main_parts_(NULL) {
+    : v8_natives_fd_(-1),
+      v8_snapshot_fd_(-1),
+      browser_main_parts_(NULL) {
   DCHECK(!g_browser_client);
   g_browser_client = this;
 }
@@ -65,20 +64,19 @@ SprocketContentBrowserClient::~SprocketContentBrowserClient() {
   g_browser_client = NULL;
 }
 
-content::BrowserMainParts*
-SprocketContentBrowserClient::CreateBrowserMainParts(
-  const content::MainFunctionParams& parameters) {
+content::BrowserMainParts* SprocketContentBrowserClient::CreateBrowserMainParts(
+    const content::MainFunctionParams& parameters) {
   browser_main_parts_ = new SprocketBrowserMainParts(parameters);
   return browser_main_parts_;
 }
 
-net::URLRequestContextGetter*
-SprocketContentBrowserClient::CreateRequestContext(
-  content::BrowserContext* browser_context,
-  content::ProtocolHandlerMap* protocol_handlers,
-  content::URLRequestInterceptorScopedVector request_interceptors) {
-    SprocketBrowserContext* sprocket_browser_context = SprocketBrowserContextForBrowserContext(browser_context);
-    return sprocket_browser_context->CreateRequestContext(protocol_handlers);
+net::URLRequestContextGetter* SprocketContentBrowserClient::CreateRequestContext(
+    content::BrowserContext* browser_context,
+    content::ProtocolHandlerMap* protocol_handlers,
+    content::URLRequestInterceptorScopedVector request_interceptors) {
+  SprocketBrowserContext* sprocket_browser_context =
+      SprocketBrowserContextForBrowserContext(browser_context);
+  return sprocket_browser_context->CreateRequestContext(protocol_handlers);
 }
 
 bool SprocketContentBrowserClient::IsHandledURL(const GURL& url) {
@@ -165,21 +163,18 @@ content::QuotaPermissionContext* SprocketContentBrowserClient::CreateQuotaPermis
   return new SprocketQuotaPermissionContext;
 }
 
-SprocketBrowserContext*
-SprocketContentBrowserClient::browser_context() {
+SprocketBrowserContext* SprocketContentBrowserClient::BrowserContext() {
   return browser_main_parts_->browser_context();
 }
 
-SprocketBrowserContext*
-SprocketContentBrowserClient::off_the_record_browser_context() {
+SprocketBrowserContext* SprocketContentBrowserClient::OffTheRecordBrowserContext() {
   return browser_main_parts_->off_the_record_browser_context();
 }
 
-SprocketBrowserContext*
-SprocketContentBrowserClient::SprocketBrowserContextForBrowserContext(
+SprocketBrowserContext* SprocketContentBrowserClient::SprocketBrowserContextForBrowserContext(
     content::BrowserContext* content_browser_context) {
-  if (content_browser_context == browser_context())
-    return browser_context();
-  DCHECK_EQ(content_browser_context, off_the_record_browser_context());
-  return off_the_record_browser_context();
+  if (content_browser_context == BrowserContext())
+    return BrowserContext();
+  DCHECK_EQ(content_browser_context, OffTheRecordBrowserContext());
+  return OffTheRecordBrowserContext();
 }

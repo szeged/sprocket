@@ -66,9 +66,9 @@ base::StringPiece NetResourceProvider(int key) {
 
 
 SprocketBrowserMainParts::SprocketBrowserMainParts(
-  const content::MainFunctionParams& parameters)
-  : parameters_(parameters),
-    run_message_loop_(true) {
+    const content::MainFunctionParams& parameters)
+    : parameters_(parameters),
+  run_message_loop_(true) {
 }
 
 SprocketBrowserMainParts::~SprocketBrowserMainParts() {
@@ -92,16 +92,15 @@ void SprocketBrowserMainParts::PostMainMessageLoopStart() {
 
 void SprocketBrowserMainParts::InitializeBrowserContexts() {
   set_browser_context(new SprocketBrowserContext(false));
-  set_off_the_record_browser_context(
-    new SprocketBrowserContext(true));
+  set_off_the_record_browser_context(new SprocketBrowserContext(true));
 }
 
 void SprocketBrowserMainParts::InitializeMessageLoopContext() {
   SprocketWindow* window = SprocketWindow::CreateNewWindow(gfx::Size());
   SprocketWebContents::CreateSprocketWebContents(window,
-            browser_context_.get(),
-            GetStartupURL(),
-            gfx::Size());
+                                                 browser_context_.get(),
+                                                 GetStartupURL(),
+                                                 gfx::Size());
 }
 
 void SprocketBrowserMainParts::PreMainMessageLoopRun() {
@@ -114,7 +113,7 @@ void SprocketBrowserMainParts::PreMainMessageLoopRun() {
   InitializeMessageLoopContext();
 }
 
-bool SprocketBrowserMainParts::MainMessageLoopRun(int* result_code)  {
+bool SprocketBrowserMainParts::MainMessageLoopRun(int* result_code) {
   return !run_message_loop_;
 }
 

@@ -67,13 +67,13 @@ void SprocketWindow::PlatformAddTab(SprocketWebContents* sprocket_web_contents) 
   sprocket_web_contents_ = sprocket_web_contents;
 
   SprocketWindowDelegateView* delegate_view =
-    static_cast<SprocketWindowDelegateView*>(window_widget_->widget_delegate());
+      static_cast<SprocketWindowDelegateView*>(window_widget_->widget_delegate());
   delegate_view->AddTab(sprocket_web_contents, content_size_);
 }
 
 void SprocketWindow::PlatformSelectTabAt(int index) {
   SprocketWindowDelegateView* delegate_view =
-    static_cast<SprocketWindowDelegateView*>(window_widget_->widget_delegate());
+      static_cast<SprocketWindowDelegateView*>(window_widget_->widget_delegate());
   delegate_view->SelectTabAt(index);
 }
 
@@ -85,7 +85,7 @@ void SprocketWindow::PlatformSelectTab(Tab* tab) {
 
 void SprocketWindow::PlatformEnableUIControl(UIControl control, bool is_enabled) {
   SprocketWindowDelegateView* delegate_view =
-    static_cast<SprocketWindowDelegateView*>(window_widget_->widget_delegate());
+      static_cast<SprocketWindowDelegateView*>(window_widget_->widget_delegate());
   if (control == BACK_BUTTON)
     delegate_view->EnableUIControl(BACK_BUTTON, is_enabled);
   else if (control == FORWARD_BUTTON)
@@ -96,7 +96,7 @@ void SprocketWindow::PlatformEnableUIControl(UIControl control, bool is_enabled)
 
 void SprocketWindow::PlatformSetAddressBarURL(const GURL& url) {
   SprocketWindowDelegateView* delegate_view =
-    static_cast<SprocketWindowDelegateView*>(window_widget_->widget_delegate());
+      static_cast<SprocketWindowDelegateView*>(window_widget_->widget_delegate());
   delegate_view->SetAddressBarURL(url);
 }
 
@@ -105,14 +105,14 @@ void SprocketWindow::PlatformSetIsLoading(bool loading) {
 
 void SprocketWindow::PlatformSetTitle(const base::string16& title) {
   SprocketWindowDelegateView* delegate_view =
-    static_cast<SprocketWindowDelegateView*>(window_widget_->widget_delegate());
+      static_cast<SprocketWindowDelegateView*>(window_widget_->widget_delegate());
   delegate_view->SetWindowTitle(title);
   window_widget_->UpdateWindowTitle();
 }
 
 bool SprocketWindow::PlatformHandleContextMenu(const content::ContextMenuParams& params) {
   SprocketWindowDelegateView* delegate_view =
-    static_cast<SprocketWindowDelegateView*>(window_widget_->widget_delegate());
+      static_cast<SprocketWindowDelegateView*>(window_widget_->widget_delegate());
   delegate_view->ShowWebContentsContextMenu(params);
   return true;
 }

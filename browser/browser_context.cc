@@ -38,16 +38,16 @@ SprocketBrowserContext::SprocketResourceContext::GetRequestContext() {
 }
 
 SprocketBrowserContext::SprocketBrowserContext(bool off_the_record)
-  : resource_context_(new SprocketResourceContext),
-    ignore_certificate_errors_(false),
-    off_the_record_(off_the_record) {
+    : resource_context_(new SprocketResourceContext),
+      ignore_certificate_errors_(false),
+      off_the_record_(off_the_record) {
   InitWhileIOAllowed();
 }
 
 SprocketBrowserContext::~SprocketBrowserContext() {
   if (resource_context_) {
     content::BrowserThread::DeleteSoon(
-      content::BrowserThread::IO, FROM_HERE, resource_context_.release());
+        content::BrowserThread::IO, FROM_HERE, resource_context_.release());
   }
 }
 
@@ -62,9 +62,9 @@ void SprocketBrowserContext::InitWhileIOAllowed() {
 #else
   scoped_ptr<base::Environment> env(base::Environment::Create());
   base::FilePath config_dir(
-    base::nix::GetXDGDirectory(env.get(),
-                   base::nix::kXdgConfigHomeEnvVar,
-                   base::nix::kDotConfigDir));
+      base::nix::GetXDGDirectory(env.get(),
+                                 base::nix::kXdgConfigHomeEnvVar,
+                                 base::nix::kDotConfigDir));
   path_ = config_dir.Append("sprocket");
 #endif
 
@@ -78,8 +78,8 @@ base::FilePath SprocketBrowserContext::GetPath() const {
 
 scoped_ptr<content::ZoomLevelDelegate>
 SprocketBrowserContext::CreateZoomLevelDelegate(
-  const base::FilePath& partition_path) {
-    return scoped_ptr<content::ZoomLevelDelegate>();
+    const base::FilePath& partition_path) {
+  return scoped_ptr<content::ZoomLevelDelegate>();
 }
 
 bool SprocketBrowserContext::IsOffTheRecord() const {
@@ -93,8 +93,8 @@ SprocketBrowserContext::GetRequestContext() {
 
 net::URLRequestContextGetter*
 SprocketBrowserContext::GetRequestContextForRenderProcess(
-  int renderer_child_id) {
-    return GetRequestContext();
+    int renderer_child_id) {
+  return GetRequestContext();
 }
 
 net::URLRequestContextGetter*
@@ -104,15 +104,15 @@ SprocketBrowserContext::GetMediaRequestContext() {
 
 net::URLRequestContextGetter*
 SprocketBrowserContext::GetMediaRequestContextForRenderProcess(
-  int renderer_child_id) {
-    return GetRequestContext();
+    int renderer_child_id) {
+  return GetRequestContext();
 }
 
 net::URLRequestContextGetter*
 SprocketBrowserContext::GetMediaRequestContextForStoragePartition(
-  const base::FilePath& partition_path,
-  bool in_memory) {
-    return GetRequestContext();
+    const base::FilePath& partition_path,
+    bool in_memory) {
+  return GetRequestContext();
 }
 
 content::ResourceContext*
@@ -150,7 +150,8 @@ content::PermissionManager* SprocketBrowserContext::GetPermissionManager() {
 }
 
 net::URLRequestContextGetter*
-SprocketBrowserContext::CreateRequestContext(content::ProtocolHandlerMap* protocol_handlers) {
+SprocketBrowserContext::CreateRequestContext(
+    content::ProtocolHandlerMap* protocol_handlers) {
   url_request_getter_ = new SprocketURLRequestContextGetter(
       ignore_certificate_errors_,
       GetPath(),

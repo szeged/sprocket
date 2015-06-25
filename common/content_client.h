@@ -16,8 +16,7 @@ std::string GetSprocketUserAgent();
 
 class SprocketContentClient : public content::ContentClient {
 
-public:
-
+ public:
   // Returns the user agent.
   std::string GetUserAgent() const override;
 

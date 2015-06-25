@@ -59,12 +59,12 @@ static void Init(JNIEnv* env, jclass clazz, jobject obj) {
 
 void LaunchSprocketWindow(JNIEnv* env, jclass clazz, jstring jurl) {
   SprocketBrowserContext* browserContext =
-      SprocketContentBrowserClient::Get()->browser_context();
+      SprocketContentBrowserClient::Get()->BrowserContext();
   GURL url(base::android::ConvertJavaStringToUTF8(env, jurl));
   SprocketWindow* window = SprocketWindow::CreateNewWindow(gfx::Size());
   SprocketWebContents::CreateSprocketWebContents(
-          window,
-          browserContext,
-          url,
-          gfx::Size());
+      window,
+      browserContext,
+      url,
+      gfx::Size());
 }

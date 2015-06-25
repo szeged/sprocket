@@ -17,8 +17,8 @@
 #elif defined(USE_AURA)
 #include "ui/gfx/native_widget_types.h"
 namespace views {
-  class ViewsDelegate;
-  class Widget;
+class ViewsDelegate;
+class Widget;
 }
 
 class Tab;
@@ -28,13 +28,13 @@ class SprocketWebContents;
 class GURL;
 
 namespace content {
-  class WebContents;
-  struct ContextMenuParams;
+class WebContents;
+struct ContextMenuParams;
 }
 
 class SprocketWindow {
 
-public:
+ public:
   enum UIControl {
     BACK_BUTTON,
     FORWARD_BUTTON,
@@ -60,7 +60,7 @@ public:
   static bool Register(JNIEnv* env);
 #endif
 
-private:
+ private:
   explicit SprocketWindow();
 
   // All the methods that begin with Platform need to be implemented by the

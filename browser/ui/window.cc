@@ -21,7 +21,7 @@ gfx::Size SprocketWindow::GetSprocketWindowDefaultSize() {
     return default_window_size;
 
   default_window_size = gfx::Size(
-    kDefaultWindowWidth, kDefaultWindowHeight);
+      kDefaultWindowWidth, kDefaultWindowHeight);
 
   return default_window_size;
 }

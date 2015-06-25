@@ -2,8 +2,8 @@
 #include "url/gurl.h"
 
 SprocketWindowDelegateView::SprocketWindowDelegateView()
-  : toolbar_view_(new View),
-    tabbed_pane_(new TabbedPane) {
+    : toolbar_view_(new View),
+      tabbed_pane_(new TabbedPane) {
 }
 
 SprocketWindowDelegateView::~SprocketWindowDelegateView() {
@@ -18,7 +18,7 @@ SprocketWindowDelegateView::~SprocketWindowDelegateView() {
 }
 
 void SprocketWindowDelegateView::AddTab(SprocketWebContents* sprocket_web_contents,
-                    const gfx::Size& size) {
+                                        const gfx::Size& size) {
   content::WebContents* web_contents = sprocket_web_contents->web_contents();
   gfx::Size prev_size;
   if (web_view_)
@@ -28,7 +28,7 @@ void SprocketWindowDelegateView::AddTab(SprocketWebContents* sprocket_web_conten
   web_view_->SetPreferredSize(prev_size.IsEmpty() ? size : prev_size);
   web_contents->Focus();
 
-  tabbed_pane_->SetListener((TabbedPaneListener *)this);
+  tabbed_pane_->set_listener((TabbedPaneListener *)this);
   tabbed_pane_->AddTab(sprocket_web_contents, web_view_);
   Layout();
 
@@ -79,15 +79,15 @@ void SprocketWindowDelegateView::ShowWebContentsContextMenu(const content::Conte
   gfx::Point screen_point(params.x, params.y);
 
   SprocketWebContents* sprocket_web_contents =
-      tabbed_pane_->GetSelectedTab()->web_contents();
+      tabbed_pane_->GetSelectedTab()->sprocket_web_contents();
   aura::Window* web_contents_window =
       sprocket_web_contents->web_contents()->GetNativeView();
   aura::Window* root_window = web_contents_window->GetRootWindow();
   aura::client::ScreenPositionClient* screen_position_client =
       aura::client::GetScreenPositionClient(root_window);
   if (screen_position_client) {
-      screen_position_client->ConvertPointToScreen(web_contents_window,
-              &screen_point);
+    screen_position_client->ConvertPointToScreen(web_contents_window,
+                                                 &screen_point);
   }
 
   context_menu_model_.reset(new SprocketContextMenuModel(sprocket_web_contents, params));
@@ -105,11 +105,11 @@ void SprocketWindowDelegateView::ShowWebContentsContextMenu(const content::Conte
 }
 
 void SprocketWindowDelegateView::TabSelectedAt(int index) {
-  SprocketWebContents* sprocket_web_content = tabbed_pane_->GetSelectedTab()->web_contents();
-  SprocketWindow* sprocket_window = sprocket_web_content->Window();
+  SprocketWebContents* sprocket_web_content = tabbed_pane_->GetSelectedTab()->sprocket_web_contents();
+  SprocketWindow* sprocket_window = sprocket_web_content->window();
 
-  sprocket_window->PlatformSetTitle(GetTabAt(index)->web_contents()->web_contents()->GetTitle());
-  sprocket_window->PlatformSetAddressBarURL(GetTabAt(index)->web_contents()->web_contents()->GetVisibleURL());
+  sprocket_window->PlatformSetTitle(GetTabAt(index)->sprocket_web_contents()->web_contents()->GetTitle());
+  sprocket_window->PlatformSetAddressBarURL(GetTabAt(index)->sprocket_web_contents()->web_contents()->GetVisibleURL());
 
   sprocket_window->PlatformEnableUIControl(SprocketWindow::BACK_BUTTON, sprocket_web_content->CanGoBack());
   sprocket_window->PlatformEnableUIControl(SprocketWindow::FORWARD_BUTTON, sprocket_web_content->CanGoForward());
@@ -117,18 +117,18 @@ void SprocketWindowDelegateView::TabSelectedAt(int index) {
 }
 
 void SprocketWindowDelegateView::LastTabClosed() {
-  tabbed_pane_->GetSelectedTab()->web_contents()->Window()->Close();
+  tabbed_pane_->GetSelectedTab()->sprocket_web_contents()->window()->Close();
 }
 
 void SprocketWindowDelegateView::OpenNewEmptyTab() {
-  SprocketWebContents* sprocket_web_content = tabbed_pane_->GetSelectedTab()->web_contents();
+  SprocketWebContents* sprocket_web_content = tabbed_pane_->GetSelectedTab()->sprocket_web_contents();
   content::WebContents* web_content = sprocket_web_content->web_contents();
-  SprocketWindow* sprocket_window = sprocket_web_content->Window();
+  SprocketWindow* sprocket_window = sprocket_web_content->window();
   SprocketWebContents::CreateSprocketWebContents(
-    sprocket_window,
-    web_content->GetBrowserContext(),
-    GURL(),
-    web_content->GetPreferredSize());
+      sprocket_window,
+      web_content->GetBrowserContext(),
+      GURL(),
+      web_content->GetPreferredSize());
   sprocket_window->PlatformSelectTabAt(tabbed_pane_->GetTabCount() - 1);
 }
 
@@ -231,20 +231,19 @@ void SprocketWindowDelegateView::InitAccelerators() {
                                            ui::VKEY_BROWSER_FORWARD };
   for (size_t i = 0; i < arraysize(keys); ++i) {
     GetFocusManager()->RegisterAccelerator(
-      ui::Accelerator(keys[i], ui::EF_NONE),
-      ui::AcceleratorManager::kNormalPriority,
-      this);
+        ui::Accelerator(keys[i], ui::EF_NONE),
+        ui::AcceleratorManager::kNormalPriority,
+        this);
   }
 }
 
 // Overridden from TextfieldController
 void SprocketWindowDelegateView::ContentsChanged(views::Textfield* sender,
-                     const base::string16& new_contents) {
-
+                                                 const base::string16& new_contents) {
 }
 
 bool SprocketWindowDelegateView::HandleKeyEvent(views::Textfield* sender,
-                    const ui::KeyEvent& key_event) {
+                                                const ui::KeyEvent& key_event) {
  if (sender == url_entry_ && key_event.key_code() == ui::VKEY_RETURN) {
    std::string text = base::UTF16ToUTF8(url_entry_->text());
    GURL url(text);
@@ -254,7 +253,7 @@ bool SprocketWindowDelegateView::HandleKeyEvent(views::Textfield* sender,
    }
 
    SprocketWebContents* sprocket_web_contents =
-       tabbed_pane_->GetSelectedTab()->web_contents();
+       tabbed_pane_->GetSelectedTab()->sprocket_web_contents();
    sprocket_web_contents->LoadURL(url);
 
    return true;
@@ -264,9 +263,8 @@ bool SprocketWindowDelegateView::HandleKeyEvent(views::Textfield* sender,
 
 // Overridden from ButtonListener
 void SprocketWindowDelegateView::ButtonPressed(views::Button* sender, const ui::Event& event) {
-
   SprocketWebContents* sprocket_web_contents =
-      tabbed_pane_->GetSelectedTab()->web_contents();
+      tabbed_pane_->GetSelectedTab()->sprocket_web_contents();
 
   if (sender == back_button_)
     sprocket_web_contents->GoBackOrForward(-1);
@@ -296,8 +294,8 @@ base::string16 SprocketWindowDelegateView::GetWindowTitle() const {
 
 void SprocketWindowDelegateView::WindowClosing() {
   SprocketWebContents* sprocket_web_contents =
-      tabbed_pane_->GetSelectedTab()->web_contents();
-  delete sprocket_web_contents->Window();
+      tabbed_pane_->GetSelectedTab()->sprocket_web_contents();
+  delete sprocket_web_contents->window();
 }
 
 views::View* SprocketWindowDelegateView::GetContentsView() {
@@ -315,15 +313,14 @@ void SprocketWindowDelegateView::Layout() {
 }
 
 void SprocketWindowDelegateView::ViewHierarchyChanged(const ViewHierarchyChangedDetails& details) {
-  if (details.is_add && details.child == this) {
+  if (details.is_add && details.child == this)
     InitSprocketWindow();
-  }
 }
 
 // Overridden from AcceleratorTarget:
 bool SprocketWindowDelegateView::AcceleratorPressed(const ui::Accelerator& accelerator) {
   SprocketWebContents* sprocket_web_contents =
-      tabbed_pane_->GetSelectedTab()->web_contents();
+      tabbed_pane_->GetSelectedTab()->sprocket_web_contents();
   switch (accelerator.key_code()) {
   case ui::VKEY_F5:
     sprocket_web_contents->Reload();

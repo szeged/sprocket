@@ -17,7 +17,7 @@
 // It lives on the UI thread. All these methods must only be called on the UI
 // thread.
 class SprocketBrowserContext : public content::BrowserContext {
-public:
+ public:
   SprocketBrowserContext(bool off_the_record);
   ~SprocketBrowserContext() override;
 
@@ -29,7 +29,7 @@ public:
   // Creates a delegate to initialize a HostZoomMap and persist its information.
   // This is called during creation of each StoragePartition.
   scoped_ptr<content::ZoomLevelDelegate> CreateZoomLevelDelegate(
-    const base::FilePath& partition_path) override;
+      const base::FilePath& partition_path) override;
 
   // Return whether this context is incognito. Default is false.
   bool IsOffTheRecord() const override;
@@ -44,7 +44,7 @@ public:
   // installed app doesn't have isolated storage, this is equivalent to calling
   // GetRequestContext().
   net::URLRequestContextGetter* GetRequestContextForRenderProcess(
-    int renderer_child_id) override;
+      int renderer_child_id) override;
 
   // Returns the default request context for media resources associated with
   // this context.
@@ -53,10 +53,10 @@ public:
   // Returns the request context for media resources associated with this
   // context and renderer process.
   net::URLRequestContextGetter* GetMediaRequestContextForRenderProcess(
-    int renderer_child_id) override;
+      int renderer_child_id) override;
   net::URLRequestContextGetter* GetMediaRequestContextForStoragePartition(
-    const base::FilePath& partition_path,
-    bool in_memory) override;
+      const base::FilePath& partition_path,
+      bool in_memory) override;
 
   // Returns the resource context.
   content::ResourceContext* GetResourceContext() override;
@@ -88,16 +88,17 @@ public:
 
 
   // Used by SprocketContentBrowserClient.
-  net::URLRequestContextGetter* CreateRequestContext(content::ProtocolHandlerMap* protocol_handlers);
+  net::URLRequestContextGetter* CreateRequestContext(
+      content::ProtocolHandlerMap* protocol_handlers);
 
-protected:
+ protected:
 
   // ResourceContext contains the relevant context information required for
   // resource loading. It lives on the IO thread, although it is constructed on
   // the UI thread. It must be destructed on the IO thread.
   // Contains URLRequestContextGetter required for resource loading.
   class SprocketResourceContext : public content::ResourceContext {
-  public:
+   public:
     SprocketResourceContext();
     ~SprocketResourceContext() override;
 
@@ -109,7 +110,7 @@ protected:
       getter_ = getter;
     }
 
-  private:
+   private:
     SprocketURLRequestContextGetter* getter_;
 
     DISALLOW_COPY_AND_ASSIGN(SprocketResourceContext);
@@ -130,7 +131,7 @@ protected:
   scoped_ptr<SprocketResourceContext> resource_context_;
   bool ignore_certificate_errors_;
 
-private:
+ private:
   void InitWhileIOAllowed();
 
   bool off_the_record_;

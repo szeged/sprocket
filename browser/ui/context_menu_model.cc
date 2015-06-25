@@ -10,15 +10,14 @@
 #include "ui/base/accelerators/accelerator.h"
 
 SprocketContextMenuModel::SprocketContextMenuModel(
-  SprocketWebContents* sprocket_web_contents,
-  const content::ContextMenuParams& params)
-  : ui::SimpleMenuModel(this),
-    sprocket_web_contents_(sprocket_web_contents),
-    params_(params)
-    {
-      AddItem(COMMAND_BACK, base::ASCIIToUTF16("Back"));
-      AddItem(COMMAND_FORWARD, base::ASCIIToUTF16("Forward"));
-      AddItem(COMMAND_RELOAD, base::ASCIIToUTF16("Reload"));
+    SprocketWebContents* sprocket_web_contents,
+    const content::ContextMenuParams& params)
+    : ui::SimpleMenuModel(this),
+      sprocket_web_contents_(sprocket_web_contents),
+      params_(params) {
+  AddItem(COMMAND_BACK, base::ASCIIToUTF16("Back"));
+  AddItem(COMMAND_FORWARD, base::ASCIIToUTF16("Forward"));
+  AddItem(COMMAND_RELOAD, base::ASCIIToUTF16("Reload"));
 }
 
 bool SprocketContextMenuModel::IsCommandIdChecked(

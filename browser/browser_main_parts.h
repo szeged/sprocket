@@ -35,9 +35,8 @@
 //    main message loop run method (e.g. MessageLoopForUI::current()->Run()).
 
 class SprocketBrowserMainParts : public content::BrowserMainParts {
-public:
-  explicit SprocketBrowserMainParts(
-    const content::MainFunctionParams& parameters);
+ public:
+  explicit SprocketBrowserMainParts(const content::MainFunctionParams& parameters);
   ~SprocketBrowserMainParts() override;
 
   SprocketBrowserContext* browser_context() {
@@ -66,7 +65,7 @@ public:
   // threads are stopped.
   void PostMainMessageLoopRun() override;
 
-protected:
+ protected:
   virtual void InitializeBrowserContexts();
   virtual void InitializeMessageLoopContext();
 
@@ -77,7 +76,7 @@ protected:
     off_the_record_browser_context_.reset(context);
   }
 
-private:
+ private:
   scoped_ptr<SprocketBrowserContext> browser_context_;
   scoped_ptr<SprocketBrowserContext> off_the_record_browser_context_;
 

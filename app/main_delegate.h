@@ -22,11 +22,11 @@ class BrowserMainRunner;
 // The embedder has a chance to customize startup using the ContentMainDelegate interface.
 class SprocketMainDelegate : public content::ContentMainDelegate {
 
-public:
+ public:
   SprocketMainDelegate();
   ~SprocketMainDelegate() override;
 
-protected:
+ protected:
   // content::ContentMainDelegate implementation:
 
   // Tells the embedder that the absolute basic startup has been done, i.e.
@@ -38,8 +38,8 @@ protected:
 
   // Asks the embedder to start a process. Return -1 for the default behavior.
   int RunProcess(
-    const std::string& process_type,
-    const content::MainFunctionParams& main_function_params) override;
+      const std::string& process_type,
+      const content::MainFunctionParams& main_function_params) override;
 
   // Called once per relevant process type to allow the embedder to customize
   // content. If an embedder wants the default (empty) implementation, don't
@@ -50,7 +50,7 @@ protected:
   // content::ContentUtilityClient* CreateContentUtilityClient() override;
 
   static void InitializeResourceBundle();
-private:
+ private:
   // The embedder API for participating in browser logic.
   scoped_ptr<SprocketContentBrowserClient> browser_client_;
 

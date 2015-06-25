@@ -7,8 +7,6 @@
 #include "sprocket/common/switches.h"
 
 namespace switches {
-
-	const char kUseSandbox[] = "use-sandbox";
-	const char kBrowserProcess[] = "";
-
+const char kUseSandbox[] = "use-sandbox";
+const char kBrowserProcess[] = "";
 }  // namespace switches

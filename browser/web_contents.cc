@@ -15,10 +15,10 @@
 
 // static
 SprocketWebContents* SprocketWebContents::CreateSprocketWebContents(
-                              SprocketWindow* window,
-                              content::BrowserContext* browser_context,
-                              const GURL& url,
-                              const gfx::Size& initial_size) {
+    SprocketWindow* window,
+    content::BrowserContext* browser_context,
+    const GURL& url,
+    const gfx::Size& initial_size) {
   content::WebContents::CreateParams create_params(browser_context, NULL);
   const gfx::Size& size = SprocketWindow::AdjustWindowSize(initial_size);
   create_params.initial_size = size;
@@ -33,16 +33,15 @@ SprocketWebContents* SprocketWebContents::CreateSprocketWebContents(
 
 // static
 SprocketWebContents* SprocketWebContents::AdoptWebContents(
-                              SprocketWindow* window,
-                              content::WebContents* web_contents) {
+    SprocketWindow* window,
+    content::WebContents* web_contents) {
   return new SprocketWebContents(window, web_contents);
 }
 
-SprocketWebContents::SprocketWebContents(
-                            SprocketWindow* window,
-                            content::WebContents* web_contents)
-                            : window_(window),
-                              is_fullscreen_(false) {
+SprocketWebContents::SprocketWebContents(SprocketWindow* window,
+                                         content::WebContents* web_contents)
+    : window_(window),
+    is_fullscreen_(false) {
   web_contents_.reset(web_contents);
   window->PlatformAddTab(this);
   web_contents->SetDelegate(this);
@@ -54,7 +53,7 @@ SprocketWebContents::~SprocketWebContents() {
 void SprocketWebContents::LoadURL(const GURL& url) {
   content::NavigationController::LoadURLParams params(url);
   params.transition_type = ui::PageTransitionFromInt(
-    ui::PAGE_TRANSITION_TYPED | ui::PAGE_TRANSITION_FROM_ADDRESS_BAR);
+      ui::PAGE_TRANSITION_TYPED | ui::PAGE_TRANSITION_FROM_ADDRESS_BAR);
   web_contents_->GetController().LoadURLWithParams(params);
   web_contents_->Focus();
 }
@@ -108,12 +107,12 @@ content::WebContents* SprocketWebContents::OpenURLFromTab(content::WebContents* 
     load_url_params.transition_type = params.transition;
     load_url_params.extra_headers = params.extra_headers;
     load_url_params.should_replace_current_entry =
-      params.should_replace_current_entry;
+        params.should_replace_current_entry;
 
     load_url_params.is_renderer_initiated = params.is_renderer_initiated;
     if (params.transferred_global_request_id != content::GlobalRequestID()) {
       load_url_params.transferred_global_request_id =
-        params.transferred_global_request_id;
+          params.transferred_global_request_id;
     }
 
     source->GetController().LoadURLWithParams(load_url_params);
@@ -128,11 +127,11 @@ content::WebContents* SprocketWebContents::OpenURLFromTab(content::WebContents* 
 #if defined(USE_AURA)
     SprocketWebContents* sprocket_web_contents =
 #endif
-        SprocketWebContents::CreateSprocketWebContents(
-            window_,
-            source->GetBrowserContext(),
-            params.url,
-            source->GetPreferredSize());
+    SprocketWebContents::CreateSprocketWebContents(
+        window_,
+        source->GetBrowserContext(),
+        params.url,
+        source->GetPreferredSize());
 #if defined(USE_AURA)
     window_->PlatformSelectTab(sprocket_web_contents->tab());
 #endif
@@ -142,7 +141,7 @@ content::WebContents* SprocketWebContents::OpenURLFromTab(content::WebContents* 
 }
 
 void SprocketWebContents::NavigationStateChanged(content::WebContents* source,
-                                  content::InvalidateTypes changed_flags) {
+                                                 content::InvalidateTypes changed_flags) {
 #if defined(USE_AURA)
   if (tab_->selected() && changed_flags & content::INVALIDATE_TYPE_TITLE)
     window_->PlatformSetTitle(source->GetTitle());
@@ -155,11 +154,11 @@ void SprocketWebContents::NavigationStateChanged(content::WebContents* source,
 }
 
 void SprocketWebContents::AddNewContents(content::WebContents* source,
-                           content::WebContents* new_contents,
-                           WindowOpenDisposition disposition,
-                           const gfx::Rect& initial_rect,
-                           bool user_gesture,
-                           bool* was_blocked) {
+                                         content::WebContents* new_contents,
+                                         WindowOpenDisposition disposition,
+                                         const gfx::Rect& initial_rect,
+                                         bool user_gesture,
+                                         bool* was_blocked) {
   if (disposition == NEW_FOREGROUND_TAB) {
 #if defined(USE_AURA)
     SprocketWebContents* adopted_web_contents =
@@ -177,7 +176,7 @@ void SprocketWebContents::AddNewContents(content::WebContents* source,
 }
 
 void SprocketWebContents::LoadingStateChanged(content::WebContents* source,
-                                  bool to_different_document) {
+                                              bool to_different_document) {
   UpdateNavigationControls(to_different_document);
   window_->PlatformSetIsLoading(source->IsLoading());
 }

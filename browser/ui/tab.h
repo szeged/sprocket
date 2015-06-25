@@ -15,8 +15,8 @@ class TabbedPane;
 class SprocketWebContents;
 
 namespace views {
-  class Label;
-  class LabelButton;
+class Label;
+class LabelButton;
 }
 
 // The tab view shown in the tab strip.
@@ -27,14 +27,14 @@ class Tab : public views::View {
   static const char kEmptyTab[];
 
   Tab(TabbedPane* tabbed_pane,
-        SprocketWebContents* sprocket_web_contents,
-        views::View* contents);
+      SprocketWebContents* sprocket_web_contents,
+      views::View* contents);
   ~Tab() override;
 
   void SetTitle(const base::string16& title);
 
   views::View* contents() const { return contents_; }
-  SprocketWebContents* web_contents() const { return sprocket_web_contents_; }
+  SprocketWebContents* sprocket_web_contents() const { return sprocket_web_contents_; }
 
   bool selected() const { return contents_->visible(); }
   void SetSelected(bool selected);

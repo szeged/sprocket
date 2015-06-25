@@ -48,9 +48,9 @@ SprocketURLRequestContextGetter::SprocketURLRequestContextGetter(
   // must synchronously run on the glib message loop. This will be passed to
   // the URLRequestContextStorage on the IO thread in GetURLRequestContext().
   proxy_config_service_.reset(
-    net::ProxyService::CreateSystemProxyConfigService(
-      content::BrowserThread::GetMessageLoopProxyForThread(content::BrowserThread::IO),
-      content::BrowserThread::GetMessageLoopProxyForThread(content::BrowserThread::FILE))
+      net::ProxyService::CreateSystemProxyConfigService(
+          content::BrowserThread::GetMessageLoopProxyForThread(content::BrowserThread::IO),
+          content::BrowserThread::GetMessageLoopProxyForThread(content::BrowserThread::FILE))
   );
 }
 
@@ -130,7 +130,7 @@ net::URLRequestContext* SprocketURLRequestContextGetter::GetURLRequestContext() 
     network_session_params.ignore_certificate_errors =
         ignore_certificate_errors_;
     network_session_params.host_resolver =
-      url_request_context_->host_resolver();
+        url_request_context_->host_resolver();
 
     storage_->set_http_transaction_factory(new net::HttpCache(network_session_params, main_backend));
 
@@ -164,7 +164,6 @@ net::URLRequestContext* SprocketURLRequestContextGetter::GetURLRequestContext() 
   return url_request_context_.get();
 }
 
-scoped_refptr<base::SingleThreadTaskRunner>
-    SprocketURLRequestContextGetter::GetNetworkTaskRunner() const {
+scoped_refptr<base::SingleThreadTaskRunner> SprocketURLRequestContextGetter::GetNetworkTaskRunner() const {
   return content::BrowserThread::GetMessageLoopProxyForThread(content::BrowserThread::IO);
 }

@@ -13,8 +13,8 @@
 #include "ui/base/models/simple_menu_model.h"
 
 class SprocketContextMenuModel : public ui::SimpleMenuModel,
-                                    public ui::SimpleMenuModel::Delegate {
-public:
+                                 public ui::SimpleMenuModel::Delegate {
+ public:
   explicit SprocketContextMenuModel(
       SprocketWebContents* sprocket_web_contents,
       const content::ContextMenuParams& params);
@@ -26,7 +26,7 @@ public:
                                   ui::Accelerator* accelerator) override;
   void ExecuteCommand(int command_id, int event_flags) override;
 
-private:
+ private:
   enum CommandID {
     COMMAND_BACK,
     COMMAND_FORWARD,

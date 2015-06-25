@@ -27,7 +27,7 @@ base::StringPiece SprocketContentClient::GetDataResource(
     int resource_id,
     ui::ScaleFactor scale_factor) const {
   return ResourceBundle::GetSharedInstance().GetRawDataResourceForScale(
-    resource_id, scale_factor);
+      resource_id, scale_factor);
 }
 
 base::RefCountedStaticMemory* SprocketContentClient::GetDataResourceBytes(

@@ -40,9 +40,10 @@ void SprocketWindow::PlatformCloseWindow() {
 
 void SprocketWindow::PlatformAddTab(SprocketWebContents* sprocket_web_contents) {
   JNIEnv* env = AttachCurrentThread();
-  Java_SprocketWindow_initFromNativeTabContents(env,
-                  java_object_.obj(),
-                  sprocket_web_contents->web_contents()->GetJavaWebContents().obj());
+  Java_SprocketWindow_initFromNativeTabContents(
+      env,
+      java_object_.obj(),
+      sprocket_web_contents->web_contents()->GetJavaWebContents().obj());
 }
 
 void SprocketWindow::PlatformSelectTabAt(int index) {
@@ -81,15 +82,15 @@ void SprocketWindow::PlatformLoadProgressChanged(double progress) {
 }
 
 void SprocketWindow::PlatformToggleFullscreenModeForTab(
-                        content::WebContents* web_contents,
-                        bool enter_fullscreen) {
+    content::WebContents* web_contents,
+    bool enter_fullscreen) {
   JNIEnv* env = AttachCurrentThread();
   Java_SprocketWindow_toggleFullscreenModeForTab(
       env, java_object_.obj(), enter_fullscreen);
 }
 
 bool SprocketWindow::PlatformIsFullscreenForTabOrPending(
-                        const content::WebContents* web_contents) const {
+    const content::WebContents* web_contents) const {
   JNIEnv* env = AttachCurrentThread();
   return Java_SprocketWindow_isFullscreenForTabOrPending(env, java_object_.obj());
 }
