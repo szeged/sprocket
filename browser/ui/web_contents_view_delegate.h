@@ -30,7 +30,6 @@ class SprocketWebContentsViewDelegate : public content::WebContentsViewDelegate 
 
  private:
   content::WebContents* web_contents_;
-  content::ContextMenuParams params_;
 
   DISALLOW_COPY_AND_ASSIGN(SprocketWebContentsViewDelegate);
 };

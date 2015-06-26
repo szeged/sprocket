@@ -9,6 +9,9 @@
 #include "content/public/browser/render_view_host.h"
 #include "content/public/browser/web_contents.h"
 #include "sprocket/browser/ui/window.h"
+#if defined(USE_AURA)
+#include "sprocket/browser/ui/tab.h"
+#endif
 
 // static
 SprocketWebContents* SprocketWebContents::CreateSprocketWebContents(
@@ -41,7 +44,7 @@ SprocketWebContents::SprocketWebContents(
                             : window_(window),
                               is_fullscreen_(false) {
   web_contents_.reset(web_contents);
-  window->PlatformSetContents(this);
+  window->PlatformAddTab(this);
   web_contents->SetDelegate(this);
 }
 
@@ -80,10 +83,15 @@ void SprocketWebContents::Stop() {
 }
 
 void SprocketWebContents::UpdateNavigationControls(bool to_different_document) {
-  window_->PlatformEnableUIControl(SprocketWindow::BACK_BUTTON, CanGoBack());
-  window_->PlatformEnableUIControl(SprocketWindow::FORWARD_BUTTON, CanGoForward());
-  window_->PlatformEnableUIControl(SprocketWindow::STOP_BUTTON,
-      to_different_document && web_contents_->IsLoading());
+#if defined(USE_AURA)
+  if (tab_->selected())
+#endif
+  {
+    window_->PlatformEnableUIControl(SprocketWindow::BACK_BUTTON, CanGoBack());
+    window_->PlatformEnableUIControl(SprocketWindow::FORWARD_BUTTON, CanGoForward());
+    window_->PlatformEnableUIControl(SprocketWindow::STOP_BUTTON,
+        to_different_document && web_contents_->IsLoading());
+  }
 }
 
 void SprocketWebContents::Close() {
@@ -92,32 +100,58 @@ void SprocketWebContents::Close() {
 
 content::WebContents* SprocketWebContents::OpenURLFromTab(content::WebContents* source,
                                    const content::OpenURLParams& params) {
-  // CURRENT_TAB is the only one we implement for now.
-  if (params.disposition != CURRENT_TAB)
-    return NULL;
-  content::NavigationController::LoadURLParams load_url_params(params.url);
-  load_url_params.source_site_instance = params.source_site_instance;
-  load_url_params.referrer = params.referrer;
-  load_url_params.frame_tree_node_id = params.frame_tree_node_id;
-  load_url_params.transition_type = params.transition;
-  load_url_params.extra_headers = params.extra_headers;
-  load_url_params.should_replace_current_entry =
-    params.should_replace_current_entry;
+  if (params.disposition == CURRENT_TAB) {
+    content::NavigationController::LoadURLParams load_url_params(params.url);
+    load_url_params.source_site_instance = params.source_site_instance;
+    load_url_params.referrer = params.referrer;
+    load_url_params.frame_tree_node_id = params.frame_tree_node_id;
+    load_url_params.transition_type = params.transition;
+    load_url_params.extra_headers = params.extra_headers;
+    load_url_params.should_replace_current_entry =
+      params.should_replace_current_entry;
 
-  load_url_params.is_renderer_initiated = params.is_renderer_initiated;
-  if (params.transferred_global_request_id != content::GlobalRequestID()) {
-    load_url_params.transferred_global_request_id =
-      params.transferred_global_request_id;
+    load_url_params.is_renderer_initiated = params.is_renderer_initiated;
+    if (params.transferred_global_request_id != content::GlobalRequestID()) {
+      load_url_params.transferred_global_request_id =
+        params.transferred_global_request_id;
+    }
+
+    source->GetController().LoadURLWithParams(load_url_params);
+    return source;
+  } else if (params.disposition == NEW_BACKGROUND_TAB) {
+    SprocketWebContents::CreateSprocketWebContents(
+        window_,
+        source->GetBrowserContext(),
+        params.url,
+        source->GetPreferredSize());
+  } else if (params.disposition == NEW_FOREGROUND_TAB) {
+#if defined(USE_AURA)
+    SprocketWebContents* sprocket_web_contents =
+#endif
+        SprocketWebContents::CreateSprocketWebContents(
+            window_,
+            source->GetBrowserContext(),
+            params.url,
+            source->GetPreferredSize());
+#if defined(USE_AURA)
+    window_->PlatformSelectTab(sprocket_web_contents->tab());
+#endif
   }
 
-  source->GetController().LoadURLWithParams(load_url_params);
-  return source;
+  return NULL;
 }
 
 void SprocketWebContents::NavigationStateChanged(content::WebContents* source,
                                   content::InvalidateTypes changed_flags) {
+#if defined(USE_AURA)
+  if (tab_->selected() && changed_flags & content::INVALIDATE_TYPE_TITLE)
+    window_->PlatformSetTitle(source->GetTitle());
+  else
+    tab_->SetTitle(source->GetTitle());
+#elif defined(OS_ANDROID)
   if (changed_flags & content::INVALIDATE_TYPE_TITLE)
     window_->PlatformSetTitle(source->GetTitle());
+#endif
 }
 
 void SprocketWebContents::AddNewContents(content::WebContents* source,
@@ -126,8 +160,20 @@ void SprocketWebContents::AddNewContents(content::WebContents* source,
                            const gfx::Rect& initial_rect,
                            bool user_gesture,
                            bool* was_blocked) {
-  SprocketWindow* window = SprocketWindow::CreateNewWindow(gfx::Size(initial_rect.size()));
-  AdoptWebContents(window, new_contents);
+  if (disposition == NEW_FOREGROUND_TAB) {
+#if defined(USE_AURA)
+    SprocketWebContents* adopted_web_contents =
+#endif
+        AdoptWebContents(window_, new_contents);
+#if defined(USE_AURA)
+    window_->PlatformSelectTab(adopted_web_contents->tab());
+#endif
+  } else if  (disposition == NEW_BACKGROUND_TAB) {
+    AdoptWebContents(window_, new_contents);
+  } else {
+    SprocketWindow* window = SprocketWindow::CreateNewWindow(gfx::Size(initial_rect.size()));
+    AdoptWebContents(window, new_contents);
+  }
 }
 
 void SprocketWebContents::LoadingStateChanged(content::WebContents* source,
@@ -181,7 +227,10 @@ bool SprocketWebContents::CanOverscrollContent() const {
 }
 
 void SprocketWebContents::DidNavigateMainFramePostCommit(content::WebContents* web_contents) {
-  window_->PlatformSetAddressBarURL(web_contents->GetLastCommittedURL());
+#if defined(USE_AURA)
+  if (tab_->selected())
+#endif
+    window_->PlatformSetAddressBarURL(web_contents->GetLastCommittedURL());
 }
 
 void SprocketWebContents::ActivateContents(content::WebContents* contents) {

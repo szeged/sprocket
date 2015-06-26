@@ -11,6 +11,9 @@
 #include "content/public/browser/web_contents_delegate.h"
 
 class SprocketWindow;
+#if defined(USE_AURA)
+class Tab;
+#endif
 
 namespace content {
   class BrowserContext;
@@ -117,7 +120,10 @@ public:
 
 
   content::WebContents* web_contents() const { return web_contents_.get(); }
-
+#if defined(USE_AURA)
+  Tab* tab() const { return tab_; }
+  void SetTab(Tab* tab) { tab_ = tab; }
+#endif
 private:
   explicit SprocketWebContents(SprocketWindow* window,
                                content::WebContents* web_contents);
@@ -127,6 +133,9 @@ private:
 
   scoped_ptr<content::WebContents> web_contents_;
   SprocketWindow* window_;
+#if defined(USE_AURA)
+  Tab* tab_;
+#endif
 
   bool is_fullscreen_;
 };

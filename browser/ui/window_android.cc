@@ -38,11 +38,15 @@ void SprocketWindow::PlatformCreateWindow(int width, int height) {
 void SprocketWindow::PlatformCloseWindow() {
 }
 
-void SprocketWindow::PlatformSetContents(SprocketWebContents* sprocket_web_contents) {
+void SprocketWindow::PlatformAddTab(SprocketWebContents* sprocket_web_contents) {
   JNIEnv* env = AttachCurrentThread();
   Java_SprocketWindow_initFromNativeTabContents(env,
                   java_object_.obj(),
                   sprocket_web_contents->web_contents()->GetJavaWebContents().obj());
+}
+
+void SprocketWindow::PlatformSelectTabAt(int index) {
+  NOTIMPLEMENTED() << ": " << index;
 }
 
 void SprocketWindow::PlatformEnableUIControl(UIControl control, bool is_enabled) {

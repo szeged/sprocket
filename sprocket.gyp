@@ -85,7 +85,14 @@
             'browser/ui/context_menu_model.h',
             'browser/ui/views_delegate_aura.cc',
             'browser/ui/views_delegate_aura.h',
-            'browser/ui/window_aura.cc'
+            'browser/ui/window_aura.cc',
+            'browser/ui/window_delegate_view_aura.h',
+            'browser/ui/window_delegate_view_aura.cc',
+            'browser/ui/tab.cc',
+            'browser/ui/tab.h',
+            'browser/ui/tabbed_pane.cc',
+            'browser/ui/tabbed_pane.h',
+            'browser/ui/tabbed_pane_listener.h',
           ],
         },{
           'sources': [

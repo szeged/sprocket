@@ -16,11 +16,12 @@
 #include "base/android/scoped_java_ref.h"
 #elif defined(USE_AURA)
 #include "ui/gfx/native_widget_types.h"
-
 namespace views {
   class ViewsDelegate;
   class Widget;
 }
+
+class Tab;
 #endif
 
 class SprocketWebContents;
@@ -76,7 +77,11 @@ private:
   // Closes the window.
   void PlatformCloseWindow();
   // Links the WebContents into the newly created window.
-  void PlatformSetContents(SprocketWebContents* sprocket_web_contents);
+  void PlatformAddTab(SprocketWebContents* sprocket_web_contents);
+  void PlatformSelectTabAt(int index);
+#if defined(USE_AURA)
+  void PlatformSelectTab(Tab* tab);
+#endif
   // Enable/disable a button.
   void PlatformEnableUIControl(UIControl control, bool is_enabled);
   // Updates the url in the url bar.
