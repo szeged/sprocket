@@ -35,7 +35,7 @@ ninja -C out/Release sprocket
 ```shell
 # run the config
 export GYP_CROSSCOMPILE=1
-./build/gyp_chromium sprocket/sprocket.gyp -Ddisable_nacl=1 -Dtarget_arch=arm -Darm_float_abi
+./build/gyp_chromium sprocket/sprocket.gyp -Ddisable_nacl=1 -Dtarget_arch=arm -Darm_float_abi=hard
 # build it with 'sprocket' target
 ninja -C out/Release sprocket
 # run it from the out dir
