@@ -2,34 +2,28 @@
 #include "url/gurl.h"
 
 SprocketWindowDelegateView::SprocketWindowDelegateView()
-    : toolbar_view_(new View),
+    : toolbar_(new Toolbar),
       tabbed_pane_(new TabbedPane) {
 }
 
 SprocketWindowDelegateView::~SprocketWindowDelegateView() {
-  delete web_view_;
   delete tabbed_pane_;
-  delete url_entry_;
-  delete back_button_;
-  delete forward_button_;
-  delete refresh_button_;
-  delete stop_button_;
-  delete toolbar_view_;
+  delete toolbar_;
 }
 
 void SprocketWindowDelegateView::AddTab(SprocketWebContents* sprocket_web_contents,
                                         const gfx::Size& size) {
   content::WebContents* web_contents = sprocket_web_contents->web_contents();
   gfx::Size prev_size;
-  if (web_view_)
-     prev_size.SetSize(web_view_->width(), web_view_->height());
-  web_view_ = new views::WebView(web_contents->GetBrowserContext());
-  web_view_->SetWebContents(web_contents);
-  web_view_->SetPreferredSize(prev_size.IsEmpty() ? size : prev_size);
+  if (GetSelectedTab())
+    prev_size = GetSelectedTab()->contents()->size();
+  views::WebView* web_view = new views::WebView(web_contents->GetBrowserContext());
+  web_view->SetWebContents(web_contents);
+  web_view->SetPreferredSize(prev_size.IsEmpty() ? size : prev_size);
   web_contents->Focus();
 
   tabbed_pane_->set_listener((TabbedPaneListener *)this);
-  tabbed_pane_->AddTab(sprocket_web_contents, web_view_);
+  tabbed_pane_->AddTab(sprocket_web_contents, web_view);
   Layout();
 
   // Resize the widget, keeping the same origin.
@@ -42,6 +36,10 @@ Tab* SprocketWindowDelegateView::GetTabAt(int index) {
   return tabbed_pane_->GetTabAt(index);
 }
 
+Tab* SprocketWindowDelegateView::GetSelectedTab() {
+  return tabbed_pane_->GetSelectedTab();
+}
+
 void SprocketWindowDelegateView::SelectTabAt(int index) {
   tabbed_pane_->SelectTabAt(index);
 }
@@ -51,7 +49,7 @@ void SprocketWindowDelegateView::SelectTab(Tab* tab) {
 }
 
 void SprocketWindowDelegateView::SetAddressBarURL(const GURL& url) {
-  url_entry_->SetText(base::ASCIIToUTF16(url.spec()));
+  toolbar_->SetAddressBarURL(base::ASCIIToUTF16(url.spec()));
 }
 
 void SprocketWindowDelegateView::SetWindowTitle(const base::string16& title) {
@@ -63,16 +61,7 @@ void SprocketWindowDelegateView::SetWindowTitle(const base::string16& title) {
 }
 
 void SprocketWindowDelegateView::EnableUIControl(SprocketWindow::UIControl control, bool is_enabled) {
-  if (control == SprocketWindow::BACK_BUTTON) {
-    back_button_->SetState(is_enabled ? views::CustomButton::STATE_NORMAL
-        : views::CustomButton::STATE_DISABLED);
-  } else if (control == SprocketWindow::FORWARD_BUTTON) {
-    forward_button_->SetState(is_enabled ? views::CustomButton::STATE_NORMAL
-        : views::CustomButton::STATE_DISABLED);
-  } else if (control == SprocketWindow::STOP_BUTTON) {
-    stop_button_->SetState(is_enabled ? views::CustomButton::STATE_NORMAL
-        : views::CustomButton::STATE_DISABLED);
-  }
+  toolbar_->EnableUIControl(control, is_enabled);
 }
 
 void SprocketWindowDelegateView::ShowWebContentsContextMenu(const content::ContextMenuParams& params) {
@@ -94,7 +83,8 @@ void SprocketWindowDelegateView::ShowWebContentsContextMenu(const content::Conte
   context_menu_runner_.reset(new views::MenuRunner(
       context_menu_model_.get(), views::MenuRunner::CONTEXT_MENU));
 
-  if (context_menu_runner_->RunMenuAt(web_view_->GetWidget(),
+  views::WebView* web_view = static_cast<views::WebView*>(GetSelectedTab()->contents());
+  if (context_menu_runner_->RunMenuAt(web_view->GetWidget(),
                                       NULL,
                                       gfx::Rect(screen_point, gfx::Size()),
                                       views::MENU_ANCHOR_TOPRIGHT,
@@ -113,7 +103,7 @@ void SprocketWindowDelegateView::TabSelectedAt(int index) {
 
   sprocket_window->PlatformEnableUIControl(SprocketWindow::BACK_BUTTON, sprocket_web_content->CanGoBack());
   sprocket_window->PlatformEnableUIControl(SprocketWindow::FORWARD_BUTTON, sprocket_web_content->CanGoForward());
-  sprocket_window->PlatformEnableUIControl(SprocketWindow::STOP_BUTTON, sprocket_web_content->web_contents()->IsLoading());
+  sprocket_window->PlatformEnableUIControl(SprocketWindow::REFRESH_STOP_BUTTON, sprocket_web_content->web_contents()->IsLoading());
 }
 
 void SprocketWindowDelegateView::LastTabClosed() {
@@ -149,67 +139,8 @@ void SprocketWindowDelegateView::InitSprocketWindow() {
   // Add toolbar buttons and URL text field
   {
     layout->StartRow(0, 0);
-    views::GridLayout* toolbar_layout = new views::GridLayout(toolbar_view_);
-    toolbar_view_->SetLayoutManager(toolbar_layout);
-
-    views::ColumnSet* toolbar_column_set =
-        toolbar_layout->AddColumnSet(0);
-    // Back button
-    back_button_ = new views::LabelButton(this, base::ASCIIToUTF16("Back"));
-    back_button_->SetStyle(views::Button::STYLE_BUTTON);
-    gfx::Size back_button_size = back_button_->GetPreferredSize();
-    toolbar_column_set->AddColumn(views::GridLayout::CENTER,
-                                  views::GridLayout::CENTER, 0,
-                                  views::GridLayout::FIXED,
-                                  back_button_size.width(),
-                                  back_button_size.width() / 2);
-    // Forward button
-    forward_button_ =
-        new views::LabelButton(this, base::ASCIIToUTF16("Forward"));
-    forward_button_->SetStyle(views::Button::STYLE_BUTTON);
-    gfx::Size forward_button_size = forward_button_->GetPreferredSize();
-    toolbar_column_set->AddColumn(views::GridLayout::CENTER,
-                                  views::GridLayout::CENTER, 0,
-                                  views::GridLayout::FIXED,
-                                  forward_button_size.width(),
-                                  forward_button_size.width() / 2);
-    // Refresh button
-    refresh_button_ =
-        new views::LabelButton(this, base::ASCIIToUTF16("Refresh"));
-    refresh_button_->SetStyle(views::Button::STYLE_BUTTON);
-    gfx::Size refresh_button_size = refresh_button_->GetPreferredSize();
-    toolbar_column_set->AddColumn(views::GridLayout::CENTER,
-                                  views::GridLayout::CENTER, 0,
-                                  views::GridLayout::FIXED,
-                                  refresh_button_size.width(),
-                                  refresh_button_size.width() / 2);
-    // Stop button
-    stop_button_ = new views::LabelButton(this, base::ASCIIToUTF16("Stop"));
-    stop_button_->SetStyle(views::Button::STYLE_BUTTON);
-    gfx::Size stop_button_size = stop_button_->GetPreferredSize();
-    toolbar_column_set->AddColumn(views::GridLayout::CENTER,
-                                  views::GridLayout::CENTER, 0,
-                                  views::GridLayout::FIXED,
-                                  stop_button_size.width(),
-                                  stop_button_size.width() / 2);
-    toolbar_column_set->AddPaddingColumn(0, 2);
-    // URL entry
-    url_entry_ = new views::Textfield();
-    url_entry_->set_controller(this);
-    toolbar_column_set->AddColumn(views::GridLayout::FILL,
-                                  views::GridLayout::FILL, 1,
-                                  views::GridLayout::USE_PREF, 0, 0);
-    toolbar_column_set->AddPaddingColumn(0, 2);
-
-    // Fill up the first row
-    toolbar_layout->StartRow(0, 0);
-    toolbar_layout->AddView(back_button_);
-    toolbar_layout->AddView(forward_button_);
-    toolbar_layout->AddView(refresh_button_);
-    toolbar_layout->AddView(stop_button_);
-    toolbar_layout->AddView(url_entry_);
-
-    layout->AddView(toolbar_view_);
+    toolbar_->Init(this);
+    layout->AddView(toolbar_);
   }
 
   layout->AddPaddingRow(0, 5);
@@ -235,45 +166,6 @@ void SprocketWindowDelegateView::InitAccelerators() {
         ui::AcceleratorManager::kNormalPriority,
         this);
   }
-}
-
-// Overridden from TextfieldController
-void SprocketWindowDelegateView::ContentsChanged(views::Textfield* sender,
-                                                 const base::string16& new_contents) {
-}
-
-bool SprocketWindowDelegateView::HandleKeyEvent(views::Textfield* sender,
-                                                const ui::KeyEvent& key_event) {
- if (sender == url_entry_ && key_event.key_code() == ui::VKEY_RETURN) {
-   std::string text = base::UTF16ToUTF8(url_entry_->text());
-   GURL url(text);
-   if (!url.has_scheme()) {
-     url = GURL(std::string("http://") + std::string(text));
-     url_entry_->SetText(base::ASCIIToUTF16(url.spec()));
-   }
-
-   SprocketWebContents* sprocket_web_contents =
-       tabbed_pane_->GetSelectedTab()->sprocket_web_contents();
-   sprocket_web_contents->LoadURL(url);
-
-   return true;
- }
- return false;
-}
-
-// Overridden from ButtonListener
-void SprocketWindowDelegateView::ButtonPressed(views::Button* sender, const ui::Event& event) {
-  SprocketWebContents* sprocket_web_contents =
-      tabbed_pane_->GetSelectedTab()->sprocket_web_contents();
-
-  if (sender == back_button_)
-    sprocket_web_contents->GoBackOrForward(-1);
-  else if (sender == forward_button_)
-    sprocket_web_contents->GoBackOrForward(1);
-  else if (sender == refresh_button_)
-    sprocket_web_contents->Reload();
-  else if (sender == stop_button_)
-    sprocket_web_contents->Stop();
 }
 
 bool SprocketWindowDelegateView::CanResize() const {

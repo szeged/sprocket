@@ -45,6 +45,7 @@ class SprocketWebContents : public content::WebContentsDelegate {
   void GoBackOrForward(int offset);
   void Reload();
   void Stop();
+  bool IsLoading();
   void UpdateNavigationControls(bool to_different_document);
   void Close();
 

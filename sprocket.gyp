@@ -93,6 +93,8 @@
             'browser/ui/tabbed_pane.cc',
             'browser/ui/tabbed_pane.h',
             'browser/ui/tabbed_pane_listener.h',
+            'browser/ui/toolbar.cc',
+            'browser/ui/toolbar.h',
           ],
         },{
           'sources': [

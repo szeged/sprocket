@@ -81,6 +81,10 @@ void SprocketWebContents::Stop() {
   web_contents_->Focus();
 }
 
+bool SprocketWebContents::IsLoading() {
+  return web_contents_->IsLoading();
+}
+
 void SprocketWebContents::UpdateNavigationControls(bool to_different_document) {
 #if defined(USE_AURA)
   if (tab_->selected())
@@ -88,7 +92,7 @@ void SprocketWebContents::UpdateNavigationControls(bool to_different_document) {
   {
     window_->PlatformEnableUIControl(SprocketWindow::BACK_BUTTON, CanGoBack());
     window_->PlatformEnableUIControl(SprocketWindow::FORWARD_BUTTON, CanGoForward());
-    window_->PlatformEnableUIControl(SprocketWindow::STOP_BUTTON,
+    window_->PlatformEnableUIControl(SprocketWindow::REFRESH_STOP_BUTTON,
         to_different_document && web_contents_->IsLoading());
   }
 }

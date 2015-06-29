@@ -38,7 +38,7 @@ class SprocketWindow {
   enum UIControl {
     BACK_BUTTON,
     FORWARD_BUTTON,
-    STOP_BUTTON
+    REFRESH_STOP_BUTTON
   };
 
   static void Initialize();
@@ -81,6 +81,7 @@ class SprocketWindow {
   void PlatformSelectTabAt(int index);
 #if defined(USE_AURA)
   void PlatformSelectTab(Tab* tab);
+  Tab* PlatformGetSelectedTab();
 #endif
   // Enable/disable a button.
   void PlatformEnableUIControl(UIControl control, bool is_enabled);
@@ -101,8 +102,6 @@ class SprocketWindow {
   bool PlatformIsFullscreenForTabOrPending(
       const content::WebContents* web_contents) const;
 #endif
-
-  SprocketWebContents* sprocket_web_contents_;
 
 #if defined(OS_ANDROID)
   base::android::ScopedJavaGlobalRef<jobject> java_object_;

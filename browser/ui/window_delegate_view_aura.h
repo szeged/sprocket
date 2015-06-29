@@ -9,14 +9,12 @@
 #include "sprocket/browser/ui/tab.h"
 #include "sprocket/browser/ui/tabbed_pane.h"
 #include "sprocket/browser/ui/tabbed_pane_listener.h"
+#include "sprocket/browser/ui/toolbar.h"
 #include "ui/aura/client/screen_position_client.h"
 #include "ui/aura/env.h"
 #include "ui/aura/window_tree_host.h"
 #include "ui/gfx/screen.h"
-#include "ui/views/controls/button/menu_button.h"
 #include "ui/views/controls/menu/menu_runner.h"
-#include "ui/views/controls/textfield/textfield.h"
-#include "ui/views/controls/textfield/textfield_controller.h"
 #include "ui/views/controls/webview/webview.h"
 #include "ui/views/layout/fill_layout.h"
 #include "ui/views/layout/grid_layout.h"
@@ -27,11 +25,10 @@
 class Tab;
 class TabbedPane;
 class TabbedPaneListener;
+class Toolbar;
 
 // Maintain the UI controls and web view for sprocket
 class SprocketWindowDelegateView : public views::WidgetDelegateView,
-                                   public views::TextfieldController,
-                                   public views::ButtonListener,
                                    public TabbedPaneListener {
  public:
   SprocketWindowDelegateView();
@@ -41,6 +38,7 @@ class SprocketWindowDelegateView : public views::WidgetDelegateView,
   void AddTab(SprocketWebContents* sprocket_web_contents, const gfx::Size& size);
 
   Tab* GetTabAt(int index);
+  Tab* GetSelectedTab();
   // Update the state of UI controls
   void SelectTabAt(int index);
   void SelectTab(Tab* tab);
@@ -63,14 +61,6 @@ class SprocketWindowDelegateView : public views::WidgetDelegateView,
   void InitSprocketWindow();
 
   void InitAccelerators();
-
-  // Overridden from TextfieldController
-  void ContentsChanged(views::Textfield* sender, const base::string16& new_contents) override;
-
-  bool HandleKeyEvent(views::Textfield* sender, const ui::KeyEvent& key_event) override;
-
-  // Overridden from ButtonListener
-  void ButtonPressed(views::Button* sender, const ui::Event& event) override;
 
   // Overridden from WidgetDelegateView
   bool CanResize()   const override;
@@ -96,18 +86,13 @@ class SprocketWindowDelegateView : public views::WidgetDelegateView,
   base::string16 title_;
 
   // Toolbar view contains forward/backward/reload button and URL entry
-  View* toolbar_view_;
-  views::LabelButton* back_button_;
-  views::LabelButton* forward_button_;
-  views::LabelButton* refresh_button_;
-  views::LabelButton* stop_button_;
-  views::Textfield* url_entry_;
-  scoped_ptr<SprocketContextMenuModel> context_menu_model_;
-  scoped_ptr<views::MenuRunner> context_menu_runner_;
+  Toolbar* toolbar_;
 
   // Tabbed pane contains the web view
   TabbedPane* tabbed_pane_;
-  views::WebView* web_view_;
+
+  scoped_ptr<SprocketContextMenuModel> context_menu_model_;
+  scoped_ptr<views::MenuRunner> context_menu_runner_;
 
   DISALLOW_COPY_AND_ASSIGN(SprocketWindowDelegateView);
 };

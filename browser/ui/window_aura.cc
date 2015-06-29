@@ -64,8 +64,6 @@ void SprocketWindow::PlatformCloseWindow() {
 }
 
 void SprocketWindow::PlatformAddTab(SprocketWebContents* sprocket_web_contents) {
-  sprocket_web_contents_ = sprocket_web_contents;
-
   SprocketWindowDelegateView* delegate_view =
       static_cast<SprocketWindowDelegateView*>(window_widget_->widget_delegate());
   delegate_view->AddTab(sprocket_web_contents, content_size_);
@@ -77,9 +75,15 @@ void SprocketWindow::PlatformSelectTabAt(int index) {
   delegate_view->SelectTabAt(index);
 }
 
+Tab* SprocketWindow::PlatformGetSelectedTab() {
+  SprocketWindowDelegateView* delegate_view =
+      static_cast<SprocketWindowDelegateView*>(window_widget_->widget_delegate());
+  return delegate_view->GetSelectedTab();
+}
+
 void SprocketWindow::PlatformSelectTab(Tab* tab) {
   SprocketWindowDelegateView* delegate_view =
-    static_cast<SprocketWindowDelegateView*>(window_widget_->widget_delegate());
+      static_cast<SprocketWindowDelegateView*>(window_widget_->widget_delegate());
   delegate_view->SelectTab(tab);
 }
 
@@ -90,8 +94,8 @@ void SprocketWindow::PlatformEnableUIControl(UIControl control, bool is_enabled)
     delegate_view->EnableUIControl(BACK_BUTTON, is_enabled);
   else if (control == FORWARD_BUTTON)
     delegate_view->EnableUIControl(FORWARD_BUTTON, is_enabled);
-  else if (control == STOP_BUTTON)
-    delegate_view->EnableUIControl(STOP_BUTTON, is_enabled);
+  else if (control == REFRESH_STOP_BUTTON)
+    delegate_view->EnableUIControl(REFRESH_STOP_BUTTON, is_enabled);
 }
 
 void SprocketWindow::PlatformSetAddressBarURL(const GURL& url) {
