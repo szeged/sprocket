@@ -256,7 +256,7 @@ void TabbedPane::Layout() {
   tab_scroll_view_->Layout();
 
   contents_->SetBounds(0, tab_scroll_view_->bounds().bottom(), width(),
-                       std::max(0, height() - size.height()));
+                       std::max(0, height() - scroll_view_height));
   for (int i = 0; i < contents_->child_count(); ++i)
     contents_->child_at(i)->SetSize(contents_->size());
 }
