@@ -8,10 +8,13 @@
 
 #include "content/public/browser/render_view_host.h"
 #include "content/public/browser/web_contents.h"
+#include "sprocket/browser/javascript_dialog_manager.h"
 #include "sprocket/browser/ui/window.h"
 #if defined(USE_AURA)
 #include "sprocket/browser/ui/tab.h"
 #endif
+
+std::map<content::WebContents*, SprocketWebContents*> SprocketWebContents::sprocket_web_contents_;
 
 // static
 SprocketWebContents* SprocketWebContents::CreateSprocketWebContents(
@@ -45,9 +48,21 @@ SprocketWebContents::SprocketWebContents(SprocketWindow* window,
   web_contents_.reset(web_contents);
   window->PlatformAddTab(this);
   web_contents->SetDelegate(this);
+  sprocket_web_contents_.insert(
+      std::pair<content::WebContents*, SprocketWebContents*>(web_contents, this));
+}
+
+// static
+SprocketWebContents* SprocketWebContents::From(content::WebContents* web_contents) {
+  auto it = sprocket_web_contents_.find(web_contents);
+  if (it != sprocket_web_contents_.end())
+    return it->second;
+  else
+    return NULL;
 }
 
 SprocketWebContents::~SprocketWebContents() {
+  sprocket_web_contents_.erase(web_contents_.get());
 }
 
 void SprocketWebContents::LoadURL(const GURL& url) {
@@ -234,6 +249,10 @@ void SprocketWebContents::DidNavigateMainFramePostCommit(content::WebContents* w
   if (tab_->selected())
 #endif
     window_->PlatformSetAddressBarURL(web_contents->GetLastCommittedURL());
+}
+
+content::JavaScriptDialogManager* SprocketWebContents::GetJavaScriptDialogManager(content::WebContents*) {
+  return new SprocketJavaScriptDialogManager;
 }
 
 void SprocketWebContents::ActivateContents(content::WebContents* contents) {

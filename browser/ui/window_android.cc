@@ -10,6 +10,7 @@
 #include "content/public/browser/web_contents.h"
 #include "jni/SprocketWindow_jni.h"
 #include "sprocket/android/manager.h"
+#include "sprocket/browser/ui/javascript_dialog.h"
 #include "sprocket/browser/web_contents.h"
 #include <jni.h>
 
@@ -79,6 +80,10 @@ bool SprocketWindow::PlatformHandleContextMenu(const content::ContextMenuParams&
 void SprocketWindow::PlatformLoadProgressChanged(double progress) {
   JNIEnv* env = AttachCurrentThread();
   Java_SprocketWindow_onLoadProgressChanged(env, java_object_.obj(), progress);
+}
+
+void SprocketWindow::PlatformShowJavaScriptDialog(SprocketJavaScriptDialog* dialog) {
+  // TODO: Implement!
 }
 
 void SprocketWindow::PlatformToggleFullscreenModeForTab(

@@ -9,6 +9,7 @@
 
 #include "content/public/browser/web_contents.h"
 #include "content/public/browser/web_contents_delegate.h"
+#include <map>
 
 class SprocketWindow;
 #if defined(USE_AURA)
@@ -36,6 +37,8 @@ class SprocketWebContents : public content::WebContentsDelegate {
   static SprocketWebContents* AdoptWebContents(
       SprocketWindow* window,
       content::WebContents* web_contents);
+
+  static SprocketWebContents* From(content::WebContents*);
 
   SprocketWindow* window() { return window_; }
 
@@ -108,6 +111,10 @@ class SprocketWebContents : public content::WebContentsDelegate {
   // Invoked when a main fram navigation occurs.
   void DidNavigateMainFramePostCommit(content::WebContents* web_contents) override;
 
+  // Returns a pointer to a service to manage JavaScript dialogs. May return
+  // nullptr in which case dialogs aren't shown.
+  content::JavaScriptDialogManager* GetJavaScriptDialogManager(content::WebContents* source) override;
+
   // Selects the specified contents, bringing its container to the front.
   void ActivateContents(content::WebContents* contents) override;
 
@@ -132,6 +139,7 @@ class SprocketWebContents : public content::WebContentsDelegate {
   void ToggleFullscreenModeForTab(content::WebContents* web_contents,
                                   bool enter_fullscreen);
 
+  static std::map<content::WebContents*, SprocketWebContents*> sprocket_web_contents_;
   scoped_ptr<content::WebContents> web_contents_;
   SprocketWindow* window_;
 #if defined(USE_AURA)

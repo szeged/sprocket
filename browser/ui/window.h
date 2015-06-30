@@ -24,6 +24,7 @@ class Widget;
 class Tab;
 #endif
 
+class SprocketJavaScriptDialog;
 class SprocketWebContents;
 class GURL;
 
@@ -95,6 +96,8 @@ class SprocketWindow {
   bool PlatformHandleContextMenu(const content::ContextMenuParams& params);
   // Changes the load progress
   void PlatformLoadProgressChanged(double progress);
+  // Shows a JavaScript dialog
+  void PlatformShowJavaScriptDialog(SprocketJavaScriptDialog* dialog);
 
 #if defined(OS_ANDROID)
   void PlatformToggleFullscreenModeForTab(content::WebContents* web_contents,
@@ -117,6 +120,7 @@ class SprocketWindow {
   static std::set<SprocketWindow*> windows_;
 
   friend class SprocketWebContents;
+  friend class SprocketJavaScriptDialogManager;
 };
 
 #endif // SPROCKET_BROWSER_UI_WINDOW_H_
