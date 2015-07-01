@@ -8,6 +8,7 @@
 
 #include "base/strings/utf_string_conversions.h"
 #include "content/public/browser/web_contents.h"
+#include "sprocket/browser/ui/authentication_dialog.h"
 #include "sprocket/browser/ui/context_menu_model.h"
 #include "sprocket/browser/ui/javascript_dialog.h"
 #include "sprocket/browser/ui/views_delegate_aura.h"
@@ -127,6 +128,21 @@ void SprocketWindow::PlatformLoadProgressChanged(double progress) {
 }
 
 void SprocketWindow::PlatformShowJavaScriptDialog(SprocketJavaScriptDialog* dialog) {
+  content::WebContents* web_contents =
+      PlatformGetSelectedTab()->sprocket_web_contents()->web_contents();
+  views::Widget* dialog_widget =
+      views::DialogDelegate::CreateDialogWidget(
+          dialog,
+          window_,
+          web_contents->GetNativeView());
+  gfx::Rect bounds = window_widget_->GetWindowBoundsInScreen();
+  bounds.ClampToCenteredSize(dialog_widget->GetWindowBoundsInScreen().size());
+  dialog_widget->SetBounds(bounds);
+  // TODO: This does not work: dialog_widget->SetAlwaysOnTop(true);
+  dialog_widget->Show();
+}
+
+void SprocketWindow::PlatformShowAuthenticationDialog(SprocketAuthenticationDialog* dialog) {
   content::WebContents* web_contents =
       PlatformGetSelectedTab()->sprocket_web_contents()->web_contents();
   views::Widget* dialog_widget =

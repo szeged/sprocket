@@ -24,6 +24,7 @@ class Widget;
 class Tab;
 #endif
 
+class SprocketAuthenticationDialog;
 class SprocketJavaScriptDialog;
 class SprocketWebContents;
 class GURL;
@@ -98,6 +99,8 @@ class SprocketWindow {
   void PlatformLoadProgressChanged(double progress);
   // Shows a JavaScript dialog
   void PlatformShowJavaScriptDialog(SprocketJavaScriptDialog* dialog);
+  // Asks for username and password
+  void PlatformShowAuthenticationDialog(SprocketAuthenticationDialog* dialog);
 
 #if defined(OS_ANDROID)
   void PlatformToggleFullscreenModeForTab(content::WebContents* web_contents,
@@ -121,6 +124,7 @@ class SprocketWindow {
 
   friend class SprocketWebContents;
   friend class SprocketJavaScriptDialogManager;
+  friend class SprocketResourceDispatcherHostLoginDelegate;
 };
 
 #endif // SPROCKET_BROWSER_UI_WINDOW_H_

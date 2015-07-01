@@ -86,6 +86,10 @@ void SprocketWindow::PlatformShowJavaScriptDialog(SprocketJavaScriptDialog* dial
   // TODO: Implement!
 }
 
+void SprocketWindow::PlatformShowAuthenticationDialog(SprocketAuthenticationDialog* dialog) {
+  // TODO: Implement!
+}
+
 void SprocketWindow::PlatformToggleFullscreenModeForTab(
     content::WebContents* web_contents,
     bool enter_fullscreen) {

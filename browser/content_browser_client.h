@@ -11,6 +11,7 @@
 
 #include "base/memory/scoped_ptr.h"
 #include "content/public/browser/content_browser_client.h"
+#include "sprocket/browser/resource_dispatcher_host_delegate.h"
 
 class SprocketBrowserContext;
 class SprocketBrowserMainParts;
@@ -69,6 +70,10 @@ class SprocketContentBrowserClient : public content::ContentBrowserClient {
   // Create and return a new quota permission context.
   content::QuotaPermissionContext* CreateQuotaPermissionContext() override;
 
+  // Notifies the embedder that the ResourceDispatcherHost has been created.
+  // This is when it can optionally add a delegate.
+  void ResourceDispatcherHostCreated() override;
+
 
 
   SprocketBrowserContext* BrowserContext();
@@ -84,6 +89,7 @@ class SprocketContentBrowserClient : public content::ContentBrowserClient {
   base::ScopedFD v8_snapshot_fd_;
 
   SprocketBrowserMainParts* browser_main_parts_;
+  scoped_ptr<SprocketResourceDispatcherHostDelegate> resource_dispatcher_host_delegate_;
 };
 
 #endif  // SPROCKET_BROWSER_CONTENT_BROWSER_CLIENT_H_

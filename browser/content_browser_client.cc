@@ -163,6 +163,11 @@ content::QuotaPermissionContext* SprocketContentBrowserClient::CreateQuotaPermis
   return new SprocketQuotaPermissionContext;
 }
 
+void SprocketContentBrowserClient::ResourceDispatcherHostCreated() {
+  resource_dispatcher_host_delegate_.reset(new SprocketResourceDispatcherHostDelegate);
+  content::ResourceDispatcherHost::Get()->SetDelegate(resource_dispatcher_host_delegate_.get());
+}
+
 SprocketBrowserContext* SprocketContentBrowserClient::BrowserContext() {
   return browser_main_parts_->browser_context();
 }
