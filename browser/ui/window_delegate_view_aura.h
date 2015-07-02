@@ -1,3 +1,9 @@
+// Copyright (c) 2015 University of Szeged.
+// Copyright (c) 2015 The Chromium Authors.
+// All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 #ifndef SPROCKET_BROWSER_UI_WINDOW_DELEGATE_VIEW_AURA_H
 #define SPROCKET_BROWSER_UI_WINDOW_DELEGATE_VIEW_AURA_H
 
@@ -16,7 +22,7 @@
 #include "ui/gfx/screen.h"
 #include "ui/views/controls/menu/menu_runner.h"
 #include "ui/views/controls/webview/webview.h"
-#include "ui/views/layout/fill_layout.h"
+#include "ui/views/layout/box_layout.h"
 #include "ui/views/layout/grid_layout.h"
 #include "ui/views/widget/desktop_aura/desktop_screen.h"
 #include "ui/views/widget/widget_delegate.h"

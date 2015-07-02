@@ -141,7 +141,6 @@ TabbedPane::~TabbedPane() {
 }
 
 int TabbedPane::GetTabCount() const {
-  DCHECK_EQ(tab_strip_->child_count() - 1, contents_->child_count());
   return contents_->child_count();
 }
 

@@ -1,3 +1,9 @@
+// Copyright (c) 2015 University of Szeged.
+// Copyright (c) 2015 The Chromium Authors.
+// All rights reserved.
+// Use of this source code is governed by a BSD-style license that can be
+// found in the LICENSE file.
+
 #include "sprocket/browser/ui/window_delegate_view_aura.h"
 #include "url/gurl.h"
 
@@ -148,7 +154,7 @@ void SprocketWindowDelegateView::InitSprocketWindow() {
   // Add tabbed pane as the second row
   {
     layout->StartRow(1, 0);
-    tabbed_pane_->SetLayoutManager(new views::FillLayout());
+    tabbed_pane_->SetLayoutManager(new views::BoxLayout(views::BoxLayout::kVertical, 0, 0, 0));
     layout->AddView(tabbed_pane_);
   }
 

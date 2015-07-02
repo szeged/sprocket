@@ -28,7 +28,11 @@ class SprocketJavaScriptDialog
       const base::string16& message_text,
       const base::string16& default_prompt_text,
       const content::JavaScriptDialogManager::DialogClosedCallback& callback);
+#if defined(USE_AURA)
+  ~SprocketJavaScriptDialog() override;
+#else
   ~SprocketJavaScriptDialog();
+#endif
 
 #if defined(USE_AURA)
   // Overridden from views::DialogDelegate:
