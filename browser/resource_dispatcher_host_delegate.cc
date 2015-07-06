@@ -22,7 +22,6 @@ SprocketResourceDispatcherHostLoginDelegate::SprocketResourceDispatcherHostLogin
     : url_(request->url()),
       realm_(auth_info->realm),
       host_(auth_info->challenger.ToString()),
-      proxy_(auth_info->is_proxy),
       request_(request) {
   DCHECK(content::BrowserThread::CurrentlyOn(content::BrowserThread::IO));
 
@@ -33,6 +32,9 @@ SprocketResourceDispatcherHostLoginDelegate::SprocketResourceDispatcherHostLogin
   content::BrowserThread::PostTask(
       content::BrowserThread::UI, FROM_HERE,
       base::Bind(&SprocketResourceDispatcherHostLoginDelegate::TriggerDialog, this));
+}
+
+SprocketResourceDispatcherHostLoginDelegate::~SprocketResourceDispatcherHostLoginDelegate() {
 }
 
 void SprocketResourceDispatcherHostLoginDelegate::OnRequestCancelled() {

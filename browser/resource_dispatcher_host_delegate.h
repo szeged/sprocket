@@ -28,7 +28,7 @@ public:
 
   // Notify the login delegate that the request was cancelled.
   // This function can only be called from the IO thread.
-  virtual void OnRequestCancelled() override;
+  void OnRequestCancelled() override;
 
 
 
@@ -40,10 +40,10 @@ public:
   void SetCredentials(const base::string16& username, const base::string16& password);
 
 private:
+  ~SprocketResourceDispatcherHostLoginDelegate() override;
   GURL url_;
   std::string realm_;
   std::string host_;
-  bool proxy_;
 
   int render_process_id_;
   int render_frame_id_;
@@ -60,7 +60,7 @@ public:
 
   // Creates a ResourceDispatcherHostLoginDelegate that asks the user for a
   // username and password.
-  virtual content::ResourceDispatcherHostLoginDelegate* CreateLoginDelegate(
+  content::ResourceDispatcherHostLoginDelegate* CreateLoginDelegate(
               net::AuthChallengeInfo* auth_info,
               net::URLRequest* request) override;
 };

@@ -38,13 +38,13 @@ public:
 
 #if defined(USE_AURA)
   // Overridden from views::DialogDelegate:
-  virtual base::string16 GetWindowTitle() const override;
-  virtual bool Cancel() override;
-  virtual bool Accept(bool window_closing) override;
+  base::string16 GetWindowTitle() const override;
+  bool Cancel() override;
+  bool Accept(bool window_closing) override;
 
   // Overridden from ui::DialogModel:
-  virtual int GetDialogButtons() const override;
-  virtual base::string16 GetDialogButtonLabel(ui::DialogButton button) const override;
+  int GetDialogButtons() const override;
+  base::string16 GetDialogButtonLabel(ui::DialogButton button) const override;
 
   gfx::Size GetPreferredSize() const override;
 #endif
