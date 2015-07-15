@@ -1,7 +1,10 @@
 ![](android/java/res/mipmap-hdpi/app_icon.png) Sprocket
 ========
 The browser is based on Chromium's Content API.
-Supported platforms: Linux, Android
+Supported platforms: Linux, Android.
+Currently we have two branches: master and core.
+Core branch contains the relevant code to a minimal browser which can be easily extended with new features.
+Master branch contains extra features, for example toolbar, dialogs, tab support.
 Build steps
 -------------
 #### Getting the Chromium source code
@@ -48,6 +51,10 @@ ninja -C out/Release sprocket
 ninja -C out/Release sprocket_apk
 # install the apk
 ./build/android/adb_install_apk.py --apk Sprocket.apk --release
+# run it with specific url
+./tools/run_adb_sprocket www.google.com
+# kill the running app
+./tools/kill_adb_sprocket
 ```
 ##### Sandbox (Linux)
 [Official guide](https://code.google.com/p/chromium/wiki/LinuxSUIDSandboxDevelopment "Sandbox")
