@@ -1,0 +1,13 @@
+#!/bin/bash
+# Copyright (c) 2015 University of Szeged
+# Copyright 2014 The Chromium Authors.
+# All rights reserved.
+# Use of this source code is governed by a BSD-style license that can be
+# found in the LICENSE file.
+
+optional_url=$1
+
+adb shell am start \
+  -a android.intent.action.VIEW \
+  -n hu.uszeged.sprocket_apk/.SprocketActivity \
+  ${optional_url:+-d "$optional_url"}
