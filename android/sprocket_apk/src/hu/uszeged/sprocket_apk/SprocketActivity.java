@@ -61,7 +61,7 @@ public class SprocketActivity extends Activity {
 
         DeviceUtils.addDeviceSpecificUserAgentSwitch(this);
         try {
-            LibraryLoader.get(LibraryProcessType.PROCESS_BROWSER).ensureInitialized();
+            LibraryLoader.get(LibraryProcessType.PROCESS_BROWSER).ensureInitialized(getApplicationContext());
         } catch (ProcessInitException e) {
             Log.e(TAG, "ContentView initialization failed.", e);
             // Since the library failed to initialize nothing in the application

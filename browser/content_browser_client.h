@@ -44,21 +44,19 @@ class SprocketContentBrowserClient : public content::ContentBrowserClient {
   // protocol handlers.
   bool IsHandledURL(const GURL& url) override;
 
-  // Allows the embedder to pass extra command line flags.
-  // switches::kProcessType will already be set at this point.
-  void AppendExtraCommandLineSwitches(base::CommandLine* command_line,
-                                      int child_process_id) override;
-
   // Returns the default filename used in downloads when we have no idea what
   // else we should do with the file.
   std::string GetDefaultDownloadName() override;
 
   // Populates |mappings| with all files that need to be mapped before launching
   // a child process.
+#if defined(OS_ANDROID)
   void GetAdditionalMappedFilesForChildProcess(
       const base::CommandLine& command_line,
       int child_process_id,
-      content::FileDescriptorInfo* mappings) override;
+      content::FileDescriptorInfo* mappings,
+      std::map<int, base::MemoryMappedFile::Region>* regions) override;
+#endif
 
   // Create and return a new quota permission context.
   content::QuotaPermissionContext* CreateQuotaPermissionContext() override;
@@ -73,9 +71,6 @@ class SprocketContentBrowserClient : public content::ContentBrowserClient {
  private:
   SprocketBrowserContext* SprocketBrowserContextForBrowserContext(
       content::BrowserContext* content_browser_context);
-
-  base::ScopedFD v8_natives_fd_;
-  base::ScopedFD v8_snapshot_fd_;
 
   SprocketBrowserMainParts* browser_main_parts_;
 };

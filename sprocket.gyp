@@ -121,7 +121,6 @@
         '<(DEPTH)/net/net.gyp:net_resources',
         '<(DEPTH)/ui/resources/ui_resources.gyp:ui_resources',
         '<(DEPTH)/ui/strings/ui_strings.gyp:ui_strings',
-        'sprocket_resources',
       ],
       'conditions': [
         ['OS=="android"', {

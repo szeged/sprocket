@@ -13,6 +13,9 @@ NOTE: Do NOT use --no-history command line switch when cloning Chromium reposito
 [Linux official guide](http://dev.chromium.org/developers/how-tos/get-the-code "Get the code")
 
 [Android official guide](https://code.google.com/p/chromium/wiki/AndroidBuildInstructions "Android Instructions")
+
+[Linux ARM cross compile official guide](https://code.google.com/p/chromium/wiki/LinuxChromiumArm "ARM Instructions")
+
 #### Sprocket code
 Inside Chromium's 'src' directory, run the following commands:
 ```shell
@@ -20,14 +23,16 @@ Inside Chromium's 'src' directory, run the following commands:
 git checkout -b sprocket
 # get the code
 git clone https://github.com/szeged/sprocket.git sprocket
-# use a stable revision
-git reset --hard "$(< sprocket/LKGR)" && gclient sync --nohooks
+# checkout Sprocket Core branch
+cd sprocket && git checkout core && cd ..
+# use the latest working Chromium release revision
+git reset --hard "$(< sprocket/LKGR)" && gclient sync --nohooks --with_branch_heads --jobs 16
 ```
 Next, run the selected platform's commands.
 ##### Linux/PC
 ```shell
 # run the config
-./build/gyp_chromium sprocket/sprocket.gyp
+./build/gyp_chromium sprocket/sprocket.gyp -Dclang=0
 # build it with 'sprocket' target
 ninja -C out/Release sprocket
 # run it from the out dir
