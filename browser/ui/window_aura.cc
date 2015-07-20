@@ -79,14 +79,21 @@ void SprocketWindow::PlatformSetTitle(const base::string16& title) {
 }
 
 void SprocketWindow::PlatformToggleFullscreenModeForTab(bool enter_fullscreen) {
+  was_fullscreen_ = is_fullscreen_;
   if (is_fullscreen_ != enter_fullscreen) {
     is_fullscreen_ = enter_fullscreen;
     window_widget_->SetFullscreen(enter_fullscreen);
+    if (!is_fullscreen_)
+      sprocket_web_contents_->ExitFullscreenModeForTab(sprocket_web_contents_->web_contents());
   }
 }
 
 bool SprocketWindow::PlatformIsFullscreenForTabOrPending() const {
   return is_fullscreen_;
+}
+
+bool SprocketWindow::PlatformWasFullscreenForTab() const {
+  return was_fullscreen_;
 }
 
 void SprocketWindow::PlatformHandleKeyboardEvent(const content::NativeWebKeyboardEvent& event) {

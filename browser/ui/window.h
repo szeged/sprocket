@@ -78,7 +78,9 @@ class SprocketWindow {
 
   void PlatformToggleFullscreenModeForTab(bool enter_fullscreen);
   bool PlatformIsFullscreenForTabOrPending() const;
-
+#if defined(USE_AURA)
+  bool PlatformWasFullscreenForTab() const;
+#endif
   void PlatformHandleKeyboardEvent(const content::NativeWebKeyboardEvent& event);
 
   SprocketWebContents* sprocket_web_contents_;
@@ -94,6 +96,7 @@ class SprocketWindow {
   friend class SprocketWindowDelegateView;
 
   bool is_fullscreen_;
+  bool was_fullscreen_;
 #endif
 
   static std::set<SprocketWindow*> windows_;

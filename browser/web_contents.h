@@ -106,8 +106,6 @@ class SprocketWebContents : public content::WebContentsDelegate {
 
   content::WebContents* web_contents() const { return web_contents_.get(); }
 
-
-
  private:
   explicit SprocketWebContents(SprocketWindow* window,
                                content::WebContents* web_contents);

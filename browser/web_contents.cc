@@ -134,7 +134,10 @@ void SprocketWebContents::ExitFullscreenModeForTab(content::WebContents* web_con
 
 void SprocketWebContents::ToggleFullscreenModeForTab(content::WebContents* web_contents,
                                        bool enter_fullscreen) {
-  window_->PlatformToggleFullscreenModeForTab(enter_fullscreen);
+#if defined(USE_AURA)
+  if (enter_fullscreen || !window_->PlatformWasFullscreenForTab())
+#endif
+    window_->PlatformToggleFullscreenModeForTab(enter_fullscreen);
   if (is_fullscreen_ != enter_fullscreen) {
     is_fullscreen_ = enter_fullscreen;
     web_contents->GetRenderViewHost()->WasResized();
