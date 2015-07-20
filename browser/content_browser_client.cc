@@ -53,9 +53,7 @@ class SprocketQuotaPermissionContext : public content::QuotaPermissionContext {
 
 
 SprocketContentBrowserClient::SprocketContentBrowserClient()
-    : v8_natives_fd_(-1),
-      v8_snapshot_fd_(-1),
-      browser_main_parts_(NULL) {
+    : browser_main_parts_(NULL) {
   DCHECK(!g_browser_client);
   g_browser_client = this;
 }
@@ -97,57 +95,24 @@ bool SprocketContentBrowserClient::IsHandledURL(const GURL& url) {
   return false;
 }
 
-void SprocketContentBrowserClient::AppendExtraCommandLineSwitches(
-    base::CommandLine* command_line,
-    int child_process_id) {
-#if defined(V8_USE_EXTERNAL_STARTUP_DATA)
-  std::string process_type = command_line->GetSwitchValueASCII(switches::kProcessType);
-  if (process_type != switches::kZygoteProcess) {
-    command_line->AppendSwitch(::switches::kV8NativesPassedByFD);
-    command_line->AppendSwitch(::switches::kV8SnapshotPassedByFD);
-  }
-#endif // V8_USE_EXTERNAL_STARTUP_DATA
-}
-
 std::string SprocketContentBrowserClient::GetDefaultDownloadName() {
   return "download";
 }
 
+#if defined(OS_ANDROID)
 void SprocketContentBrowserClient::GetAdditionalMappedFilesForChildProcess(
     const base::CommandLine& command_line,
     int child_process_id,
-    content::FileDescriptorInfo* mappings) {
-#if defined(V8_USE_EXTERNAL_STARTUP_DATA)
-  if (v8_snapshot_fd_.get() == -1 && v8_natives_fd_.get() == -1) {
-    int v8_natives_fd = -1;
-    int v8_snapshot_fd = -1;
-    if (gin::V8Initializer::OpenV8FilesForChildProcesses(&v8_natives_fd,
-                                                         &v8_snapshot_fd)) {
-      v8_natives_fd_.reset(v8_natives_fd);
-      v8_snapshot_fd_.reset(v8_snapshot_fd);
-    }
-  }
-  mappings->Share(kV8NativesDataDescriptor, v8_natives_fd_.get());
-  mappings->Share(kV8SnapshotDataDescriptor, v8_snapshot_fd_.get());
-#endif // V8_USE_EXTERNAL_STARTUP_DATA
-
-#if defined(OS_ANDROID)
-  int flags = base::File::FLAG_OPEN | base::File::FLAG_READ;
-  base::FilePath pak_file;
-  bool r = PathService::Get(base::DIR_ANDROID_APP_DATA, &pak_file);
-  CHECK(r);
-  pak_file = pak_file.Append(FILE_PATH_LITERAL("paks"));
-  pak_file = pak_file.Append(FILE_PATH_LITERAL("sprocket.pak"));
-
-  base::File f(pak_file, flags);
-  if (!f.IsValid()) {
-    NOTREACHED() << "Failed to open file when creating renderer process: "
-                 << "sprocket.pak";
-  }
-
-  mappings->Transfer(kSprocketPakDescriptor, base::ScopedFD(f.TakePlatformFile()));
-#endif // OS_ANDROID
+    content::FileDescriptorInfo* mappings,
+    std::map<int, base::MemoryMappedFile::Region>* regions) {
+  mappings->Share(
+      kSprocketPakDescriptor,
+      base::GlobalDescriptors::GetInstance()->Get(kSprocketPakDescriptor));
+  regions->insert(std::make_pair(
+      kSprocketPakDescriptor,
+      base::GlobalDescriptors::GetInstance()->GetRegion(kSprocketPakDescriptor)));
 }
+#endif
 
 content::WebContentsViewDelegate* SprocketContentBrowserClient::GetWebContentsViewDelegate(
     content::WebContents* web_contents) {

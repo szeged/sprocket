@@ -19,6 +19,7 @@
 #include "ui/base/resource/resource_bundle.h"
 
 #if defined(OS_ANDROID)
+#include "base/android/apk_assets.h"
 #include "base/posix/global_descriptors.h"
 #include "sprocket/android/descriptors.h"
 #endif
@@ -84,26 +85,40 @@ content::ContentBrowserClient* SprocketMainDelegate::CreateContentBrowserClient(
 // static
 void SprocketMainDelegate::InitializeResourceBundle() {
 #if defined(OS_ANDROID)
-  int pak_fd =
-      base::GlobalDescriptors::GetInstance()->MaybeGet(kSprocketPakDescriptor);
+  // On Android, the renderer runs with a different UID and can never access
+  // the file system. Use the file descriptor passed in at launch time.
+  auto* global_descriptors = base::GlobalDescriptors::GetInstance();
+  int pak_fd = global_descriptors->MaybeGet(kSprocketPakDescriptor);
+  base::MemoryMappedFile::Region pak_region;
   if (pak_fd >= 0) {
-    ui::ResourceBundle::InitSharedInstanceWithPakFileRegion(
-        base::File(pak_fd), base::MemoryMappedFile::Region::kWholeFile);
-    ResourceBundle::GetSharedInstance().AddDataPackFromFile(
-        base::File(pak_fd), ui::SCALE_FACTOR_100P);
-    return;
+    pak_region = global_descriptors->GetRegion(kSprocketPakDescriptor);
+  } else {
+    pak_fd =
+        base::android::OpenApkAsset("assets/sprocket.pak", &pak_region);
+    // Loaded from disk for browsertests.
+    if (pak_fd < 0) {
+      base::FilePath pak_file;
+      bool r = PathService::Get(base::DIR_ANDROID_APP_DATA, &pak_file);
+      DCHECK(r);
+      pak_file = pak_file.Append(FILE_PATH_LITERAL("paks"));
+      pak_file = pak_file.Append(FILE_PATH_LITERAL("sprocket.pak"));
+      int flags = base::File::FLAG_OPEN | base::File::FLAG_READ;
+      pak_fd = base::File(pak_file, flags).TakePlatformFile();
+      pak_region = base::MemoryMappedFile::Region::kWholeFile;
+    }
+    global_descriptors->Set(kSprocketPakDescriptor, pak_fd, pak_region);
   }
-#endif
-  base::FilePath pak_file;
-  base::FilePath pak_dir;
-
-#if defined(OS_ANDROID)
-  bool got_path = PathService::Get(base::DIR_ANDROID_APP_DATA, &pak_dir);
-  DCHECK(got_path);
-  pak_dir = pak_dir.Append(FILE_PATH_LITERAL("paks"));
+  DCHECK_GE(pak_fd, 0);
+  // This is clearly wrong. See crbug.com/330930
+  ui::ResourceBundle::InitSharedInstanceWithPakFileRegion(base::File(pak_fd),
+                                                          pak_region);
+  ui::ResourceBundle::GetSharedInstance().AddDataPackFromFileRegion(
+      base::File(pak_fd), pak_region, ui::SCALE_FACTOR_100P);
 #else
-  PathService::Get(base::DIR_MODULE, &pak_dir);
-#endif
-  pak_file = pak_dir.Append(FILE_PATH_LITERAL("sprocket.pak"));
+  base::FilePath pak_file;
+  bool r = PathService::Get(base::DIR_MODULE, &pak_file);
+  DCHECK(r);
+  pak_file = pak_file.Append(FILE_PATH_LITERAL("sprocket.pak"));
   ui::ResourceBundle::InitSharedInstanceWithPakPath(pak_file);
+#endif
 }

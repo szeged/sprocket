@@ -4,6 +4,12 @@
     'chromium_code': 1,
     'grit_out_dir': '<(SHARED_INTERMEDIATE_DIR)/sprocket',
     'sprocket_version': '0.1.0.0',
+    'conditions': [
+      # On Android disable Linting by default
+      ['OS=="android"', {
+        'android_lint%': 0,
+      }]
+    ],
   },
   'targets': [
     {
@@ -144,7 +150,7 @@
         '<(DEPTH)/net/net.gyp:net_resources',
         '<(DEPTH)/ui/resources/ui_resources.gyp:ui_resources',
         '<(DEPTH)/ui/strings/ui_strings.gyp:ui_strings',
-        'sprocket_resources',
+        '<(DEPTH)/ui/views/resources/views_resources.gyp:views_resources',
       ],
       'conditions': [
         ['OS=="android"', {
@@ -173,6 +179,7 @@
               '<(SHARED_INTERMEDIATE_DIR)/ui/resources/webui_resources.pak',
               '<(SHARED_INTERMEDIATE_DIR)/ui/strings/app_locale_settings_en-US.pak',
               '<(SHARED_INTERMEDIATE_DIR)/ui/strings/ui_strings_en-US.pak',
+              '<(SHARED_INTERMEDIATE_DIR)/ui/views/resources/views_resources_100_percent.pak',
             ],
             'pak_output': '<(PRODUCT_DIR)/sprocket.pak',
             'conditions': [
