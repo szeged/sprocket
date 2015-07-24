@@ -25,7 +25,6 @@
 #include "ui/views/layout/box_layout.h"
 #include "ui/views/widget/desktop_aura/desktop_screen.h"
 #include "ui/views/widget/widget_delegate.h"
-#include "sprocket/browser/ui/window_delegate_view_aura.h"
 #include "sprocket/browser/web_contents.h"
 
 namespace content {

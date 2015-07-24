@@ -12,7 +12,7 @@ NOTE: Do NOT use --no-history command line switch when cloning Chromium reposito
 
 [Linux official guide](http://dev.chromium.org/developers/how-tos/get-the-code "Get the code")
 
-[Android official guide](https://code.google.com/p/chromium/wiki/AndroidBuildInstructions "Android Instructions")
+[Android official guide](https://www.chromium.org/developers/how-tos/android-build-instructions "Android Instructions")
 
 [Linux ARM cross compile official guide](https://code.google.com/p/chromium/wiki/LinuxChromiumArm "ARM Instructions")
 
