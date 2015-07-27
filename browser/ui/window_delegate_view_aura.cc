@@ -52,6 +52,8 @@ void SprocketWindowDelegateView::InitSprocketWindow() {
 void SprocketWindowDelegateView::InitAccelerators() {
   GetFocusManager()->RegisterAccelerator(ui::Accelerator(ui::VKEY_F11, ui::EF_NONE),
       ui::AcceleratorManager::kNormalPriority, this);
+  GetFocusManager()->RegisterAccelerator(ui::Accelerator(ui::VKEY_F10, ui::EF_NONE),
+      ui::AcceleratorManager::kNormalPriority, this);
 }
 
 bool SprocketWindowDelegateView::CanResize() const {
@@ -96,6 +98,9 @@ void SprocketWindowDelegateView::HandleKeyboardEvent(const content::NativeWebKey
 
 bool SprocketWindowDelegateView::AcceleratorPressed(const ui::Accelerator& accelerator) {
   switch (accelerator.key_code()) {
+  case ui::VKEY_F10:
+    sprocket_web_contents_->ShowDevTools();
+    return true;
   case ui::VKEY_F11:
     sprocket_web_contents_->window()->PlatformToggleFullscreenModeForTab(
         !sprocket_web_contents_->window()->PlatformIsFullscreenForTabOrPending());

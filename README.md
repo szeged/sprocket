@@ -2,9 +2,10 @@
 ========
 The browser is based on Chromium's Content API.
 Supported platforms: Linux, Android.
-Currently we have two branches: master and core.
+Currently we have three branches: master, testing and core.
 Core branch contains the relevant code to a minimal browser which can be easily extended with new features.
 Master branch contains extra features, for example toolbar, dialogs, tab support.
+Testing branch contains test specific features, for example devtools.
 Build steps
 -------------
 #### Getting the Chromium source code
@@ -27,6 +28,9 @@ git clone https://github.com/szeged/sprocket.git sprocket
 cd sprocket && git checkout core && cd ..
 # use the latest working Chromium release revision
 git reset --hard "$(< sprocket/LKGR)" && gclient sync --nohooks --with_branch_heads --jobs 16
+# apply patches
+git apply sprocket/patch/gritsettings.patch
+git apply sprocket/patch/chromedriver.patch
 ```
 Next, run the selected platform's commands.
 ##### Linux/PC
@@ -72,6 +76,14 @@ BUILDTYPE=Release build/update-linux-sandbox.sh
 export CHROME_DEVEL_SANDBOX=/usr/local/sbin/chrome-devel-sandbox
 # run sprocket with sandbox
 ./out/Release/sprocket --use-sandbox
+```
+##### Chromedriver
+[Official site](https://sites.google.com/a/chromium.org/chromedriver/ "ChromeDriver")
+```shell
+# build the chromedirver
+ninja -C out/Release chromedriver
+# run the server
+./out/Release/chromedriver
 ```
 Additional info
 ---------------

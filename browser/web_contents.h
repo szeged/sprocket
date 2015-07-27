@@ -9,8 +9,10 @@
 
 #include "content/public/browser/web_contents.h"
 #include "content/public/browser/web_contents_delegate.h"
+#include "content/public/browser/web_contents_observer.h"
 
 class SprocketWindow;
+class SprocketDevToolsFrontend;
 
 namespace content {
 class BrowserContext;
@@ -25,7 +27,8 @@ class Event;
 // WebContentsDelegate: Objects implement this interface to get notified about
 // changes in the WebContents and to provide necessary functionality.
 
-class SprocketWebContents : public content::WebContentsDelegate {
+class SprocketWebContents : public content::WebContentsDelegate,
+                            public content::WebContentsObserver {
 
  public:
   ~SprocketWebContents() override;
@@ -48,6 +51,9 @@ class SprocketWebContents : public content::WebContentsDelegate {
   void Reload();
   void Stop();
   void Close();
+  void ShowDevTools();
+  void ShowDevToolsForElementAt(int x, int y);
+  void CloseDevTools();
 
   // content::WebContentsDelegate overrides.
 
@@ -107,14 +113,26 @@ class SprocketWebContents : public content::WebContentsDelegate {
   content::WebContents* web_contents() const { return web_contents_.get(); }
 
  private:
+
+  class DevToolsWebContentsObserver;
+
   explicit SprocketWebContents(SprocketWindow* window,
                                content::WebContents* web_contents);
 
   void ToggleFullscreenModeForTab(content::WebContents* web_contents,
                                   bool enter_fullscreen);
 
+// WebContentsObserver
+  void TitleWasSet(content::NavigationEntry* entry, bool explicit_set) override;
+
+  void InnerShowDevTools();
+  void OnDevToolsWebContentsDestroyed();
+
   scoped_ptr<content::WebContents> web_contents_;
   SprocketWindow* window_;
+
+  scoped_ptr<DevToolsWebContentsObserver> devtools_observer_;
+  SprocketDevToolsFrontend* devtools_frontend_;
 
   bool is_fullscreen_;
 };

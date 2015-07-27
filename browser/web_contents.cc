@@ -6,10 +6,33 @@
 
 #include "sprocket/browser/web_contents.h"
 
+#include "content/public/browser/devtools_agent_host.h"
+#include "content/public/browser/navigation_entry.h"
 #include "content/public/browser/render_view_host.h"
 #include "content/public/browser/web_contents.h"
+#include "content/public/browser/web_contents_observer.h"
+#include "sprocket/browser/devtools/devtools_frontend.h"
 #include "sprocket/browser/ui/window.h"
 #include "ui/events/event.h"
+
+class SprocketWebContents::DevToolsWebContentsObserver : public WebContentsObserver {
+ public:
+  DevToolsWebContentsObserver(SprocketWebContents* sprocket_web_contents,
+                              content::WebContents* web_contents)
+      : content::WebContentsObserver(web_contents),
+        sprocket_web_contents_(sprocket_web_contents) {
+  }
+
+  // WebContentsObserver
+  void WebContentsDestroyed() override {
+    sprocket_web_contents_->OnDevToolsWebContentsDestroyed();
+  }
+
+ private:
+  SprocketWebContents* sprocket_web_contents_;
+
+  DISALLOW_COPY_AND_ASSIGN(DevToolsWebContentsObserver);
+};
 
 // static
 SprocketWebContents* SprocketWebContents::CreateSprocketWebContents(
@@ -38,7 +61,9 @@ SprocketWebContents* SprocketWebContents::AdoptWebContents(
 
 SprocketWebContents::SprocketWebContents(SprocketWindow* window,
                                          content::WebContents* web_contents)
-    : window_(window),
+    : WebContentsObserver(web_contents),
+    window_(window),
+    devtools_frontend_(NULL),
     is_fullscreen_(false) {
   web_contents_.reset(web_contents);
   window->PlatformSetContents(this);
@@ -81,6 +106,23 @@ void SprocketWebContents::Stop() {
 
 void SprocketWebContents::Close() {
   window_->PlatformCloseWindow();
+}
+
+void SprocketWebContents::ShowDevTools() {
+  InnerShowDevTools();
+}
+
+void SprocketWebContents::ShowDevToolsForElementAt(int x, int y) {
+  InnerShowDevTools();
+  devtools_frontend_->InspectElementAt(x, y);
+}
+
+void SprocketWebContents::CloseDevTools() {
+  if (!devtools_frontend_)
+    return;
+  devtools_observer_.reset();
+  devtools_frontend_->Close();
+  devtools_frontend_ = NULL;
 }
 
 content::WebContents* SprocketWebContents::OpenURLFromTab(content::WebContents* source,
@@ -171,7 +213,28 @@ void SprocketWebContents::DeactivateContents(content::WebContents* contents) {
 void SprocketWebContents::HandleKeyboardEvent(content::WebContents* source,
                                               const content::NativeWebKeyboardEvent& event) {
 #if defined(USE_AURA)
-  if (event.os_event->type() == ui::ET_KEY_PRESSED)
+  if (event.os_event && event.os_event->type() == ui::ET_KEY_PRESSED)
     window_->PlatformHandleKeyboardEvent(event);
 #endif
+}
+
+void SprocketWebContents::TitleWasSet(content::NavigationEntry* entry, bool explicit_set) {
+  if (entry)
+    window_->PlatformSetTitle(entry->GetTitle());
+}
+
+void SprocketWebContents::InnerShowDevTools() {
+  if (!devtools_frontend_) {
+    devtools_frontend_ = SprocketDevToolsFrontend::Show(web_contents());
+    devtools_observer_.reset(new DevToolsWebContentsObserver(
+        this, devtools_frontend_->frontend_contents()->web_contents()));
+  }
+
+  devtools_frontend_->Activate();
+  devtools_frontend_->Focus();
+}
+
+void SprocketWebContents::OnDevToolsWebContentsDestroyed() {
+  devtools_observer_.reset();
+  devtools_frontend_ = NULL;
 }

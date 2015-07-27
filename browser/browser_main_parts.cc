@@ -13,9 +13,11 @@
 #include "base/message_loop/message_loop.h"
 #include "content/public/common/main_function_params.h"
 #include "content/public/common/url_constants.h"
-#include "sprocket/browser/web_contents.h"
-#include "sprocket/browser/ui/window.h"
+#include "components/devtools_http_handler/devtools_http_handler.h"
 #include "sprocket/browser/browser_context.h"
+#include "sprocket/browser/devtools/devtools_manager_delegate.h"
+#include "sprocket/browser/ui/window.h"
+#include "sprocket/browser/web_contents.h"
 #include "net/base/filename_util.h"
 #include "net/base/net_module.h"
 #include "net/grit/net_resources.h"
@@ -68,10 +70,12 @@ base::StringPiece NetResourceProvider(int key) {
 SprocketBrowserMainParts::SprocketBrowserMainParts(
     const content::MainFunctionParams& parameters)
     : parameters_(parameters),
-  run_message_loop_(true) {
+      run_message_loop_(true),
+      devtools_http_handler_(nullptr) {
 }
 
 SprocketBrowserMainParts::~SprocketBrowserMainParts() {
+  DCHECK(!devtools_http_handler_);
 }
 
 void SprocketBrowserMainParts::PreEarlyInitialization() {
@@ -110,6 +114,9 @@ void SprocketBrowserMainParts::PreMainMessageLoopRun() {
 
   net::NetModule::SetResourceProvider(NetResourceProvider);
 
+  devtools_http_handler_.reset(
+      SprocketDevToolsManagerDelegate::CreateHttpHandler(browser_context_.get()));
+
   InitializeMessageLoopContext();
 }
 
@@ -119,6 +126,7 @@ bool SprocketBrowserMainParts::MainMessageLoopRun(int* result_code) {
 
 void SprocketBrowserMainParts::PostMainMessageLoopRun() {
   SprocketWindow::Deinitialize();
+  devtools_http_handler_.reset();
   browser_context_.reset();
   off_the_record_browser_context_.reset();
 }

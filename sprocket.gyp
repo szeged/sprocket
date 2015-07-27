@@ -8,6 +8,7 @@
     'pkg-config': 'pkg-config',
     'chromium_code': 1,
     'grit_out_dir': '<(SHARED_INTERMEDIATE_DIR)/sprocket',
+    'protoc_out_dir': '<(SHARED_INTERMEDIATE_DIR)/protoc_out',
     'sprocket_version': '0.1.0.0',
   },
   'targets': [
@@ -38,6 +39,8 @@
         '<(DEPTH)/content/content.gyp:content_resources',
         '<(DEPTH)/content/content.gyp:content_utility',
         '<(DEPTH)/content/content.gyp:content_browser',
+        '<(DEPTH)/components/components.gyp:devtools_discovery',
+        '<(DEPTH)/components/components.gyp:devtools_http_handler',
         'sprocket_pak',
       ],
       'sources': [
@@ -53,6 +56,10 @@
         'browser/content_browser_client.h',
         'browser/web_contents.cc',
         'browser/web_contents.h',
+        'browser/devtools/devtools_frontend.cc',
+        'browser/devtools/devtools_frontend.h',
+        'browser/devtools/devtools_manager_delegate.cc',
+        'browser/devtools/devtools_manager_delegate.h',
         'browser/net/url_request_context_getter.h',
         'browser/net/url_request_context_getter.cc',
         'browser/ui/window.cc',
@@ -128,6 +135,11 @@
         '<(DEPTH)/ui/strings/ui_strings.gyp:ui_strings',
       ],
       'conditions': [
+        ['OS!="android"', {
+          'dependencies': [
+            '<(DEPTH)/content/browser/devtools/devtools_resources.gyp:devtools_resources',
+          ],
+        }],
         ['OS=="android"', {
           'copies': [
             {
@@ -157,6 +169,7 @@
             ],
             'conditions': [
               ['OS!="android"', {
+                'pak_inputs': ['<(SHARED_INTERMEDIATE_DIR)/blink/devtools_resources.pak',],
                 'pak_output': '<(PRODUCT_DIR)/sprocket.pak',
               }, {
                 'pak_output': '<(PRODUCT_DIR)/sprocket/assets/sprocket.pak',
@@ -172,6 +185,13 @@
       'type': 'none',
       'dependencies': [
         '<(DEPTH)/sandbox/sandbox.gyp:chrome_sandbox',
+      ],
+    },
+    {
+      'target_name': 'chromedriver',
+      'type': 'executable',
+      'dependencies': [
+        '<(DEPTH)/chrome/chrome.gyp:chromedriver',
       ],
     },
     {

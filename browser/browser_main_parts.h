@@ -13,6 +13,10 @@
 #include "content/public/common/main_function_params.h"
 #include "sprocket/browser/browser_context.h"
 
+namespace devtools_http_handler {
+class DevToolsHttpHandler;
+}
+
 // This class contains different "stages" to be executed by |BrowserMain()|,
 // Each stage is represented by a single BrowserMainParts method, called from
 // the corresponding method in |BrowserMainLoop| (e.g., EarlyInitialization())
@@ -65,6 +69,10 @@ class SprocketBrowserMainParts : public content::BrowserMainParts {
   // threads are stopped.
   void PostMainMessageLoopRun() override;
 
+  devtools_http_handler::DevToolsHttpHandler* devtools_http_handler() {
+    return devtools_http_handler_.get();
+  }
+
  protected:
   virtual void InitializeBrowserContexts();
   virtual void InitializeMessageLoopContext();
@@ -82,6 +90,8 @@ class SprocketBrowserMainParts : public content::BrowserMainParts {
 
   const content::MainFunctionParams parameters_;
   bool run_message_loop_;
+
+  scoped_ptr<devtools_http_handler::DevToolsHttpHandler> devtools_http_handler_;
 
   DISALLOW_COPY_AND_ASSIGN(SprocketBrowserMainParts);
 };
