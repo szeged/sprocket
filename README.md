@@ -24,6 +24,7 @@ git checkout -b sprocket
 # get the code
 git clone https://github.com/szeged/sprocket.git sprocket
 # use the latest working Chromium release revision
+# if it doesn't see the revision, you should try `git fetch --tags` first
 git reset --hard "$(< sprocket/LKGR)" && gclient sync --nohooks --with_branch_heads --jobs 16
 ```
 Next, run the selected platform's commands.
@@ -55,9 +56,9 @@ ninja -C out/Release sprocket_apk
 # install the apk
 ./build/android/adb_install_apk.py --apk Sprocket.apk --release
 # run it with specific url
-./tools/run_adb_sprocket www.google.com
+./sprocket/tools/run_adb_sprocket www.google.com
 # kill the running app
-./tools/kill_adb_sprocket
+./sprocket/tools/kill_adb_sprocket
 ```
 ##### Sandbox (Linux)
 [Official guide](https://code.google.com/p/chromium/wiki/LinuxSUIDSandboxDevelopment "Sandbox")
