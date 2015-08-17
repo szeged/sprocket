@@ -13,6 +13,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
 
+import java.util.List;
+import java.util.ArrayList;
+
 import org.chromium.base.CalledByNative;
 import org.chromium.base.ThreadUtils;
 import org.chromium.base.VisibleForTesting;
@@ -32,7 +35,7 @@ public class SprocketManager extends FrameLayout {
     private static boolean sStartup = true;
     private WindowAndroid mWindow;
     private SprocketWindow mActiveSprocketWindow;
-
+    private List<SprocketWindow> sprocketWindows;
     private String mStartupUrl = DEFAULT_SPROCKET_URL;
 
     // The target for all content rendering.
@@ -45,6 +48,7 @@ public class SprocketManager extends FrameLayout {
     public SprocketManager(final Context context, AttributeSet attrs) {
         super(context, attrs);
         nativeInit(this);
+        sprocketWindows = new ArrayList<SprocketWindow>();
         mContentViewClient = new ContentViewClient() {
             @Override
             public ContentVideoViewClient getContentVideoViewClient() {
@@ -146,10 +150,11 @@ public class SprocketManager extends FrameLayout {
         LayoutInflater inflater =
                 (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         SprocketWindow sprocketWindow = (SprocketWindow) inflater.inflate(R.layout.sprocket_view, null);
+        if (mActiveSprocketWindow != null)
+            sprocketWindows.add(sprocketWindow);
         sprocketWindow.initialize(nativeSprocketWindowPtr, mWindow, mContentViewClient);
 
-        // TODO(tedchoc): Allow switching back to these inactive SprocketWindow.
-        if (mActiveSprocketWindow != null) removeSprocketWindow(mActiveSprocketWindow);
+        if (mActiveSprocketWindow != null) removeSprocketWindow(mActiveSprocketWindow, false);
 
         showSprocketWindow(sprocketWindow);
         return sprocketWindow;
@@ -168,13 +173,19 @@ public class SprocketManager extends FrameLayout {
     }
 
     @CalledByNative
-    private void removeSprocketWindow(SprocketWindow sprocketWindow) {
+    private void removeSprocketWindow(SprocketWindow sprocketWindow, boolean shouldShow) {
         if (sprocketWindow == mActiveSprocketWindow) mActiveSprocketWindow = null;
         if (sprocketWindow.getParent() == null) return;
         ContentViewCore contentViewCore = sprocketWindow.getContentViewCore();
         if (contentViewCore != null) contentViewCore.onHide();
         sprocketWindow.setContentViewRenderView(null);
         removeView(sprocketWindow);
+
+        if (shouldShow && sprocketWindows.size() > 1) {
+            mActiveSprocketWindow = sprocketWindows.get((sprocketWindows.lastIndexOf(sprocketWindow) + 1) % sprocketWindows.size());
+            showSprocketWindow(mActiveSprocketWindow);
+            sprocketWindows.remove(sprocketWindow);
+        }
     }
 
     private static native void nativeInit(Object sprocketManagerInstance);

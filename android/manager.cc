@@ -44,7 +44,7 @@ jobject CreateSprocketWindow(SprocketWindow* sprocket_window) {
 void RemoveSprocketWindow(jobject sprocket_window) {
   JNIEnv* env = base::android::AttachCurrentThread();
   jobject j_sprocket_manager = g_global_state.Get().j_sprocket_manager.obj();
-  Java_SprocketManager_removeSprocketWindow(env, j_sprocket_manager, sprocket_window);
+  Java_SprocketManager_removeSprocketWindow(env, j_sprocket_manager, sprocket_window, true);
 }
 
 // Register native methods

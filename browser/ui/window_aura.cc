@@ -40,6 +40,7 @@ void SprocketWindow::PlatformExit() {
 }
 
 void SprocketWindow::PlatformCleanUp() {
+  delete sprocket_web_contents_;
 }
 
 void SprocketWindow::PlatformCreateWindow(int width, int height) {

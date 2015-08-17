@@ -62,7 +62,6 @@ SprocketWindow::SprocketWindow() {
 }
 
 SprocketWindow::~SprocketWindow() {
-  delete sprocket_web_contents_;
   PlatformCleanUp();
 
   windows_.erase(this);

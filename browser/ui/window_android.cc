@@ -36,9 +36,12 @@ void SprocketWindow::PlatformCreateWindow(int width, int height) {
 }
 
 void SprocketWindow::PlatformCloseWindow() {
+  RemoveSprocketWindow(java_object_.obj());
+  delete sprocket_web_contents_;
 }
 
 void SprocketWindow::PlatformSetContents(SprocketWebContents* sprocket_web_contents) {
+  sprocket_web_contents_ = sprocket_web_contents;
   JNIEnv* env = AttachCurrentThread();
   Java_SprocketWindow_initFromNativeTabContents(
       env,
