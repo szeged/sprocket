@@ -62,9 +62,9 @@ ninja -C out/Release sprocket_apk
 # install the apk
 ./build/android/adb_install_apk.py --apk Sprocket.apk --release
 # run it with specific url
-./sprocket/tools/run_adb_sprocket www.google.com
+./sprocket/tools/android/run_adb_sprocket www.google.com
 # kill the running app
-./sprocket/tools/kill_adb_sprocket
+./sprocket/tools/android/kill_adb_sprocket
 ```
 ##### Sandbox (Linux)
 [Official guide](https://code.google.com/p/chromium/wiki/LinuxSUIDSandboxDevelopment "Sandbox")
