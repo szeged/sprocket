@@ -24,9 +24,14 @@
 #include "ui/views/controls/webview/webview.h"
 #include "ui/views/layout/box_layout.h"
 #include "ui/views/layout/grid_layout.h"
+#include "ui/views/layout/fill_layout.h"
 #include "ui/views/widget/desktop_aura/desktop_screen.h"
 #include "ui/views/widget/widget_delegate.h"
 #include "ui/views/window/client_view.h"
+
+namespace content {
+struct NativeWebKeyboardEvent;
+}
 
 class Tab;
 class TabbedPane;
@@ -56,6 +61,9 @@ class SprocketWindowDelegateView : public views::WidgetDelegateView,
   void EnableUIControl(SprocketWindow::UIControl control, bool is_enabled);
 
   void ShowWebContentsContextMenu(const content::ContextMenuParams& params);
+
+  void SetFullscreen(bool fullscreen);
+  void HandleKeyboardEvent(const content::NativeWebKeyboardEvent& event);
 
   //TabbedPaneListener override
   void TabSelectedAt(int index) override;
@@ -87,6 +95,8 @@ class SprocketWindowDelegateView : public views::WidgetDelegateView,
 
   // Overridden from AcceleratorTarget:
   bool AcceleratorPressed(const ui::Accelerator& accelerator) override;
+
+  views::View* grid_view_;
 
   // Window title
   base::string16 title_;

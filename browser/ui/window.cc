@@ -58,7 +58,8 @@ void SprocketWindow::Deinitialize() {
   PlatformExit();
 }
 
-SprocketWindow::SprocketWindow() {
+SprocketWindow::SprocketWindow()
+    : is_fullscreen_(false) {
 }
 
 SprocketWindow::~SprocketWindow() {

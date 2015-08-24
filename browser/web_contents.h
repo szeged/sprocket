@@ -19,6 +19,11 @@ class Tab;
 namespace content {
 class BrowserContext;
 class SiteInstance;
+struct NativeWebKeyboardEvent;
+}
+
+namespace ui {
+class Event;
 }
 
 // WebContentsDelegate: Objects implement this interface to get notified about
@@ -94,8 +99,13 @@ class SprocketWebContents : public content::WebContentsDelegate {
   // loaded).
   void LoadProgressChanged(content::WebContents* source, double progress) override;
 
+  // Called when the renderer puts a tab into fullscreen mode.
+  // |origin| is the origin of the initiating frame inside the |web_contents|.
+  // |origin| can be empty in which case the |web_contents| last committed
+  // URL's origin should be used.
   void EnterFullscreenModeForTab(content::WebContents* web_contents,
                                  const GURL& origin) override;
+  // Called when the renderer puts a tab out of fullscreen mode.
   void ExitFullscreenModeForTab(content::WebContents* web_contents) override;
   bool IsFullscreenForTabOrPending(
       const content::WebContents* web_contents) const override;
@@ -125,7 +135,10 @@ class SprocketWebContents : public content::WebContentsDelegate {
   // Returns true if the context menu operation was handled by the delegate.
   bool HandleContextMenu(const content::ContextMenuParams& params) override;
 
-
+  // Allows delegates to handle unhandled keyboard messages coming back from
+  // the renderer.
+  void HandleKeyboardEvent(content::WebContents* source,
+                           const content::NativeWebKeyboardEvent& event) override;
 
   content::WebContents* web_contents() const { return web_contents_.get(); }
 #if defined(USE_AURA)

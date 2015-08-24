@@ -90,18 +90,18 @@ void SprocketWindow::PlatformShowAuthenticationDialog(SprocketAuthenticationDial
   // TODO: Implement!
 }
 
-void SprocketWindow::PlatformToggleFullscreenModeForTab(
-    content::WebContents* web_contents,
-    bool enter_fullscreen) {
+void SprocketWindow::PlatformToggleFullscreenModeForTab(bool enter_fullscreen) {
   JNIEnv* env = AttachCurrentThread();
   Java_SprocketWindow_toggleFullscreenModeForTab(
       env, java_object_.obj(), enter_fullscreen);
 }
 
-bool SprocketWindow::PlatformIsFullscreenForTabOrPending(
-    const content::WebContents* web_contents) const {
+bool SprocketWindow::PlatformIsFullscreenForTabOrPending() const {
   JNIEnv* env = AttachCurrentThread();
   return Java_SprocketWindow_isFullscreenForTabOrPending(env, java_object_.obj());
+}
+
+void SprocketWindow::PlatformHandleKeyboardEvent(const content::NativeWebKeyboardEvent& event) {
 }
 
 // static

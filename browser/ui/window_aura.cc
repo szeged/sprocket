@@ -156,3 +156,33 @@ void SprocketWindow::PlatformShowAuthenticationDialog(SprocketAuthenticationDial
   // TODO: This does not work: dialog_widget->SetAlwaysOnTop(true);
   dialog_widget->Show();
 }
+
+void SprocketWindow::PlatformToggleFullscreenModeForTab(bool enter_fullscreen) {
+  was_fullscreen_ = is_fullscreen_;
+  if (is_fullscreen_ != enter_fullscreen) {
+    is_fullscreen_ = enter_fullscreen;
+    window_widget_->SetFullscreen(enter_fullscreen);
+    SprocketWindowDelegateView* delegate_view =
+        static_cast<SprocketWindowDelegateView*>(window_widget_->widget_delegate());
+    delegate_view->SetFullscreen(enter_fullscreen);
+
+    if (!is_fullscreen_) {
+      SprocketWebContents* sprocket_web_contents = PlatformGetSelectedTab()->sprocket_web_contents();
+      sprocket_web_contents->ExitFullscreenModeForTab(sprocket_web_contents->web_contents());
+    }
+  }
+}
+
+bool SprocketWindow::PlatformIsFullscreenForTabOrPending() const {
+  return is_fullscreen_;
+}
+
+bool SprocketWindow::PlatformWasFullscreenForTab() const {
+  return was_fullscreen_;
+}
+
+void SprocketWindow::PlatformHandleKeyboardEvent(const content::NativeWebKeyboardEvent& event) {
+  SprocketWindowDelegateView* delegate_view =
+      static_cast<SprocketWindowDelegateView*>(window_widget_->widget_delegate());
+  delegate_view->HandleKeyboardEvent(event);
+}

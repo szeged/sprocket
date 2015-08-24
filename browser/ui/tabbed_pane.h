@@ -36,6 +36,8 @@ class TabbedPane : public views::View,
 
   int selected_tab_index() const { return selected_tab_index_; }
 
+  views::View* contents() const {return contents_; }
+
   // Returns the number of tabs.
   int GetTabCount() const;
 

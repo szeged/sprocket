@@ -44,7 +44,7 @@ SprocketWebContents* SprocketWebContents::AdoptWebContents(
 SprocketWebContents::SprocketWebContents(SprocketWindow* window,
                                          content::WebContents* web_contents)
     : window_(window),
-    is_fullscreen_(false) {
+      is_fullscreen_(false) {
   web_contents_.reset(web_contents);
   window->PlatformAddTab(this);
   web_contents->SetDelegate(this);
@@ -214,10 +214,11 @@ void SprocketWebContents::ExitFullscreenModeForTab(content::WebContents* web_con
 }
 
 void SprocketWebContents::ToggleFullscreenModeForTab(content::WebContents* web_contents,
-                                       bool enter_fullscreen) {
-#if defined(OS_ANDROID)
-  window_->PlatformToggleFullscreenModeForTab(web_contents, enter_fullscreen);
+                                                     bool enter_fullscreen) {
+#if defined(USE_AURA)
+  if (enter_fullscreen || !window_->PlatformWasFullscreenForTab())
 #endif
+    window_->PlatformToggleFullscreenModeForTab(enter_fullscreen);
   if (is_fullscreen_ != enter_fullscreen) {
     is_fullscreen_ = enter_fullscreen;
     web_contents->GetRenderViewHost()->WasResized();
@@ -225,11 +226,7 @@ void SprocketWebContents::ToggleFullscreenModeForTab(content::WebContents* web_c
 }
 
 bool SprocketWebContents::IsFullscreenForTabOrPending(const content::WebContents* web_contents) const {
-#if defined(OS_ANDROID)
-  return window_->PlatformIsFullscreenForTabOrPending(web_contents);
-#else
   return is_fullscreen_;
-#endif
 }
 
 void SprocketWebContents::CloseContents(content::WebContents* source) {
@@ -265,4 +262,12 @@ void SprocketWebContents::DeactivateContents(content::WebContents* contents) {
 
 bool SprocketWebContents::HandleContextMenu(const content::ContextMenuParams& params) {
   return window_->PlatformHandleContextMenu(params);
+}
+
+void SprocketWebContents::HandleKeyboardEvent(content::WebContents* source,
+                                              const content::NativeWebKeyboardEvent& event) {
+#if defined(USE_AURA)
+  if (event.os_event && event.os_event->type() == ui::ET_KEY_PRESSED)
+    window_->PlatformHandleKeyboardEvent(event);
+#endif
 }

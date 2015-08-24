@@ -5,6 +5,7 @@
 // found in the LICENSE file.
 
 #include "sprocket/browser/ui/window_delegate_view_aura.h"
+#include "ui/content_accelerators/accelerator_util.h"
 #include "url/gurl.h"
 
 SprocketWindowDelegateView::SprocketWindowDelegateView()
@@ -100,6 +101,10 @@ void SprocketWindowDelegateView::ShowWebContentsContextMenu(const content::Conte
   }
 }
 
+void SprocketWindowDelegateView::HandleKeyboardEvent(const content::NativeWebKeyboardEvent& event) {
+  AcceleratorPressed(ui::GetAcceleratorFromNativeWebKeyboardEvent(event));
+}
+
 void SprocketWindowDelegateView::TabSelectedAt(int index) {
   SprocketWebContents* sprocket_web_content = tabbed_pane_->GetSelectedTab()->sprocket_web_contents();
   SprocketWindow* sprocket_window = sprocket_web_content->window();
@@ -130,9 +135,13 @@ void SprocketWindowDelegateView::OpenNewEmptyTab() {
 
 void SprocketWindowDelegateView::InitSprocketWindow() {
   set_background(views::Background::CreateStandardPanelBackground());
+  views::FillLayout* fill_layout = new views::FillLayout();
+  SetLayoutManager(fill_layout);
 
-  views::GridLayout* layout = new views::GridLayout(this);
-  SetLayoutManager(layout);
+  grid_view_ = new views::View();
+  views::GridLayout* layout = new views::GridLayout(grid_view_);
+  grid_view_->SetLayoutManager(layout);
+  AddChildView(grid_view_);
 
   views::ColumnSet* column_set = layout->AddColumnSet(0);
   column_set->AddPaddingColumn(0, 2);
@@ -159,11 +168,30 @@ void SprocketWindowDelegateView::InitSprocketWindow() {
   }
 
   layout->AddPaddingRow(0, 5);
+
   InitAccelerators();
+}
+
+void SprocketWindowDelegateView::SetFullscreen(bool fullscreen) {
+  views::View* contents = tabbed_pane_->contents();
+
+  if (fullscreen) {
+    RemoveChildView(grid_view_);
+    AddChildView(contents);
+
+    contents->SetBounds(0, 0, width(), height());
+    for (int i = 0; i < contents->child_count(); ++i)
+      contents->child_at(i)->SetSize(contents->size());
+  } else {
+    RemoveChildView(contents);
+    AddChildView(grid_view_);
+    tabbed_pane_->AddChildView(contents);
+  }
 }
 
 void SprocketWindowDelegateView::InitAccelerators() {
   static const ui::KeyboardCode keys[] = { ui::VKEY_F5,
+                                           ui::VKEY_F11,
                                            ui::VKEY_BROWSER_BACK,
                                            ui::VKEY_BROWSER_FORWARD };
   for (size_t i = 0; i < arraysize(keys); ++i) {
@@ -222,6 +250,10 @@ bool SprocketWindowDelegateView::AcceleratorPressed(const ui::Accelerator& accel
   switch (accelerator.key_code()) {
   case ui::VKEY_F5:
     sprocket_web_contents->Reload();
+    return true;
+  case ui::VKEY_F11:
+    sprocket_web_contents->window()->PlatformToggleFullscreenModeForTab(
+        !sprocket_web_contents->window()->PlatformIsFullscreenForTabOrPending());
     return true;
   case ui::VKEY_BROWSER_BACK:
     sprocket_web_contents->GoBackOrForward(-1);

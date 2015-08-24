@@ -32,6 +32,7 @@ class GURL;
 namespace content {
 class WebContents;
 struct ContextMenuParams;
+struct NativeWebKeyboardEvent;
 }
 
 class SprocketWindow {
@@ -101,13 +102,14 @@ class SprocketWindow {
   void PlatformShowJavaScriptDialog(SprocketJavaScriptDialog* dialog);
   // Asks for username and password
   void PlatformShowAuthenticationDialog(SprocketAuthenticationDialog* dialog);
+  // Enters/exits fullscreen mode
+  void PlatformToggleFullscreenModeForTab(bool enter_fullscreen);
+  // Returns with the state of the window
+  bool PlatformIsFullscreenForTabOrPending() const;
 
-#if defined(OS_ANDROID)
-  void PlatformToggleFullscreenModeForTab(content::WebContents* web_contents,
-                                          bool enter_fullscreen);
-  bool PlatformIsFullscreenForTabOrPending(
-      const content::WebContents* web_contents) const;
-#endif
+  bool PlatformWasFullscreenForTab() const;
+
+  void PlatformHandleKeyboardEvent(const content::NativeWebKeyboardEvent& event);
 
 #if defined(OS_ANDROID)
   base::android::ScopedJavaGlobalRef<jobject> java_object_;
@@ -121,6 +123,9 @@ class SprocketWindow {
 #endif
 
   static std::set<SprocketWindow*> windows_;
+
+  bool is_fullscreen_;
+  bool was_fullscreen_;
 
   friend class SprocketWebContents;
   friend class SprocketJavaScriptDialogManager;
