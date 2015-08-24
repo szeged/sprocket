@@ -2,9 +2,10 @@
 ========
 The browser is based on Chromium's Content API.
 Supported platforms: Linux, Android.
-Currently we have two branches: master and core.
+Currently we have three branches: master, testing and core.
 Core branch contains the relevant code to a minimal browser which can be easily extended with new features.
 Master branch contains extra features, for example toolbar, dialogs, tab support.
+Testing branch contains test specific features, for example devtools.
 Build steps
 -------------
 #### Getting the Chromium source code
@@ -12,7 +13,7 @@ NOTE: Do NOT use --no-history command line switch when cloning Chromium reposito
 
 [Linux official guide](http://dev.chromium.org/developers/how-tos/get-the-code "Get the code")
 
-[Android official guide](https://code.google.com/p/chromium/wiki/AndroidBuildInstructions "Android Instructions")
+[Android official guide](https://www.chromium.org/developers/how-tos/android-build-instructions "Android Instructions")
 
 [Linux ARM cross compile official guide](https://code.google.com/p/chromium/wiki/LinuxChromiumArm "ARM Instructions")
 
