@@ -11,6 +11,7 @@ try:
   from actions.scroll import ScrollAction
   from actions.smartclick import SmartClickAction
   from actions.touch import TouchAction
+  from actions.form import FormAction
 except ImportError:
   raise ImportError("You should add your SprocketMonkey folder to PYTHONPATH")
 
@@ -89,17 +90,20 @@ class Monkey:
     keyEventAction = KeyEventAction(self._browser)
     scrollAction = ScrollAction(self._browser)
     smartClickAction = SmartClickAction(self._browser)
+    formAction = FormAction(self._browser)
 
     self._actions.append(mouseEventAction)
     self._actions.append(keyEventAction)
     self._actions.append(scrollAction)
     self._actions.append(smartClickAction)
+    self._actions.append(formAction)
 
     #set priority for each action
     self._priorities = { self._actions.index(mouseEventAction) : 3,
                          self._actions.index(keyEventAction)   : 2,
                          self._actions.index(scrollAction)     : 1,
-                         self._actions.index(smartClickAction) : 4 }
+                         self._actions.index(smartClickAction) : 2,
+                         self._actions.index(formAction) : 2 }
 
   def performNextAction(self):
     actionIndex = Generator().selectWithPriority(self._priorities)
