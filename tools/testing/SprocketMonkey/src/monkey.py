@@ -91,19 +91,22 @@ class Monkey:
     scrollAction = ScrollAction(self._browser)
     smartClickAction = SmartClickAction(self._browser)
     formAction = FormAction(self._browser)
+    touchAction = TouchAction(self._browser)
 
     self._actions.append(mouseEventAction)
     self._actions.append(keyEventAction)
     self._actions.append(scrollAction)
     self._actions.append(smartClickAction)
     self._actions.append(formAction)
+    self._actions.append(touchAction)
 
     #set priority for each action
     self._priorities = { self._actions.index(mouseEventAction) : 3,
                          self._actions.index(keyEventAction)   : 2,
                          self._actions.index(scrollAction)     : 1,
                          self._actions.index(smartClickAction) : 2,
-                         self._actions.index(formAction) : 2 }
+                         self._actions.index(formAction)       : 2,
+                         self._actions.index(touchAction)      : ((0, 2)[self._onAndroid])}
 
   def performNextAction(self):
     actionIndex = Generator().selectWithPriority(self._priorities)
