@@ -10,6 +10,8 @@
 #include "base/strings/utf_string_conversions.h"
 #include "sprocket/browser/ui/tab.h"
 #include "sprocket/browser/web_contents.h"
+#include "third_party/skia/include/core/SkPaint.h"
+#include "third_party/skia/include/core/SkPath.h"
 #include "ui/accessibility/ax_view_state.h"
 #include "ui/base/resource/resource_bundle.h"
 #include "ui/events/keycodes/keyboard_codes.h"
