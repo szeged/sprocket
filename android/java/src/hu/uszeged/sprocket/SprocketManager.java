@@ -16,7 +16,7 @@ import android.widget.FrameLayout;
 import java.util.List;
 import java.util.ArrayList;
 
-import org.chromium.base.CalledByNative;
+import org.chromium.base.annotations.CalledByNative;
 import org.chromium.base.ThreadUtils;
 import org.chromium.base.VisibleForTesting;
 import org.chromium.content.browser.ActivityContentVideoViewClient;

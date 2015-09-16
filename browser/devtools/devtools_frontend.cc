@@ -196,7 +196,7 @@ void SprocketDevToolsFrontend::HandleMessageFromDevToolsFrontend(
       params->GetSize() == 1 && params->GetString(0, &browser_message)) {
     agent_host_->DispatchProtocolMessage(browser_message);
   } else if (method == "loadCompleted") {
-    web_contents()->GetMainFrame()->ExecuteJavaScript(
+    web_contents()->GetMainFrame()->ExecuteJavaScriptForTests(
         base::ASCIIToUTF16("DevToolsAPI.setUseSoftMenu(true);"));
   } else if (method == "loadNetworkResource" && params->GetSize() == 3) {
     // TODO(pfeldman): handle some of the embedder messages in content.
@@ -263,7 +263,7 @@ void SprocketDevToolsFrontend::DispatchProtocolMessage(
   if (message.length() < kMaxMessageChunkSize) {
     base::string16 javascript = base::UTF8ToUTF16(
         "DevToolsAPI.dispatchMessage(" + message + ");");
-    web_contents()->GetMainFrame()->ExecuteJavaScript(javascript);
+    web_contents()->GetMainFrame()->ExecuteJavaScriptForTests(javascript);
     return;
   }
 
@@ -274,7 +274,7 @@ void SprocketDevToolsFrontend::DispatchProtocolMessage(
         base::StringValue(message.substr(pos, kMaxMessageChunkSize)), &param);
     std::string code = "DevToolsAPI.dispatchMessageChunk(" + param + ");";
     base::string16 javascript = base::UTF8ToUTF16(code);
-    web_contents()->GetMainFrame()->ExecuteJavaScript(javascript);
+    web_contents()->GetMainFrame()->ExecuteJavaScriptForTests(javascript);
   }
 }
 
@@ -322,7 +322,7 @@ void SprocketDevToolsFrontend::CallClientFunction(
     }
   }
   javascript.append(");");
-  web_contents()->GetMainFrame()->ExecuteJavaScript(
+  web_contents()->GetMainFrame()->ExecuteJavaScriptForTests(
       base::UTF8ToUTF16(javascript));
 }
 
