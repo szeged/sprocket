@@ -11,12 +11,14 @@
 #include "sprocket/android/manager.h"
 #include "sprocket/browser/web_contents.h"
 #include "sprocket/browser/ui/window.h"
+#include "sprocket/browser/ui/javascript_dialog.h"
 
 namespace {
 
 static base::android::RegistrationMethod kSprocketWindowRegistrationMethods[] = {
     {"SprocketWindow", SprocketWindow::Register},
     {"SprocketManager", RegisterSprocketManager},
+    {"SprocketJavaScriptDialog", SprocketJavaScriptDialog::Register},
 };
 
 }  // namespace

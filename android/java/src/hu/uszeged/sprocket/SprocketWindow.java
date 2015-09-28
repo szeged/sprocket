@@ -6,6 +6,8 @@
 
 package hu.uszeged.sprocket;
 
+import hu.uszeged.sprocket.dialogs.SprocketJavaScriptDialog;
+
 import android.content.Context;
 import android.graphics.drawable.ClipDrawable;
 import android.text.TextUtils;
@@ -277,6 +279,7 @@ public class SprocketWindow extends LinearLayout {
                     .setImageResource(android.R.drawable.ic_menu_close_clear_cancel);
         } else {
             mStopReloadButton.setImageResource(R.drawable.ic_refresh);
+            onLoadProgressChanged(0.0);
         }
     }
 
@@ -304,6 +307,11 @@ public class SprocketWindow extends LinearLayout {
                         FrameLayout.LayoutParams.MATCH_PARENT));
         cv.requestFocus();
         mContentViewRenderView.setCurrentContentViewCore(mContentViewCore);
+    }
+
+    @CalledByNative
+    private void showJavaScriptDialog(SprocketJavaScriptDialog dialog) {
+        dialog.show(getContext());
     }
 
     /**

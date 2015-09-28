@@ -34,6 +34,8 @@ SprocketJavaScriptDialog::SprocketJavaScriptDialog(
     prompt_->SetText(default_prompt_text);
     AddChildView(prompt_);
   }
+#elif defined(OS_ANDROID)
+  CreateJavaObject();
 #endif
 }
 

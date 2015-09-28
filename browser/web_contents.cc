@@ -170,6 +170,8 @@ void SprocketWebContents::NavigationStateChanged(content::WebContents* source,
   if (changed_flags & content::INVALIDATE_TYPE_TITLE)
     window_->PlatformSetTitle(source->GetTitle());
 #endif
+  if (changed_flags & content::INVALIDATE_TYPE_URL)
+    window_->PlatformSetAddressBarURL(source->GetURL());
 }
 
 void SprocketWebContents::AddNewContents(content::WebContents* source,

@@ -23,11 +23,6 @@ void SprocketJavaScriptDialogManager::RunJavaScriptDialog(
     const string16& default_prompt_text,
     const DialogClosedCallback& callback,
     bool* did_suppress_message) {
-#if defined(OS_ANDROID)
-  // TODO: Remove this and implement Android support
-  callback.Run(false, default_prompt_text);
-  return;
-#endif
   if (SprocketWebContents* sprocket_web_contents = SprocketWebContents::From(web_contents)) {
     SprocketWindow* window = sprocket_web_contents->window();
     window->PlatformShowJavaScriptDialog(new SprocketJavaScriptDialog(
@@ -43,11 +38,6 @@ void SprocketJavaScriptDialogManager::RunBeforeUnloadDialog(
    const string16& message_text,
    bool is_reload,
    const DialogClosedCallback& callback) {
-#if defined(OS_ANDROID)
-  // TODO: Remove this and implement Android support
-  callback.Run(false, string16());
-  return;
-#endif
   if (SprocketWebContents* sprocket_web_contents = SprocketWebContents::From(web_contents)) {
     SprocketWindow* window = sprocket_web_contents->window();
     window->PlatformShowJavaScriptDialog(new SprocketJavaScriptDialog(

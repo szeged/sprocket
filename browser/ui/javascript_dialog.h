@@ -17,6 +17,10 @@ class Textfield;
 
 #include "sprocket/browser/javascript_dialog_manager.h"
 
+#if defined(OS_ANDROID)
+#include "base/android/scoped_java_ref.h"
+#endif
+
 class SprocketJavaScriptDialog
 #if defined(USE_AURA)
     : public views::DialogDelegateView
@@ -41,6 +45,13 @@ class SprocketJavaScriptDialog
 
   // Overridden from ui::DialogModel:
   int GetDialogButtons() const override;
+#elif defined(OS_ANDROID)
+  void Cancel();
+  void Accept();
+  void Accept(const base::string16& prompt_text);
+  void CreateJavaObject();
+  base::android::ScopedJavaLocalRef<jobject> GetJavaObject();
+  static bool Register(JNIEnv* env);
 #endif
 
  private:
@@ -51,6 +62,8 @@ class SprocketJavaScriptDialog
 
 #if defined(USE_AURA)
   views::Textfield* prompt_;
+#elif defined(OS_ANDROID)
+  base::android::ScopedJavaGlobalRef<jobject> java_object_;
 #endif
 
   DISALLOW_COPY_AND_ASSIGN(SprocketJavaScriptDialog);

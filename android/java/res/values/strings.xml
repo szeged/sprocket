@@ -9,4 +9,6 @@
 
 <resources>
     <string name="url_hint">Type URL Here</string>
+    <string name="button_ok">OK</string>
+    <string name="button_cancel">Cancel</string>
 </resources>

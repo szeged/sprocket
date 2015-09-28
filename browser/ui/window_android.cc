@@ -83,7 +83,8 @@ void SprocketWindow::PlatformLoadProgressChanged(double progress) {
 }
 
 void SprocketWindow::PlatformShowJavaScriptDialog(SprocketJavaScriptDialog* dialog) {
-  // TODO: Implement!
+  JNIEnv* env = AttachCurrentThread();
+  Java_SprocketWindow_showJavaScriptDialog(env, java_object_.obj(), dialog->GetJavaObject().obj());
 }
 
 void SprocketWindow::PlatformShowAuthenticationDialog(SprocketAuthenticationDialog* dialog) {
