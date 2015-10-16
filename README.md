@@ -81,6 +81,7 @@ Additional info
 ---------------
 #####  Documentation  
 >- [How to build a Web Browser](https://docs.google.com/document/d/1Uwvjy5Mj_CMIoLPbKo_kcdVVyrF9waocZQ1vJMuIj54 "How to build a Web Browser")  
+>- [Chromium Architecture Overview](https://docs.google.com/document/d/1QXPBeg-0Vm5xQFDybEXgIubg-3AUgD0-doXBAo9r6os "Chromium Architecture overview")
 
 
 ##### Blog posts  
