@@ -90,13 +90,14 @@ ninja -C out/Release chromedriver
 
 Additional info
 ---------------
-#####  Documentation  
->- [How to build a Web Browser](https://docs.google.com/document/d/1Uwvjy5Mj_CMIoLPbKo_kcdVVyrF9waocZQ1vJMuIj54 "How to build a Web Browser")  
->- [Chromium Architecture Overview](https://docs.google.com/document/d/1QXPBeg-0Vm5xQFDybEXgIubg-3AUgD0-doXBAo9r6os "Chromium Architecture overview")
+#####  Documentation
+>- [How to build a Web Browser](https://goo.gl/Dn7RWs "How to build a Web Browser")
+>- [Chromium Architecture Overview](https://goo.gl/U092Og "Chromium Architecture overview")
 
 
-##### Blog posts  
+##### Blog posts
 >- [Sprocket Introduction](http://browser.sed.hu/blog/20150714/sprocket-experimental-multiplatform-browser-based-content-api "Sprocket introduction")
 >- [Sprocket's core branch](http://browser.sed.hu/blog/20150805/core-sprocket-minimal-experimental-browser-based-content-api "Sprocket's core branch")
 >- [Monkey testing Sprocket](http://browser.sed.hu/blog/20150917/sprocketmonkey-infinite-monkey-theorem-about-sprocket "Monkey testing Sprocket")
+>- [Chromium Architecture Overview](http://browser.sed.hu/blog/20151016/chromium-architecture-overview "Chromium Architecture Overview")
 
