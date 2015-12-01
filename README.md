@@ -79,6 +79,10 @@ export CHROME_DEVEL_SANDBOX=/usr/local/sbin/chrome-devel-sandbox
 ```
 Additional info
 ---------------
+##### Video
+>- [Introduction video](https://youtu.be/sgKi38GbOj0 "Introduction video")
+
+
 #####  Documentation  
 >- [How to build a Web Browser](https://goo.gl/Dn7RWs "How to build a Web Browser")
 >- [Chromium Architecture Overview](https://goo.gl/U092Og "Chromium Architecture overview")
