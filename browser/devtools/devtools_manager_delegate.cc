@@ -156,6 +156,8 @@ class SprocketDevToolsDelegate :
   std::string GetDiscoveryPageHTML() override;
   std::string GetFrontendResource(const std::string& path) override;
   std::string GetPageThumbnailData(const GURL& url) override;
+  content::DevToolsExternalAgentProxyDelegate*
+      HandleWebSocketConnection(const std::string& path) override;
 
  private:
   content::BrowserContext* browser_context_;
@@ -192,6 +194,11 @@ std::string SprocketDevToolsDelegate::GetFrontendResource(
 
 std::string SprocketDevToolsDelegate::GetPageThumbnailData(const GURL& url) {
   return std::string();
+}
+
+content::DevToolsExternalAgentProxyDelegate*
+SprocketDevToolsDelegate::HandleWebSocketConnection(const std::string& path) {
+  return nullptr;
 }
 
 }  // namespace

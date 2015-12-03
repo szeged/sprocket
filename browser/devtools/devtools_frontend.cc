@@ -243,6 +243,9 @@ void SprocketDevToolsFrontend::HandleMessageFromDevToolsFrontend(
     if (!params->GetString(0, &name))
       return;
     preferences_.RemoveWithoutPathExpansion(name, nullptr);
+  } else if (method == "requestFileSystems") {
+    web_contents()->GetMainFrame()->ExecuteJavaScriptForTests(
+        base::ASCIIToUTF16("DevToolsAPI.fileSystemsLoaded([]);"));
   } else {
     return;
   }

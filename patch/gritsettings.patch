@@ -1,14 +1,14 @@
 diff --git a/tools/gritsettings/resource_ids b/tools/gritsettings/resource_ids
-index a64ae83..653becf 100644
+index 92456c8..19e2bca 100644
 --- a/tools/gritsettings/resource_ids
 +++ b/tools/gritsettings/resource_ids
-@@ -160,6 +160,9 @@
+@@ -170,6 +170,9 @@
    "content/shell/shell_resources.grd": {
-     "includes": [25500],
+     "includes": [25150],
    },
 +  "sprocket/sprocket_resources.grd": {
-+    "includes": [25600],
++    "includes": [25250],
 +  },
    # This file is generated during the build.
    "<(SHARED_INTERMEDIATE_DIR)/content/browser/tracing/tracing_resources.grd": {
-     "includes": [25750],
+     "includes": [25400],

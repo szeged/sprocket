@@ -52,12 +52,15 @@ bool RegisterSprocketManager(JNIEnv* env) {
   return RegisterNativesImpl(env);
 }
 
-static void Init(JNIEnv* env, jclass clazz, jobject obj) {
-  g_global_state.Get().j_sprocket_manager.Reset(
-      base::android::ScopedJavaLocalRef<jobject>(env, obj));
+static void Init(JNIEnv* env,
+                 const JavaParamRef<jclass>& clazz,
+                 const JavaParamRef<jobject>& obj) {
+  g_global_state.Get().j_sprocket_manager.Reset(obj);
 }
 
-void LaunchSprocketWindow(JNIEnv* env, jclass clazz, jstring jurl) {
+void LaunchSprocketWindow(JNIEnv* env,
+                          const JavaParamRef<jclass>& clazz,
+                          const JavaParamRef<jstring>& jurl) {
   SprocketBrowserContext* browserContext =
       SprocketContentBrowserClient::Get()->BrowserContext();
   GURL url(base::android::ConvertJavaStringToUTF8(env, jurl));
