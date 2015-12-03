@@ -47,11 +47,10 @@ SprocketURLRequestContextGetter::SprocketURLRequestContextGetter(
   // We must create the proxy config service on the UI loop on Linux because it
   // must synchronously run on the glib message loop. This will be passed to
   // the URLRequestContextStorage on the IO thread in GetURLRequestContext().
-  proxy_config_service_.reset(
+  proxy_config_service_ =
       net::ProxyService::CreateSystemProxyConfigService(
-          content::BrowserThread::GetMessageLoopProxyForThread(content::BrowserThread::IO),
-          content::BrowserThread::GetMessageLoopProxyForThread(content::BrowserThread::FILE))
-  );
+          content::BrowserThread::UnsafeGetMessageLoopForThread(content::BrowserThread::IO)->task_runner(),
+          content::BrowserThread::UnsafeGetMessageLoopForThread(content::BrowserThread::FILE)->task_runner());
 }
 
 SprocketURLRequestContextGetter::~SprocketURLRequestContextGetter() {
@@ -76,8 +75,8 @@ net::URLRequestContext* SprocketURLRequestContextGetter::GetURLRequestContext() 
         new net::ChannelIDService(new net::DefaultChannelIDStore(NULL),
                                   base::WorkerPool::GetTaskRunner(true))));
     storage_->set_cert_verifier(net::CertVerifier::CreateDefault());
-    storage_->set_transport_security_state(new net::TransportSecurityState);
-    storage_->set_proxy_service(net::ProxyService::CreateUsingSystemProxyResolver(proxy_config_service_.release(), 0, NULL));
+    storage_->set_transport_security_state(make_scoped_ptr(new net::TransportSecurityState));
+    storage_->set_proxy_service(net::ProxyService::CreateUsingSystemProxyResolver(proxy_config_service_.Pass(), 0, NULL));
     storage_->set_ssl_config_service(new net::SSLConfigServiceDefaults);
     storage_->set_http_auth_handler_factory( net::HttpAuthHandlerFactory::CreateDefault(host_resolver.get()));
     storage_->set_http_server_properties(scoped_ptr<net::HttpServerProperties>(new net::HttpServerPropertiesImpl()));
@@ -91,9 +90,9 @@ net::URLRequestContext* SprocketURLRequestContextGetter::GetURLRequestContext() 
 
 
     // Setting HTTP user agent
-    storage_->set_http_user_agent_settings(
+    storage_->set_http_user_agent_settings(make_scoped_ptr(
         new net::StaticHttpUserAgentSettings(
-            "en-us,en", GetSprocketUserAgent()));
+            "en-us,en", GetSprocketUserAgent())));
 
 
     // Cache settings
@@ -132,7 +131,7 @@ net::URLRequestContext* SprocketURLRequestContextGetter::GetURLRequestContext() 
     network_session_params.host_resolver =
         url_request_context_->host_resolver();
 
-    storage_->set_http_transaction_factory(new net::HttpCache(network_session_params, main_backend));
+    storage_->set_http_transaction_factory(make_scoped_ptr(new net::HttpCache(network_session_params, main_backend)));
 
 
     // Generate job factory
@@ -141,24 +140,24 @@ net::URLRequestContext* SprocketURLRequestContextGetter::GetURLRequestContext() 
     bool set_protocol = false;
     // Keep ProtocolHandlers added in sync with SprocketContentBrowserClient::IsHandledURL().
     for (auto it = protocol_handlers_.begin(); it != protocol_handlers_.end(); ++it) {
-      set_protocol = job_factory->SetProtocolHandler(it->first, it->second.release());
+      set_protocol = job_factory->SetProtocolHandler(it->first, make_scoped_ptr(it->second.release()));
       DCHECK(set_protocol);
     }
     protocol_handlers_.clear();
 
     set_protocol = job_factory->SetProtocolHandler(
-        url::kDataScheme, new net::DataProtocolHandler);
+        url::kDataScheme, make_scoped_ptr(new net::DataProtocolHandler));
     DCHECK(set_protocol);
 
 #if !defined(DISABLE_FILE_SUPPORT)
     set_protocol = job_factory->SetProtocolHandler(
         url::kFileScheme,
-        new net::FileProtocolHandler(
+        make_scoped_ptr(new net::FileProtocolHandler(
             content::BrowserThread::GetBlockingPool()->GetTaskRunnerWithShutdownBehavior(
-                base::SequencedWorkerPool::SKIP_ON_SHUTDOWN)));
+                base::SequencedWorkerPool::SKIP_ON_SHUTDOWN))));
     DCHECK(set_protocol);
 #endif
-    storage_->set_job_factory(job_factory.release());
+    storage_->set_job_factory(job_factory.Pass());
   }
 
   return url_request_context_.get();
