@@ -110,7 +110,9 @@ bool SprocketWindow::Register(JNIEnv* env) {
   return RegisterNativesImpl(env);
 }
 
-void CloseSprocketWindow(JNIEnv* env, jclass clazz, jlong sprocket_windowPtr) {
+void CloseSprocketWindow(JNIEnv* env,
+                         const JavaParamRef<jclass>& clazz,
+                         jlong sprocket_windowPtr) {
   SprocketWindow* sprocket_window = reinterpret_cast<SprocketWindow*>(sprocket_windowPtr);
   sprocket_window->Close();
 }

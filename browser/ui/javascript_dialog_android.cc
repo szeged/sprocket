@@ -49,19 +49,26 @@ bool SprocketJavaScriptDialog::Register(JNIEnv* env) {
   return RegisterNativesImpl(env);
 }
 
-void CancelDialog(JNIEnv* env, jclass clazz, jlong javaScriptDialogPtr) {
+void CancelDialog(JNIEnv* env,
+                  const JavaParamRef<jclass>& clazz,
+                  jlong javaScriptDialogPtr) {
   SprocketJavaScriptDialog* javascript_dialog =
     reinterpret_cast<SprocketJavaScriptDialog*>(javaScriptDialogPtr);
   javascript_dialog->Cancel();
 }
 
-void AcceptDialog(JNIEnv* env, jclass clazz, jlong javaScriptDialogPtr) {
+void AcceptDialog(JNIEnv* env,
+                  const JavaParamRef<jclass>& clazz,
+                  jlong javaScriptDialogPtr) {
   SprocketJavaScriptDialog* javascript_dialog =
     reinterpret_cast<SprocketJavaScriptDialog*>(javaScriptDialogPtr);
   javascript_dialog->Accept();
 }
 
-void AcceptPromptDialog(JNIEnv* env, jclass clazz, jlong javaScriptDialogPtr, jstring jprompt_text) {
+void AcceptPromptDialog(JNIEnv* env,
+                        const JavaParamRef<jclass>& clazz,
+                        jlong javaScriptDialogPtr,
+                        const JavaParamRef<jstring>& jprompt_text) {
   SprocketJavaScriptDialog* javascript_dialog =
     reinterpret_cast<SprocketJavaScriptDialog*>(javaScriptDialogPtr);
   const base::string16 prompt_text = ConvertJavaStringToUTF16(env, jprompt_text);
