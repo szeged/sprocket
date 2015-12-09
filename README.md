@@ -83,6 +83,10 @@ Additional info
 >- [Introduction video](https://youtu.be/sgKi38GbOj0 "Introduction video")
 
 
+##### Guides
+>- [Create your embedded browser](http://browser.sed.hu/blog/20151209/web-sprockets-create-your-embedded-browser-24-hours "Create your embedded browser")
+
+
 #####  Documentation  
 >- [How to build a Web Browser](https://goo.gl/Dn7RWs "How to build a Web Browser")
 >- [Chromium Architecture Overview](https://goo.gl/U092Og "Chromium Architecture overview")
