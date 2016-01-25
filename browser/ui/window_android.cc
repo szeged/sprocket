@@ -10,6 +10,7 @@
 #include "content/public/browser/web_contents.h"
 #include "jni/SprocketWindow_jni.h"
 #include "sprocket/android/manager.h"
+#include "sprocket/browser/ui/authentication_dialog.h"
 #include "sprocket/browser/ui/javascript_dialog.h"
 #include "sprocket/browser/web_contents.h"
 #include <jni.h>
@@ -88,7 +89,8 @@ void SprocketWindow::PlatformShowJavaScriptDialog(SprocketJavaScriptDialog* dial
 }
 
 void SprocketWindow::PlatformShowAuthenticationDialog(SprocketAuthenticationDialog* dialog) {
-  // TODO: Implement!
+  JNIEnv* env = AttachCurrentThread();
+  Java_SprocketWindow_showAuthenticationDialog(env, java_object_.obj(), dialog->GetJavaObject().obj());
 }
 
 void SprocketWindow::PlatformToggleFullscreenModeForTab(bool enter_fullscreen) {

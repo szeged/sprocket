@@ -85,6 +85,7 @@
             'android/manager.cc',
             'android/manager.h',
             'browser/ui/window_android.cc',
+            'browser/ui/authentication_dialog_android.cc',
             'browser/ui/javascript_dialog_android.cc',
             'browser/ui/web_contents_view_delegate_android.cc',
           ],
@@ -226,6 +227,7 @@
           'sources': [
             'android/java/src/hu/uszeged/sprocket/SprocketManager.java',
             'android/java/src/hu/uszeged/sprocket/SprocketWindow.java',
+            'android/java/src/hu/uszeged/sprocket/dialogs/SprocketAuthenticationDialog.java',
             'android/java/src/hu/uszeged/sprocket/dialogs/SprocketJavaScriptDialog.java',
           ],
           'variables': {

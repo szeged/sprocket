@@ -6,6 +6,7 @@
 
 package hu.uszeged.sprocket;
 
+import hu.uszeged.sprocket.dialogs.SprocketAuthenticationDialog;
 import hu.uszeged.sprocket.dialogs.SprocketJavaScriptDialog;
 
 import android.content.Context;
@@ -311,6 +312,11 @@ public class SprocketWindow extends LinearLayout {
 
     @CalledByNative
     private void showJavaScriptDialog(SprocketJavaScriptDialog dialog) {
+        dialog.show(getContext());
+    }
+
+    @CalledByNative
+    private void showAuthenticationDialog(SprocketAuthenticationDialog dialog) {
         dialog.show(getContext());
     }
 

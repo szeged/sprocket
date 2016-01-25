@@ -6,10 +6,10 @@
 
 #include "sprocket/browser/ui/authentication_dialog.h"
 
+#include "base/strings/utf_string_conversions.h"
 #include "sprocket/browser/resource_dispatcher_host_delegate.h"
 
 #if defined(USE_AURA)
-#include "base/strings/utf_string_conversions.h"
 #include "ui/views/controls/label.h"
 #include "ui/views/controls/textfield/textfield.h"
 #include "ui/views/layout/box_layout.h"
@@ -17,16 +17,16 @@
 
 SprocketAuthenticationDialog::SprocketAuthenticationDialog(
     SprocketResourceDispatcherHostLoginDelegate* delegate,
-    std::string realm,
-    std::string host)
+    std::string& realm,
+    std::string& host)
     : delegate_(delegate) {
+  message_ = base::ASCIIToUTF16("The server " + host + " requires a username and password. " +
+             "The server says: " + realm + ".");
 #if defined(USE_AURA)
   SetLayoutManager(new views::BoxLayout(views::BoxLayout::kVertical, 10, 10, 10));
   label_ = new views::Label;
   label_->SetMultiLine(true);
-  label_->SetText(
-      base::ASCIIToUTF16("The server " + host + " requires a username and password. " +
-                         "The server says: " + realm + "."));
+  label_->SetText(message_);
   AddChildView(label_);
 
   AddChildView(new views::Label(base::ASCIIToUTF16("Username:")));
@@ -36,6 +36,8 @@ SprocketAuthenticationDialog::SprocketAuthenticationDialog(
   password_prompt_ = new views::Textfield;
   password_prompt_->SetTextInputType(ui::TEXT_INPUT_TYPE_PASSWORD);
   AddChildView(password_prompt_);
+#elif defined(OS_ANDROID)
+  CreateJavaObject();
 #endif
 }
 

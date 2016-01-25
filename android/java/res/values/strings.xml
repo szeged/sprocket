@@ -11,4 +11,6 @@
     <string name="url_hint">Type URL Here</string>
     <string name="button_ok">OK</string>
     <string name="button_cancel">Cancel</string>
+    <string name="name_placeholder">Username</string>
+    <string name="pass_placeholder">Password</string>
 </resources>

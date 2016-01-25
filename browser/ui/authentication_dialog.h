@@ -7,6 +7,10 @@
 #ifndef SPROCKET_BROWSER_UI_AUTHENTICATION_DIALOG_H_
 #define SPROCKET_BROWSER_UI_AUTHENTICATION_DIALOG_H_
 
+#include <string>
+#include "base/strings/string16.h"
+#include "build/build_config.h"
+
 #if defined(USE_AURA)
 #include "ui/views/window/dialog_delegate.h"
 
@@ -14,9 +18,9 @@ namespace views {
   class Label;
   class Textfield;
 }
+#elif defined(OS_ANDROID)
+#include "base/android/scoped_java_ref.h"
 #endif
-
-#include "url/gurl.h"
 
 class SprocketResourceDispatcherHostLoginDelegate;
 
@@ -28,8 +32,8 @@ class SprocketAuthenticationDialog
 public:
   SprocketAuthenticationDialog(
       SprocketResourceDispatcherHostLoginDelegate* delegate,
-      std::string realm,
-      std::string host);
+      std::string& realm,
+      std::string& host);
 #if defined(USE_AURA)
   ~SprocketAuthenticationDialog() override;
 #else
@@ -47,6 +51,12 @@ public:
   base::string16 GetDialogButtonLabel(ui::DialogButton button) const override;
 
   gfx::Size GetPreferredSize() const override;
+#elif defined(OS_ANDROID)
+  void Cancel();
+  void Accept(const base::string16& username, const base::string16& password);
+  void CreateJavaObject();
+  base::android::ScopedJavaLocalRef<jobject> GetJavaObject();
+  static bool Register(JNIEnv* env);
 #endif
 
 private:
@@ -55,9 +65,12 @@ private:
   views::Label* label_;
   views::Textfield* username_prompt_;
   views::Textfield* password_prompt_;
+#elif defined(OS_ANDROID)
+  base::android::ScopedJavaGlobalRef<jobject> java_object_;
 #endif
 
   SprocketResourceDispatcherHostLoginDelegate* delegate_;
+  base::string16 message_;
 
   DISALLOW_COPY_AND_ASSIGN(SprocketAuthenticationDialog);
 };
