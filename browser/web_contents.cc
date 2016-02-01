@@ -7,6 +7,7 @@
 #include "sprocket/browser/web_contents.h"
 
 #include "content/public/browser/render_view_host.h"
+#include "content/public/browser/render_widget_host.h"
 #include "content/public/browser/web_contents.h"
 #include "sprocket/browser/ui/window.h"
 #include "ui/events/event.h"
@@ -140,7 +141,7 @@ void SprocketWebContents::ToggleFullscreenModeForTab(content::WebContents* web_c
     window_->PlatformToggleFullscreenModeForTab(enter_fullscreen);
   if (is_fullscreen_ != enter_fullscreen) {
     is_fullscreen_ = enter_fullscreen;
-    web_contents->GetRenderViewHost()->WasResized();
+    web_contents->GetRenderViewHost()->GetWidget()->WasResized();
   }
 }
 
@@ -161,11 +162,7 @@ bool SprocketWebContents::CanOverscrollContent() const {
 }
 
 void SprocketWebContents::ActivateContents(content::WebContents* contents) {
-  contents->GetRenderViewHost()->Focus();
-}
-
-void SprocketWebContents::DeactivateContents(content::WebContents* contents) {
-  contents->GetRenderViewHost()->Blur();
+  contents->GetRenderViewHost()->GetWidget()->Focus();
 }
 
 void SprocketWebContents::HandleKeyboardEvent(content::WebContents* source,

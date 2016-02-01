@@ -85,6 +85,9 @@ class SprocketBrowserContext : public content::BrowserContext {
   // otherwise.
   content::PermissionManager* GetPermissionManager() override;
 
+  // Returns the BackgroundSyncController associated with that context if any,
+  // nullptr otherwise.
+  content::BackgroundSyncController* GetBackgroundSyncController() override;
 
 
   // Used by SprocketContentBrowserClient.

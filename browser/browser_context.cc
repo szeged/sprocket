@@ -149,6 +149,10 @@ content::PermissionManager* SprocketBrowserContext::GetPermissionManager() {
   return NULL;
 }
 
+content::BackgroundSyncController* SprocketBrowserContext::GetBackgroundSyncController() {
+  return NULL;
+}
+
 net::URLRequestContextGetter*
 SprocketBrowserContext::CreateRequestContext(
     content::ProtocolHandlerMap* protocol_handlers) {

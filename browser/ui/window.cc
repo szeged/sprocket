@@ -67,5 +67,5 @@ SprocketWindow::~SprocketWindow() {
 
   windows_.erase(this);
   if (windows_.empty())
-    base::MessageLoop::current()->PostTask(FROM_HERE, base::MessageLoop::QuitClosure());
+    base::MessageLoop::current()->PostTask(FROM_HERE, base::MessageLoop::QuitWhenIdleClosure());
 }

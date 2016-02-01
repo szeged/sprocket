@@ -95,10 +95,6 @@ class SprocketWebContents : public content::WebContentsDelegate {
   // Selects the specified contents, bringing its container to the front.
   void ActivateContents(content::WebContents* contents) override;
 
-  // Deactivates the specified contents by deactivating its container and
-  // potentialy moving it to the back of the Z order.
-  void DeactivateContents(content::WebContents* contents) override;
-
   // Allows delegates to handle unhandled keyboard messages coming back from
   // the renderer.
   void HandleKeyboardEvent(content::WebContents* source,

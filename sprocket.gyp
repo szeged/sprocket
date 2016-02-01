@@ -127,18 +127,6 @@
         '<(DEPTH)/ui/resources/ui_resources.gyp:ui_resources',
         '<(DEPTH)/ui/strings/ui_strings.gyp:ui_strings',
       ],
-      'conditions': [
-        ['OS=="android"', {
-          'copies': [
-            {
-              'destination': '<(PRODUCT_DIR)',
-              'files': [
-                '<(PRODUCT_DIR)/sprocket/assets/sprocket.pak'
-              ],
-            },
-          ],
-        }],
-      ],
       'actions': [
         {
           'action_name': 'repack_sprocket_pack',
@@ -260,8 +248,7 @@
           'target_name': 'sprocket_apk',
           'type': 'none',
           'dependencies': [
-            'sprocket_icudata',
-            'sprocket_v8_external_data',
+            'sprocket_assets_copy',
             'sprocket_java',
             'libsprocket_content_view',
             '<(DEPTH)/content/content.gyp:content_java',
@@ -286,50 +273,49 @@
             'conditions': [
               ['icu_use_data_file_flag==1', {
                 'additional_input_paths': [
-                  '<(PRODUCT_DIR)/icudtl.dat',
+                  '<(asset_location)/icudtl.dat',
                 ],
               }],
               ['v8_use_external_startup_data==1', {
                 'additional_input_paths': [
-                  '<(PRODUCT_DIR)/natives_blob.bin',
-                  '<(PRODUCT_DIR)/snapshot_blob.bin',
+                  '<(asset_location)/natives_blob_<(arch_suffix).bin',
+                  '<(asset_location)/snapshot_blob_<(arch_suffix).bin',
                 ],
               }],
             ],
           },
-          'includes': [ '../build/java_apk.gypi' ],
-        },
-        {
-          'target_name': 'sprocket_icudata',
-          'type': 'none',
-          'conditions': [
-            ['icu_use_data_file_flag==1', {
-              'copies': [
-                {
-                  'destination': '<(PRODUCT_DIR)/sprocket/assets',
-                  'files': [
-                    '<(PRODUCT_DIR)/icudtl.dat',
-                  ],
-                },
-              ],
-            }],
+          'includes': [
+            '../build/android/v8_external_startup_data_arch_suffix.gypi',
+            '../build/java_apk.gypi',
           ],
         },
         {
-          'target_name': 'sprocket_v8_external_data',
+          'target_name': 'sprocket_assets_copy',
           'type': 'none',
-          'conditions': [
-            ['v8_use_external_startup_data==1', {
-              'copies': [
-                {
-                  'destination': '<(PRODUCT_DIR)/sprocket/assets',
-                  'files': [
-                    '<(PRODUCT_DIR)/natives_blob.bin',
-                    '<(PRODUCT_DIR)/snapshot_blob.bin',
-                  ],
-                },
-              ],
-            }],
+          'variables': {
+          'src_files': ['<(PRODUCT_DIR)/sprocket.pak'],
+            'conditions': [
+              ['v8_use_external_startup_data==1', {
+                'renaming_sources': [
+                  '<(PRODUCT_DIR)/natives_blob.bin',
+                  '<(PRODUCT_DIR)/snapshot_blob.bin',
+                ],
+                'renaming_destinations': [
+                  'natives_blob_<(arch_suffix).bin',
+                  'snapshot_blob_<(arch_suffix).bin',
+                ],
+              }],
+              ['icu_use_data_file_flag==1', {
+                'dependencies': ['<(DEPTH)/third_party/icu/icu.gyp:icudata'],
+                'src_files': ['<(PRODUCT_DIR)/icudtl.dat'],
+              }],
+            ],
+            'dest_path': '<(PRODUCT_DIR)/sprocket/assets',
+            'clear': 1,
+          },
+          'includes': [
+            '../build/android/copy_ex.gypi',
+            '../build/android/v8_external_startup_data_arch_suffix.gypi',
           ],
         },
       ],
