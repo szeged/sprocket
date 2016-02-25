@@ -191,6 +191,7 @@ void SprocketWindowDelegateView::SetFullscreen(bool fullscreen) {
 
 void SprocketWindowDelegateView::InitAccelerators() {
   static const ui::KeyboardCode keys[] = { ui::VKEY_F5,
+                                           ui::VKEY_F10,
                                            ui::VKEY_F11,
                                            ui::VKEY_BROWSER_BACK,
                                            ui::VKEY_BROWSER_FORWARD };
@@ -250,6 +251,9 @@ bool SprocketWindowDelegateView::AcceleratorPressed(const ui::Accelerator& accel
   switch (accelerator.key_code()) {
   case ui::VKEY_F5:
     sprocket_web_contents->Reload();
+    return true;
+  case ui::VKEY_F10:
+    sprocket_web_contents->ShowDevTools();
     return true;
   case ui::VKEY_F11:
     sprocket_web_contents->window()->PlatformToggleFullscreenModeForTab(

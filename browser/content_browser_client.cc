@@ -16,6 +16,7 @@
 #include "content/public/common/url_constants.h"
 #include "sprocket/browser/browser_context.h"
 #include "sprocket/browser/browser_main_parts.h"
+#include "sprocket/browser/devtools/devtools_manager_delegate.h"
 #include "net/url_request/url_request_context_getter.h"
 #include "url/gurl.h"
 
@@ -87,6 +88,7 @@ bool SprocketContentBrowserClient::IsHandledURL(const GURL& url) {
     url::kFileSystemScheme,
     url::kDataScheme,
     url::kFileScheme,
+    content::kChromeDevToolsScheme,
   };
   for (size_t i = 0; i < arraysize(kProtocolList); ++i) {
     if (url.scheme() == kProtocolList[i])
@@ -97,6 +99,11 @@ bool SprocketContentBrowserClient::IsHandledURL(const GURL& url) {
 
 std::string SprocketContentBrowserClient::GetDefaultDownloadName() {
   return "download";
+}
+
+content::DevToolsManagerDelegate*
+SprocketContentBrowserClient::GetDevToolsManagerDelegate() {
+  return new SprocketDevToolsManagerDelegate;
 }
 
 #if defined(OS_ANDROID)

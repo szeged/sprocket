@@ -3,6 +3,7 @@
     'pkg-config': 'pkg-config',
     'chromium_code': 1,
     'grit_out_dir': '<(SHARED_INTERMEDIATE_DIR)/sprocket',
+    'protoc_out_dir': '<(SHARED_INTERMEDIATE_DIR)/protoc_out',
     'sprocket_version': '0.1.0.0',
     'conditions': [
       # On Android disable Linting by default
@@ -39,6 +40,8 @@
         '<(DEPTH)/content/content.gyp:content_resources',
         '<(DEPTH)/content/content.gyp:content_utility',
         '<(DEPTH)/content/content.gyp:content_browser',
+        '<(DEPTH)/components/components.gyp:devtools_discovery',
+        '<(DEPTH)/components/components.gyp:devtools_http_handler',
         'sprocket_pak',
       ],
       'sources': [
@@ -56,6 +59,8 @@
         'browser/javascript_dialog_manager.h',
         'browser/web_contents.cc',
         'browser/web_contents.h',
+        'browser/devtools/devtools_manager_delegate.cc',
+        'browser/devtools/devtools_manager_delegate.h',
         'browser/net/url_request_context_getter.h',
         'browser/net/url_request_context_getter.cc',
         'browser/ui/authentication_dialog.cc',
@@ -159,6 +164,8 @@
           'action_name': 'repack_sprocket_pack',
           'variables': {
             'pak_inputs': [
+              '<(PRODUCT_DIR)/sprocket_resources.pak',
+              '<(SHARED_INTERMEDIATE_DIR)/blink/devtools_resources.pak',
               '<(SHARED_INTERMEDIATE_DIR)/blink/public/resources/blink_resources.pak',
               '<(SHARED_INTERMEDIATE_DIR)/blink/public/resources/blink_image_resources_100_percent.pak',
               '<(SHARED_INTERMEDIATE_DIR)/content/app/resources/content_resources_100_percent.pak',
@@ -182,6 +189,13 @@
       'type': 'none',
       'dependencies': [
         '<(DEPTH)/sandbox/sandbox.gyp:chrome_sandbox',
+      ],
+    },
+    {
+      'target_name': 'chromedriver',
+      'type': 'executable',
+      'dependencies': [
+        '<(DEPTH)/chrome/chrome.gyp:chromedriver',
       ],
     },
     {

@@ -6,14 +6,20 @@
 
 #include "sprocket/browser/web_contents.h"
 
+#include "content/public/browser/favicon_status.h"
+#include "content/public/browser/navigation_entry.h"
 #include "content/public/browser/render_view_host.h"
 #include "content/public/browser/render_widget_host.h"
 #include "content/public/browser/web_contents.h"
+#include "content/public/common/favicon_url.h"
+#include "devtools/devtools_manager_delegate.h"
 #include "sprocket/browser/javascript_dialog_manager.h"
 #include "sprocket/browser/ui/window.h"
+
 #if defined(USE_AURA)
 #include "sprocket/browser/ui/tab.h"
 #endif
+
 
 std::map<content::WebContents*, SprocketWebContents*> SprocketWebContents::sprocket_web_contents_;
 
@@ -44,7 +50,8 @@ SprocketWebContents* SprocketWebContents::AdoptWebContents(
 
 SprocketWebContents::SprocketWebContents(SprocketWindow* window,
                                          content::WebContents* web_contents)
-    : window_(window),
+    : WebContentsObserver(web_contents),
+      window_(window),
       is_fullscreen_(false) {
   web_contents_.reset(web_contents);
   window->PlatformAddTab(this);
@@ -115,6 +122,16 @@ void SprocketWebContents::UpdateNavigationControls(bool to_different_document) {
 
 void SprocketWebContents::Close() {
   window_->PlatformCloseWindow();
+}
+
+void SprocketWebContents::ShowDevTools() {
+  SprocketWindow* devtools_window = SprocketWindow::CreateNewWindow(gfx::Size());
+  SprocketWebContents* devtools_webcontents = SprocketWebContents::CreateSprocketWebContents(
+        devtools_window,
+        web_contents_->GetBrowserContext(),
+        GURL(),
+        web_contents_->GetPreferredSize());
+  devtools_webcontents->LoadURL(SprocketDevToolsHttpHandlerDelegate::discoveryPageURL());
 }
 
 content::WebContents* SprocketWebContents::OpenURLFromTab(content::WebContents* source,
@@ -269,4 +286,16 @@ void SprocketWebContents::HandleKeyboardEvent(content::WebContents* source,
   if (event.os_event && event.os_event->type() == ui::ET_KEY_PRESSED)
     window_->PlatformHandleKeyboardEvent(event);
 #endif
+}
+
+void SprocketWebContents::TitleWasSet(content::NavigationEntry* entry, bool explicit_set) {
+  if (entry)
+    window_->PlatformSetTitle(entry->GetTitle());
+}
+
+void SprocketWebContents::DidUpdateFaviconURL(const std::vector<content::FaviconURL>& candidates) {
+  content::NavigationEntry *entry = web_contents()->GetController().GetVisibleEntry();
+  for (const content::FaviconURL &candidate : candidates) {
+    entry->GetFavicon().url = candidate.icon_url;
+  }
 }

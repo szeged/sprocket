@@ -49,6 +49,10 @@ class SprocketContentBrowserClient : public content::ContentBrowserClient {
   // else we should do with the file.
   std::string GetDefaultDownloadName() override;
 
+  // Creates a new DevToolsManagerDelegate. The caller owns the returned value.
+  // It's valid to return nullptr.
+  content::DevToolsManagerDelegate* GetDevToolsManagerDelegate() override;
+
   // Populates |mappings| with all files that need to be mapped before launching
   // a child process.
 #if defined(OS_ANDROID)

@@ -9,6 +9,7 @@
 
 #include "content/public/browser/web_contents.h"
 #include "content/public/browser/web_contents_delegate.h"
+#include "content/public/browser/web_contents_observer.h"
 #include <map>
 
 class SprocketWindow;
@@ -29,7 +30,11 @@ class Event;
 // WebContentsDelegate: Objects implement this interface to get notified about
 // changes in the WebContents and to provide necessary functionality.
 
-class SprocketWebContents : public content::WebContentsDelegate {
+// WebContentsObserver: An observer API implemented by classes which are interested
+// in various page load events from WebContents.  They also get a chance to filter
+// IPC messages.
+class SprocketWebContents : public content::WebContentsDelegate,
+                            public content::WebContentsObserver {
 
  public:
   ~SprocketWebContents() override;
@@ -56,6 +61,7 @@ class SprocketWebContents : public content::WebContentsDelegate {
   bool IsLoading();
   void UpdateNavigationControls(bool to_different_document);
   void Close();
+  void ShowDevTools();
 
   // content::WebContentsDelegate overrides.
 
@@ -135,6 +141,20 @@ class SprocketWebContents : public content::WebContentsDelegate {
   // the renderer.
   void HandleKeyboardEvent(content::WebContents* source,
                            const content::NativeWebKeyboardEvent& event) override;
+
+
+  // WebContentsObserver overrides
+
+  // This methods is invoked when the title of the WebContents is set. If the
+  // title was explicitly set, |explicit_set| is true, otherwise the title was
+  // synthesized and |explicit_set| is false.
+  void TitleWasSet(content::NavigationEntry* entry, bool explicit_set) override;
+
+  // Invoked when new FaviconURL candidates are received from the renderer
+  // process.
+  void DidUpdateFaviconURL(const std::vector<content::FaviconURL>& candidates) override;
+
+
 
   content::WebContents* web_contents() const { return web_contents_.get(); }
 #if defined(USE_AURA)
