@@ -75,6 +75,8 @@
         'common/content_client.h',
         'common/switches.cc',
         'common/switches.h',
+        'renderer/content_renderer_client.cc',
+        'renderer/content_renderer_client.h',
       ],
       'cflags': [
         '-g',

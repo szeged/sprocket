@@ -12,6 +12,7 @@
 #include "sprocket/common/content_client.h"
 
 class SprocketContentBrowserClient;
+class SprocketContentRendererClient;
 
 #if defined(OS_ANDROID)
 namespace content {
@@ -46,13 +47,15 @@ class SprocketMainDelegate : public content::ContentMainDelegate {
   // override this.
   content::ContentBrowserClient* CreateContentBrowserClient() override;
   // content::ContentPluginClient* CreateContentPluginClient() override;
-  // content::ContentRendererClient* CreateContentRendererClient() override;
+  content::ContentRendererClient* CreateContentRendererClient() override;
   // content::ContentUtilityClient* CreateContentUtilityClient() override;
 
   static void InitializeResourceBundle();
  private:
   // The embedder API for participating in browser logic.
   scoped_ptr<SprocketContentBrowserClient> browser_client_;
+  // The embedder API for participating in renderer logic.
+  scoped_ptr<SprocketContentRendererClient> renderer_client_;
 
   SprocketContentClient content_client_;
 

@@ -15,6 +15,7 @@
 #include "content/public/common/content_switches.h"
 #include "sprocket/browser/browser_main.h"
 #include "sprocket/browser/content_browser_client.h"
+#include "sprocket/renderer/content_renderer_client.h"
 #include "sprocket/common/switches.h"
 #include "ui/base/resource/resource_bundle.h"
 
@@ -80,6 +81,11 @@ int SprocketMainDelegate::RunProcess(
 content::ContentBrowserClient* SprocketMainDelegate::CreateContentBrowserClient() {
   browser_client_.reset(new SprocketContentBrowserClient);
   return browser_client_.get();
+}
+
+content::ContentRendererClient* SprocketMainDelegate::CreateContentRendererClient() {
+  renderer_client_.reset(new SprocketContentRendererClient);
+  return renderer_client_.get();
 }
 
 // static

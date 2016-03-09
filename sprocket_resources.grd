@@ -11,6 +11,7 @@
   <release seq="1">
     <includes>
       <include name="IDR_SPROCKET_DEVTOOLS_DISCOVERY_PAGE" file="resources/devtools_discovery_page.html" type="BINDATA" />
+      <include name="IDR_SPROCKET_ERROR_PAGE" file="resources/error_page.html" type="BINDATA" />
     </includes>
   </release>
 </grit>
