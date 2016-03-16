@@ -7,7 +7,6 @@
 #ifndef SPROCKET_BROWSER_BROWSER_MAIN_PARTS_H_
 #define SPROCKET_BROWSER_BROWSER_MAIN_PARTS_H_
 
-#include "base/basictypes.h"
 #include "base/memory/scoped_ptr.h"
 #include "content/public/browser/browser_main_parts.h"
 #include "content/public/common/main_function_params.h"

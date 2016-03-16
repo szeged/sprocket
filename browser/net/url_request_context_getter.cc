@@ -76,12 +76,12 @@ net::URLRequestContext* SprocketURLRequestContextGetter::GetURLRequestContext() 
                                   base::WorkerPool::GetTaskRunner(true))));
     storage_->set_cert_verifier(net::CertVerifier::CreateDefault());
     storage_->set_transport_security_state(make_scoped_ptr(new net::TransportSecurityState));
-    storage_->set_proxy_service(net::ProxyService::CreateUsingSystemProxyResolver(proxy_config_service_.Pass(), 0, NULL));
+    storage_->set_proxy_service(net::ProxyService::CreateUsingSystemProxyResolver(std::move(proxy_config_service_), 0, NULL));
     storage_->set_ssl_config_service(new net::SSLConfigServiceDefaults);
     storage_->set_http_auth_handler_factory( net::HttpAuthHandlerFactory::CreateDefault(host_resolver.get()));
     storage_->set_http_server_properties(scoped_ptr<net::HttpServerProperties>(new net::HttpServerPropertiesImpl()));
     // Give |storage_| ownership at the end in case it's |mapped_host_resolver|.
-    storage_->set_host_resolver(host_resolver.Pass());
+    storage_->set_host_resolver(std::move(host_resolver));
 
 
     // Generating cookie store
@@ -132,7 +132,7 @@ net::URLRequestContext* SprocketURLRequestContextGetter::GetURLRequestContext() 
         url_request_context_->host_resolver();
 
     storage_->set_http_network_session(make_scoped_ptr(new net::HttpNetworkSession(network_session_params)));
-    storage_->set_http_transaction_factory(make_scoped_ptr(new net::HttpCache(storage_->http_network_session(), main_backend.Pass(), true)));
+    storage_->set_http_transaction_factory(make_scoped_ptr(new net::HttpCache(storage_->http_network_session(), std::move(main_backend), true)));
 
 
     // Generate job factory
@@ -158,7 +158,7 @@ net::URLRequestContext* SprocketURLRequestContextGetter::GetURLRequestContext() 
                 base::SequencedWorkerPool::SKIP_ON_SHUTDOWN))));
     DCHECK(set_protocol);
 #endif
-    storage_->set_job_factory(job_factory.Pass());
+    storage_->set_job_factory(std::move(job_factory));
   }
 
   return url_request_context_.get();
