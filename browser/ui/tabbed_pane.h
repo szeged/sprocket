@@ -7,7 +7,6 @@
 #ifndef SPROCKET_BROWSER_UI_TABBED_PANE_H_
 #define SPROCKET_BROWSER_UI_TABBED_PANE_H_
 
-#include "base/basictypes.h"
 #include "base/compiler_specific.h"
 #include "base/strings/string16.h"
 #include "ui/views/controls/button/menu_button.h"

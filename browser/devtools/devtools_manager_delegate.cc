@@ -65,7 +65,7 @@ class UnixDomainServerSocketFactory
 class TCPServerSocketFactory
     : public DevToolsHttpHandler::ServerSocketFactory {
  public:
-  TCPServerSocketFactory(const std::string& address, uint16 port)
+  TCPServerSocketFactory(const std::string& address, uint16_t port)
       : address_(address), port_(port) {
   }
 
@@ -81,7 +81,7 @@ class TCPServerSocketFactory
   }
 
   std::string address_;
-  uint16 port_;
+  uint16_t port_;
 
   DISALLOW_COPY_AND_ASSIGN(TCPServerSocketFactory);
 };
