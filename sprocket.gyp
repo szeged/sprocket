@@ -143,13 +143,7 @@
               '<(SHARED_INTERMEDIATE_DIR)/ui/strings/app_locale_settings_en-US.pak',
               '<(SHARED_INTERMEDIATE_DIR)/ui/strings/ui_strings_en-US.pak',
             ],
-            'conditions': [
-              ['OS!="android"', {
-                'pak_output': '<(PRODUCT_DIR)/sprocket.pak',
-              }, {
-                'pak_output': '<(PRODUCT_DIR)/sprocket/assets/sprocket.pak',
-              }],
-            ],
+            'pak_output': '<(PRODUCT_DIR)/sprocket.pak',
           },
           'includes': [ '../build/repack_action.gypi' ],
         },
