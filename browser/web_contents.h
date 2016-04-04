@@ -131,6 +131,15 @@ class SprocketWebContents : public content::WebContentsDelegate,
   // nullptr in which case dialogs aren't shown.
   content::JavaScriptDialogManager* GetJavaScriptDialogManager(content::WebContents* source) override;
 
+  // Called when color chooser should open. Returns the opened color chooser.
+  // Returns nullptr if we failed to open the color chooser (e.g. when there is
+  // a ColorChooserDialog already open on Windows). Ownership of the returned
+  // pointer is transferred to the caller.
+  content::ColorChooser* OpenColorChooser(
+      content::WebContents* web_contents,
+      SkColor color,
+      const std::vector<content::ColorSuggestion>& suggestions) override;
+
   // Selects the specified contents, bringing its container to the front.
   void ActivateContents(content::WebContents* contents) override;
 

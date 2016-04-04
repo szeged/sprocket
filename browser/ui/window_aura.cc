@@ -9,6 +9,7 @@
 #include "base/strings/utf_string_conversions.h"
 #include "content/public/browser/web_contents.h"
 #include "sprocket/browser/ui/authentication_dialog.h"
+#include "sprocket/browser/ui/color_chooser.h"
 #include "sprocket/browser/ui/context_menu_model.h"
 #include "sprocket/browser/ui/javascript_dialog.h"
 #include "sprocket/browser/ui/views_delegate_aura.h"
@@ -19,6 +20,7 @@
 #include "ui/aura/env.h"
 #include "ui/aura/window_tree_host.h"
 #include "ui/gfx/screen.h"
+#include "ui/views/color_chooser/color_chooser_view.h"
 #include "ui/views/controls/button/menu_button.h"
 #include "ui/views/controls/menu/menu_runner.h"
 #include "ui/views/controls/textfield/textfield.h"
@@ -127,12 +129,12 @@ void SprocketWindow::PlatformLoadProgressChanged(double progress) {
   // TODO: Implement!
 }
 
-void SprocketWindow::PlatformShowJavaScriptDialog(SprocketJavaScriptDialog* dialog) {
+void SprocketWindow::PlatformShowDialog(views::WidgetDelegate* delegate) {
   content::WebContents* web_contents =
       PlatformGetSelectedTab()->sprocket_web_contents()->web_contents();
   views::Widget* dialog_widget =
       views::DialogDelegate::CreateDialogWidget(
-          dialog,
+          delegate,
           window_,
           web_contents->GetNativeView());
   gfx::Rect bounds = window_widget_->GetWindowBoundsInScreen();
@@ -142,19 +144,19 @@ void SprocketWindow::PlatformShowJavaScriptDialog(SprocketJavaScriptDialog* dial
   dialog_widget->Show();
 }
 
+void SprocketWindow::PlatformShowJavaScriptDialog(SprocketJavaScriptDialog* dialog) {
+  PlatformShowDialog(dialog);
+}
+
+void SprocketWindow::PlatformShowColorChooserDialog(SprocketColorChooser* listener,
+                                                    SkColor initial_color) {
+  views::ColorChooserView* color_chooser_view =
+      new views::ColorChooserView(listener, initial_color);
+  PlatformShowDialog(color_chooser_view);
+}
+
 void SprocketWindow::PlatformShowAuthenticationDialog(SprocketAuthenticationDialog* dialog) {
-  content::WebContents* web_contents =
-      PlatformGetSelectedTab()->sprocket_web_contents()->web_contents();
-  views::Widget* dialog_widget =
-      views::DialogDelegate::CreateDialogWidget(
-          dialog,
-          window_,
-          web_contents->GetNativeView());
-  gfx::Rect bounds = window_widget_->GetWindowBoundsInScreen();
-  bounds.ClampToCenteredSize(dialog_widget->GetWindowBoundsInScreen().size());
-  dialog_widget->SetBounds(bounds);
-  // TODO: This does not work: dialog_widget->SetAlwaysOnTop(true);
-  dialog_widget->Show();
+  PlatformShowDialog(dialog);
 }
 
 void SprocketWindow::PlatformToggleFullscreenModeForTab(bool enter_fullscreen) {

@@ -65,6 +65,8 @@
         'browser/net/url_request_context_getter.cc',
         'browser/ui/authentication_dialog.cc',
         'browser/ui/authentication_dialog.h',
+        'browser/ui/color_chooser.cc',
+        'browser/ui/color_chooser.h',
         'browser/ui/javascript_dialog.cc',
         'browser/ui/javascript_dialog.h',
         'browser/ui/window.cc',

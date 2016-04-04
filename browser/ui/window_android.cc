@@ -88,6 +88,11 @@ void SprocketWindow::PlatformShowJavaScriptDialog(SprocketJavaScriptDialog* dial
   Java_SprocketWindow_showJavaScriptDialog(env, java_object_.obj(), dialog->GetJavaObject().obj());
 }
 
+void SprocketWindow::PlatformShowColorChooserDialog(SprocketColorChooser* listener,
+                                                    SkColor initial_color) {
+  // TODO: Implement!
+}
+
 void SprocketWindow::PlatformShowAuthenticationDialog(SprocketAuthenticationDialog* dialog) {
   JNIEnv* env = AttachCurrentThread();
   Java_SprocketWindow_showAuthenticationDialog(env, java_object_.obj(), dialog->GetJavaObject().obj());

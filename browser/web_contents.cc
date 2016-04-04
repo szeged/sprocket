@@ -14,6 +14,7 @@
 #include "content/public/common/favicon_url.h"
 #include "devtools/devtools_manager_delegate.h"
 #include "sprocket/browser/javascript_dialog_manager.h"
+#include "sprocket/browser/ui/color_chooser.h"
 #include "sprocket/browser/ui/window.h"
 
 #if defined(USE_AURA)
@@ -274,6 +275,15 @@ void SprocketWebContents::DidNavigateMainFramePostCommit(content::WebContents* w
 
 content::JavaScriptDialogManager* SprocketWebContents::GetJavaScriptDialogManager(content::WebContents*) {
   return new SprocketJavaScriptDialogManager;
+}
+
+content::ColorChooser* SprocketWebContents::OpenColorChooser(
+    content::WebContents* web_contents,
+    SkColor color,
+    const std::vector<content::ColorSuggestion>& suggestions) {
+  SprocketColorChooser* color_chooser = new SprocketColorChooser(web_contents);
+  window_->PlatformShowColorChooserDialog(color_chooser, color);
+  return color_chooser;
 }
 
 void SprocketWebContents::ActivateContents(content::WebContents* contents) {

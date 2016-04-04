@@ -9,6 +9,7 @@
 
 #include "base/memory/scoped_ptr.h"
 #include "base/strings/string16.h"
+#include "third_party/skia/include/core/SkColor.h"
 #include "ui/gfx/geometry/size.h"
 #include <set>
 
@@ -19,12 +20,14 @@
 namespace views {
 class ViewsDelegate;
 class Widget;
+class WidgetDelegate;
 }
 
 class Tab;
 #endif
 
 class SprocketAuthenticationDialog;
+class SprocketColorChooser;
 class SprocketJavaScriptDialog;
 class SprocketWebContents;
 class GURL;
@@ -98,8 +101,13 @@ class SprocketWindow {
   bool PlatformHandleContextMenu(const content::ContextMenuParams& params);
   // Changes the load progress
   void PlatformLoadProgressChanged(double progress);
+#if defined(USE_AURA)
+  void PlatformShowDialog(views::WidgetDelegate* delegate);
+#endif
   // Shows a JavaScript dialog
   void PlatformShowJavaScriptDialog(SprocketJavaScriptDialog* dialog);
+  // Shows a color picker
+  void PlatformShowColorChooserDialog(SprocketColorChooser* listener, SkColor initial_color);
   // Asks for username and password
   void PlatformShowAuthenticationDialog(SprocketAuthenticationDialog* dialog);
   // Enters/exits fullscreen mode
