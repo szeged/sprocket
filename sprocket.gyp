@@ -133,11 +133,12 @@
       'type': 'none',
       'actions': [
         {
+          'includes': [ '../build/grit_action.gypi' ],
           'action_name': 'generate_sprocket_resources',
           'variables': {
             'grit_grd_file': 'sprocket_resources.grd',
+            'grit_resource_ids': ''
           },
-          'includes': [ '../build/grit_action.gypi' ],
         },
       ],
       'includes': [ '../build/grit_target.gypi' ],

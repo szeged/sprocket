@@ -9,7 +9,7 @@
   </outputs>
   <translations />
   <release seq="1">
-    <includes>
+    <includes first_id="25600">
       <include name="IDR_SPROCKET_DEVTOOLS_DISCOVERY_PAGE" file="resources/devtools_discovery_page.html" type="BINDATA" />
       <include name="IDR_SPROCKET_ERROR_PAGE" file="resources/error_page.html" type="BINDATA" />
     </includes>

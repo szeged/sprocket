@@ -29,8 +29,6 @@ git clone https://github.com/szeged/sprocket.git sprocket
 # use the latest working Chromium release revision
 # if it doesn't see the revision, you should try `git fetch --tags` first
 git reset --hard "$(< sprocket/LKGR)" && gclient sync --with_branch_heads --jobs 16
-# apply patches
-git apply sprocket/patch/gritsettings.patch
 ```
 Next, run the selected platform's commands.
 ##### Linux/PC
