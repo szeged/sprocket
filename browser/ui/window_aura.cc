@@ -19,7 +19,6 @@
 #include "ui/aura/client/screen_position_client.h"
 #include "ui/aura/env.h"
 #include "ui/aura/window_tree_host.h"
-#include "ui/gfx/screen.h"
 #include "ui/views/color_chooser/color_chooser_view.h"
 #include "ui/views/controls/button/menu_button.h"
 #include "ui/views/controls/menu/menu_runner.h"
@@ -35,7 +34,7 @@ views::ViewsDelegate* SprocketWindow::views_delegate_ = NULL;
 
 // static
 void SprocketWindow::PlatformInitialize() {
-  gfx::Screen::SetScreenInstance(gfx::SCREEN_TYPE_NATIVE, views::CreateDesktopScreen());
+  gfx::Screen::SetScreenInstance(views::CreateDesktopScreen());
   views_delegate_ = new SprocketViewsDelegateAura;
 }
 
