@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Sprocket - GPU process</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="sprocket.css">
+    <script src="bootstrap/js/bootstrap.min.js"></script>
+  </head>
+  <body>
+
+    <div class="sprocket-jumbotron">
+      <div class="container">
+        <a href="index.html">
+          <img src="img/sprocket_title.png" class="img-responsive center-block" style="height: 100px;">
+        </a>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <div class="row">
+        <div class="col-sm-2"></div>
+        <div class="col-sm-8">
+
+          <h1>GPU process - detailed architecture overview</h1>
+
+          <a href="img/arch/GPU_Process.png" target="_blank"><img src="img/arch/GPU_Process.png" class="img-responsive center-block"></a>
+
+<ul>
+<li><strong>Startup</strong></li>
+<ul><li>the entry point for the GPU process</li></ul>
+<li><strong>Loop</strong></li>
+<ul><li>MainMessageLoop</li>
+<ul><li>is used to process events for a particular thread</li>
+<li>puts the incoming messages, tasks to a queue</li>
+<li>pops a task from the queue and starts it</li>
+<li>strong relationship with the IPC communication framework</li>
+<li>has task reentrancy protection</li>
+<ul><li>second task cannot be started until first task finishes</li></ul></ul></ul>
+<li><strong>IPC</strong></li>
+<ul><li>framework which is used for inter-process communication</li>
+<li>connects directly to the MainMessageLoop</li>
+<li>provides communication channels through which the messages can be sent</li>
+<li>message creating, sending and receiving</li>
+<li>asynchronous message handling</li></ul>
+<li><strong>TaskAnnotator</strong></li>
+<ul><li>all incoming tasks are going through a TaskAnnotator which annotates the task before the execution</li>
+<li>implements common debug annotations for posted tasks. This includes data such as task origins, queueing durations and memory usage</li>
+<li>runs a previously queued task</li></ul>
+<li><strong>GPU Command Buffer</strong></li>
+<ul><li>implements IPC methods (Receive, Send)</li>
+<li>handles messages (Set/Get buffer, Flush, Create/Destroy Images, etc) and sends commands</li></ul>
+<li><strong>gfx::GLSurface</strong></li>
+<ul><li>encapsulates a surface that can be rendered to with GL, hiding platform specific management</li></ul>
+<li><strong>gfx::GLContext</strong></li>
+<ul><li>encapsulates an OpenGL context, hiding platform specific management</li></ul>
+<li><strong>GLES2 Decoder</strong></li>
+<ul><li>decodes GLES2 commands from Command Buffer</li>
+<li>calls GL methods</li></ul>
+<li><strong>Shader, Texture, …, Draw elements</strong></li>
+<ul><li>calls actual OpenGL functions</li>
+<li>compiles and executes shader codes</li>
+<li>manipulates textures (bind, remove, setTarget, etc)</li>
+<li>other calls manage the GLContext’s state</li></ul>
+<li><strong>Swap buffers</strong></li>
+<ul><li>handles frame swaps</li>
+<li>if the buffer is offscreen then it copies the rendered frame to another framebuffer</li></ul>
+</ul>
+<hr>
+
+<p>Sources:</p>
+<ul>
+<li><a href="https://code.google.com/p/chromium/codesearch#chromium/src/base/message_loop/message_loop.h">https://code.google.com/p/chromium/codesearch#chromium/src/base/message_loop/message_loop.h</a></li>
+<li><a href="https://code.google.com/p/chromium/codesearch#chromium/src/base/debug/task_annotator.h&q=task_annotator&sq=package:chromium&type=cs&l=1">https://code.google.com/p/chromium/codesearch#chromium/src/base/debug/task_annotator.h&q=task_annotator&sq=package:chromium&type=cs&l=1</a></li>
+<li><a href="https://code.google.com/p/chromium/codesearch#chromium/src/cc/raster/task_graph_runner.h&q=taskgraph&sq=package:chromium&type=cs&l=42">https://code.google.com/p/chromium/codesearch#chromium/src/cc/raster/task_graph_runner.h&q=taskgraph&sq=package:chromium&type=cs&l=42</a></li>
+<li><a href="https://code.google.com/p/chromium/codesearch#chromium/src/content/common/gpu/gpu_command_buffer_stub.h&q=gpucommandbufferstub&sq=package:chromium&type=cs&l=92">https://code.google.com/p/chromium/codesearch#chromium/src/content/common/gpu/gpu_command_buffer_stub.h&q=gpucommandbufferstub&sq=package:chromium&type=cs&l=92</a></li>
+</ul>
+
+          <hr>
+
+      <footer>
+        <div class="row">
+          <div class="col-md-6">
+            <p>&copy; 2016 University of Szeged, DSE; Sprocket Team</p>
+          </div>
+          <div class="col-md-6 license-button-container">
+            <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank">
+              <img src="https://licensebuttons.net/l/by-sa/4.0/88x31.png">
+            </a>
+          </div>
+        </div>
+      </footer>
+
+        </div>
+        <div class="col-sm-2"></div>
+      </div>
+
+    </div> <!-- /container -->
+
+  </body>
+</html>

@@ -1,0 +1,61 @@
+.sprocket-jumbotron {
+    background-color: black;
+}
+
+.sprocket-intro {
+    text-align: center;
+}
+
+h1 {
+    margin: 20px 0px;
+    font-weight: bold;
+}
+
+p {
+    text-align: justify;
+}
+
+th {
+    background-color: #228B22;
+    color: white;
+    vertical-align: center;
+    text-align: center;
+}
+
+td, th {
+    padding: 5px;
+}
+
+.sprocket-milestone-cell {
+    vertical-align: center;
+    text-align: center;
+    font-weight: bold;
+}
+
+.sprocket-description-link {
+    text-align: center;
+}
+
+.sprocket-video-container {
+    position:relative;
+    padding-bottom:56.25%;
+    padding-top:30px;
+    height:0;
+    overflow:hidden;
+}
+
+.sprocket-video-container iframe, .sprocket-video-container object, .sprocket-video-container embed {
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+}
+
+footer {
+    margin: 20px 0px;
+}
+
+.license-button-container {
+    text-align: right;
+}

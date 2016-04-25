@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Sprocket - Zygote process</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="sprocket.css">
+    <script src="bootstrap/js/bootstrap.min.js"></script>
+  </head>
+  <body>
+
+    <div class="sprocket-jumbotron">
+      <div class="container">
+        <a href="index.html">
+          <img src="img/sprocket_title.png" class="img-responsive center-block" style="height: 100px;">
+        </a>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <div class="row">
+        <div class="col-sm-2"></div>
+        <div class="col-sm-8">
+
+          <h1>Zygote process - detailed architecture overview</h1>
+
+          <a href="img/arch/Zygote_Process.png" target="_blank"><img src="img/arch/Zygote_Process.png" class="img-responsive center-block"></a>
+
+<ul>
+<li><strong>Startup</strong></li>
+<ul><li>Startup box represents the parent process’s (Browser process) startup procedure</li></ul>
+<li><strong>Zygote</strong></li>
+<ul><li>after Browser process startup, Zygote process is created</li></ul>
+<li><strong>Fork</strong></li>
+<ul><li>Zygote process is forked in order to create Renderer process(es)</li></ul>
+<li><strong>Loop</strong></li>
+<ul><li>MainMessageLoop</li>
+<ul><li>is used to process events for a particular thread</li>
+<li>puts the incoming messages, tasks to a queue</li>
+<li>pops a task from the queue and starts it</li>
+<li>strong relationship with the IPC communication framework</li>
+<li>has task reentrancy protection</li>
+<li>second task cannot be started until first task finishes</li></ul></ul>
+<li><strong>IPC / Mojo</strong></li>
+<ul><li>framework which is used for inter-process communication</li>
+<li>connects directly to the MainMessageLoop</li>
+<li>provides communication channels through which the messages can be sent</li>
+<li>message creating, sending and receiving</li>
+<li>asynchronous message handling</li></ul>
+<li><strong>TaskAnnotator</strong></li>
+<ul><li>all incoming tasks are going through a TaskAnnotator which annotates the task before the execution</li>
+<li>implements common debug annotations for posted tasks. This includes data such as task origins, queueing durations and memory usage.</li>
+<li>runs a previously queued task</li></ul>
+<li><strong>callback</strong></li>
+<ul><li>this box represents system or message related callbacks</li></ul>
+<li><strong>Scheduler</strong></li>
+<ul><li>package which contains multiple classes regarding task schedule</li>
+<li>TaskQueueManager</li>
+<ul><li>The task queue manager provides N task queues and a selector interface for choosing which task queue to service next. Each task queue consists of two sub queues</li>
+<ul><li>Incoming task queue</li>
+<li>Work queue</li></ul>
+</ul>
+</ul>
+<li><strong>blink::HTMLDocumentParser</strong></li>
+<ul><li>parse the HTML document</li>
+<li>build the DOM tree</li></ul>
+<li><strong>autofill</strong></li>
+<ul><li>AutofillAgent deals with Autofill related communications between WebKit and the browser</li>
+<li>there is one AutofillAgent per RenderFrame</li>
+<li>Autofill encompasses:</li>
+<ul><li>single text field suggestions, that we usually refer to as Autocomplete,</li>
+<li>password form fill, referred to as Password Autofill, and</li>
+<li>entire form fill based on one field entry, referred to as Form Autofill.</li></ul>
+</ul>
+<li><strong>icu</strong></li>
+<ul><li>ICU stands for International Components for Unicode</li>
+<li>library which provides Unicode and Globalization support for software applications</li>
+<li>in the current context icu is used for regular expression pattern matching to determine if an autofill matches a specific regular expression</li></ul>
+<li><strong>content::ResourceDispatcher</strong></li>
+<ul><li>this class serves as a communication interface to the ResourceDispatcherHost in the browser process</li>
+<li>it can be used from any child process.</li>
+<li>dispatches incoming messages</li></ul>
+<li><strong>blink::TimerBase</strong></li>
+<ul><li>basic Timer</li></ul>
+<li><strong>blink::FrameLoader</strong></li>
+<ul><li>controls a load of a specific frame (page)</li></ul>
+<li><strong>blink::EventHandler</strong></li>
+<ul><li>handle events like selection, drag and drop, gesture, mouse move, mouse press or release</li>
+<li>perform hit test</li></ul>
+<li><strong>blink::EventDispatcher</strong></li>
+<ul><li>dispatches simple events, scoped events or simulated clicks</li></ul>
+<li><strong>blink::Document</strong></li>
+<ul><li>blink::DocumentLoader is responsible for the loading of the Document</li>
+<li>after CSS style applying (blink::StyleResolver) and Layout calculation the paint layers and graphics layers are updated</li></ul>
+<li><strong>media::DecoderStream</strong></li>
+<ul><li>wraps a DemuxerStream and a list of Decoders and provides decoded output to its client (e.g. Audio/VideoRendererImpl).</li></ul>
+<li><strong>blink::ScriptRunner</strong></li>
+<ul><li>class for executing JavaScript instructions</li></ul>
+<li><strong>content::RenderThread</strong></li>
+<ul><li>a thread which is used for rendering tasks in Renderer and Zygote process (only one can be present at a time)</li></ul>
+<li><strong>blink::V8Initializer</strong></li>
+<ul><li>has only static methods in order to initialize v8 context</li>
+<ul><li>on the main thread</li>
+<li>on a worker thread</li></ul></ul>
+<li><strong>extensions</strong></li>
+<ul><li>reusable extensions module</li>
+<li>it implements the core parts of Chrome's extension system, and can be used with any host of the 'content' module.</li></ul>
+<li><strong>blink::WorkerThread</strong></li>
+<ul><li>thread which can execute specific tasks</li>
+<li>tasks can be posted to a worker</li>
+<li>calls WorkerScriptController::initializeContextifNeeded in order to execute JavaScript via V8</li></ul>
+<li><strong>Compositor (cc)</strong></li>
+<ul><li>uses multiple backing stores to cache and group chunks of the render tree</li>
+<li>avoids unnecessary repainting</li>
+<li>primary compositing tasks</li>
+<ul><li>determine how to group contents into backing stores (i.e. composited layers)</li>
+<li>paint the contents of each composited layer</li>
+<li>draw the composited layers to make a final image</li></ul>
+<li>paints the layer contents to display lists</li>
+<li>handles layer updates</li></ul>
+<li><strong>Skia</strong></li>
+<ul><li>Blink’s drawing library</li>
+<li>the rasterization calls specific <strong>Skia</strong> functions in order to get the canvas drawn correctly</li>
+<ul><li>drawColor, drawPicture, drawRect, fillRect, etc.</li></ul></ul>
+<li><strong>blink::ImageDecoder</strong></li>
+<ul><li>ImageDecoder is a base for all format-specific decoders (e.g. JPEGImageDecoder). This base manages the ImageFrame cache.</li></ul>
+<li><strong>content::WebGraphicsContext3DCommandBuffer</strong></li>
+<ul><li>3D graphic related methods</li>
+<li>forwards instructions to the <strong>GpuChannelHost</strong> which</li>
+<ul><li>encapsulates an IPC channel between the client and one GPU process</li>
+<li>on the GPU process side there's a corresponding GpuChannel</li>
+<li>every method can be called on any thread with a message loop, except for the IO thread</li></ul></ul>
+<li><strong>RasterTask</strong></li>
+<ul><li>task, which performs rasterization</li>
+<li>tasks are represented as a task graph</li>
+<ul><li>edges: dependencies</li>
+<li>node: tasks, priority is assigned to them</li></ul>
+<li>items in the display list are drawn to the surface</li>
+<li>rasterization calls gpu::gles2::QueryTracker methods in order to create queries to the GPU</li></ul>
+<li><strong>gpu::gles2</strong></li>
+<ul><li>QueryTracker</li>
+<ul><li>tracks queries for client side of command buffer.</li></ul>
+<li>QueryManager</li>
+<ul><li>keeps track of the queries and their state as Queries are not shared there is one QueryManager per context.</li></ul>
+<li>sends queries to content::CommandBufferProxyImpl</li>
+<ul><li>client side proxy that forwards messages synchronously to a CommandBufferStub</li></ul></ul>
+
+</ul>
+
+<p>Sources:</p>
+<ul>
+<li><a href="https://code.google.com/p/chromium/codesearch#chromium/src/components/scheduler/base/task_queue_manager.h&q=task_queue_manager.h&sq=package:chromium&type=cs&l=5">https://code.google.com/p/chromium/codesearch#chromium/src/components/scheduler/base/task_queue_manager.h&q=task_queue_manager.h&sq=package:chromium&type=cs&l=5</a></li>
+<li><a href="https://code.google.com/p/chromium/codesearch#chromium/src/base/message_loop/message_loop.h">https://code.google.com/p/chromium/codesearch#chromium/src/base/message_loop/message_loop.h</a></li>
+<li><a href="https://code.google.com/p/chromium/codesearch#chromium/src/base/debug/task_annotator.h&q=task_annotator&sq=package:chromium&type=cs&l=1">https://code.google.com/p/chromium/codesearch#chromium/src/base/debug/task_annotator.h&q=task_annotator&sq=package:chromium&type=cs&l=1</a></li>
+<li><a href="https://code.google.com/p/chromium/codesearch#chromium/src/components/autofill/content/renderer/autofill_agent.h&q=autofill_agent&sq=package:chromium&type=cs&l=1">https://code.google.com/p/chromium/codesearch#chromium/src/components/autofill/content/renderer/autofill_agent.h&q=autofill_agent&sq=package:chromium&type=cs&l=1</a></li>
+<li><a href="http://site.icu-project.org/">http://site.icu-project.org/</a></li>
+<li><a href="https://code.google.com/p/chromium/codesearch#chromium/src/content/child/resource_dispatcher.h&q=resource_dispatcher&sq=package:chromium&type=cs">https://code.google.com/p/chromium/codesearch#chromium/src/content/child/resource_dispatcher.h&q=resource_dispatcher&sq=package:chromium&type=cs</a></li>
+<li><a href="https://code.google.com/p/chromium/codesearch#chromium/src/media/filters/decoder_stream.h&q=decoder&sq=package:chromium&type=cs&l=1">https://code.google.com/p/chromium/codesearch#chromium/src/media/filters/decoder_stream.h&q=decoder&sq=package:chromium&type=cs&l=1</a></li>
+<li><a href="https://code.google.com/p/chromium/codesearch#chromium/src/extensions/README&q=extensions/Re&sq=package:chromium&type=cs&l=1">https://code.google.com/p/chromium/codesearch#chromium/src/extensions/README&q=extensions/Re&sq=package:chromium&type=cs&l=1</a></li>
+<li><a href="https://docs.google.com/presentation/d/1dDE5u76ZBIKmsqkWi2apx3BqV8HOcNf4xxBdyNywZR8/edit#slide=id.g9ade3ed5_017">https://docs.google.com/presentation/d/1dDE5u76ZBIKmsqkWi2apx3BqV8HOcNf4xxBdyNywZR8/edit#slide=id.g9ade3ed5_017</a></li>
+<li><a href="https://code.google.com/p/chromium/codesearch#chromium/src/third_party/WebKit/Source/platform/image-decoders/ImageDecoder.h&q=imagedecoder.h&sq=package:chromium&type=cs&l=1">https://code.google.com/p/chromium/codesearch#chromium/src/third_party/WebKit/Source/platform/image-decoders/ImageDecoder.h&q=imagedecoder.h&sq=package:chromium&type=cs&l=1</a></li>
+<li><a href="https://code.google.com/p/chromium/codesearch#chromium/src/content/common/gpu/client/gpu_channel_host.h&q=gpuchannelhost&sq=package:chromium&type=cs&l=1">https://code.google.com/p/chromium/codesearch#chromium/src/content/common/gpu/client/gpu_channel_host.h&q=gpuchannelhost&sq=package:chromium&type=cs&l=1</a></li>
+<li><a href="https://code.google.com/p/chromium/codesearch#chromium/src/cc/raster/task_graph_runner.h&q=taskgraph&sq=package:chromium&type=cs&l=42">https://code.google.com/p/chromium/codesearch#chromium/src/cc/raster/task_graph_runner.h&q=taskgraph&sq=package:chromium&type=cs&l=42</a></li>
+<li><a href="https://code.google.com/p/chromium/codesearch#chromium/src/gpu/command_buffer/client/query_tracker.h&q=querytracker&sq=package:chromium&type=cs&l=77">https://code.google.com/p/chromium/codesearch#chromium/src/gpu/command_buffer/client/query_tracker.h&q=querytracker&sq=package:chromium&type=cs&l=77</a></li>
+<li><a href="https://code.google.com/p/chromium/codesearch#chromium/src/gpu/command_buffer/service/query_manager.h&q=querymanager&sq=package:chromium&type=cs&l=34">https://code.google.com/p/chromium/codesearch#chromium/src/gpu/command_buffer/service/query_manager.h&q=querymanager&sq=package:chromium&type=cs&l=34</a></li>
+<li><a href="https://code.google.com/p/chromium/codesearch#chromium/src/content/common/gpu/client/command_buffer_proxy_impl.h&q=commandbufferproxy&sq=package:chromium&type=cs&l=47">https://code.google.com/p/chromium/codesearch#chromium/src/content/common/gpu/client/command_buffer_proxy_impl.h&q=commandbufferproxy&sq=package:chromium&type=cs&l=47</a></li>
+</ul>
+
+          <hr>
+
+      <footer>
+        <div class="row">
+          <div class="col-md-6">
+            <p>&copy; 2016 University of Szeged, DSE; Sprocket Team</p>
+          </div>
+          <div class="col-md-6 license-button-container">
+            <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank">
+              <img src="https://licensebuttons.net/l/by-sa/4.0/88x31.png">
+            </a>
+          </div>
+        </div>
+      </footer>
+
+        </div>
+        <div class="col-sm-2"></div>
+      </div>
+
+    </div> <!-- /container -->
+
+  </body>
+</html>

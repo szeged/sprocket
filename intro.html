@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Sprocket - Introduction</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="sprocket.css">
+    <script src="bootstrap/js/bootstrap.min.js"></script>
+  </head>
+  <body>
+
+    <div class="sprocket-jumbotron">
+      <div class="container">
+        <a href="index.html">
+          <img src="img/sprocket_title.png" class="img-responsive center-block" style="height: 100px;">
+        </a>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <div class="row">
+        <div class="col-sm-2"></div>
+        <div class="col-sm-8">
+
+          <h1>Introduction</h1>
+
+          <p>There are multiple ways to build a web browser. You don’t need to do everything from scratch, but if you want to do that you should check <a href="http://limpet.net/mbrubeck/2014/08/08/toy-layout-engine-1.html">this tutorial</a> out first. For those who would like to follow the beaten path, the open-source communities have already provided several high quality browser engines: <a href="https://www.webkit.org/">WebKit</a> (Safari), <a href="http://www.chromium.org/Home">Blink</a> (Chromium), <a href="https://developer.mozilla.org/en-US/docs/Mozilla/Gecko">Gecko</a> (Firefox), <a href="https://github.com/servo/servo">Servo</a> (Mozilla’s experimental project). You can even read an overview about their architecture design <a href="http://taligarsiel.com/Projects/howbrowserswork1.htm">here</a>.</p>
+
+          <p>There are some other popular “out-of-the-box” solutions: <a href="https://code.google.com/p/chromiumembedded/">CEF</a>, <a href="http://nwjs.io/">NW.js</a> (previously node-webkit), <a href="http://www.awesomium.com/">Awesomium</a>, <a href="https://openfin.co/">OpenFin</a>, <a href="http://qt-project.org/wiki/QtWebEngine">QtWebEngine</a>. They are all based on Chromium’s framework, which is the Content API. Each of them are using their own UI, callbacks and ecosystem to support different purposes. If you find here what you are looking for, stick with it. Otherwise we can show the capacity of the Content API to build up your custom ecosystem.</p>
+
+          <p>The <a href="https://browser.yandex.com/future/">Yandex Browser</a> (and of course <a href="https://www.google.com/chrome/">Google Chrome)</a> could be a great example, what you can achieve with the Content API.</p>
+
+          <p>For the following tutorial we will use the Content API to build our browser, like Chrome does, but only with basic functionality.</p>
+
+          <p>You can read about the Chromium Content API and modules here: <a href="https://www.chromium.org/developers/content-module/content-api">Content API</a>, <a href="https://www.chromium.org/developers/content-module">Content Module</a></p>
+
+          <p>If you are interested in how Chromium is built together and how it works, you can check out our Chromium Architecture overview.</p>
+
+          <h2>Sprocket</h2>
+
+          <p>There are lots of very good standalone and embedded browsers on the market, but each one of them is connected to and based on their separate ecosystems. In general it is a good strategy to join an already existing system, but sometimes there is a need to build up a totally different one. Our guide is about to show how to do this, “How to build a Web Browser”.</p>
+
+          <p>In the beginning we started with ideas from already existing embedder implementations. Although the concept of already existing browsers are fine, we felt our hands were tied. So, we dropped everything and went to the beginning to build up our ideas from scratch. This is the way how Sprocket was born.</p>
+
+          <p>Sprocket has three branches currently: master, core and testing. Core Sprocket is about to be as minimal as possible compared to the existing implementations. In this branch the code size is reduced to a minimum, and unnecessary requirements were dropped. Now - after the bases have been done - we are continuously extending Sprocket with well-documented new features. You can read more about our branches later in this documentation.</p>
+
+          <p>For those who cannot wait, the source code can be found on <a href="https://github.com/szeged/sprocket">GitHub</a>. You will also see a guide there about how to compile and execute the browser. You can find some sneak peek pictures <a href="https://drive.google.com/folderview?id=0B4-vJLnNbTOLfmtmWENaTEd0STBfZTcxS0ZYNnQtTXd5WktXX0Vtb01ySENnWS1QVE10clE&usp=sharing">here</a>.</p>
+
+          <hr>
+
+      <footer>
+        <div class="row">
+          <div class="col-md-6">
+            <p>&copy; 2016 University of Szeged, DSE; Sprocket Team</p>
+          </div>
+          <div class="col-md-6 license-button-container">
+            <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank">
+              <img src="https://licensebuttons.net/l/by-sa/4.0/88x31.png">
+            </a>
+          </div>
+        </div>
+      </footer>
+
+        </div>
+        <div class="col-sm-2"></div>
+      </div>
+
+    </div> <!-- /container -->
+
+  </body>
+</html>

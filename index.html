@@ -1,38 +1,124 @@
 <!DOCTYPE html>
-<html>
-
+<html lang="en">
   <head>
-    <meta charset='utf-8' />
-    <meta http-equiv="X-UA-Compatible" content="chrome=1" />
-    <meta name="google-site-verification" content="uevq3TViUZvPaMS2xSZ7iWKHkTK0_SKVefW2dUT1H0c" />
-    <meta name="description" content="Sprocket - The essential guide to build a web browser" />
-    <link rel="stylesheet" type="text/css" media="screen" href="stylesheets/stylesheet.css">
-
-    <title>Sprocket - The essential guide to build a web browser</title>
+    <meta charset="utf-8">
+    <title>Sprocket</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="sprocket.css">
+    <script src="bootstrap/js/bootstrap.min.js"></script>
   </head>
-
   <body>
-<!-- HEADER -->
-    <div id="header_wrap" class="outer">
-        <header class="inner">
-          <a id="forkme_banner" href="https://github.com/szeged/sprocket">View on GitHub</a>
 
-          <h1 id="project_title">Sprocket</h1>
-          <h2 id="project_tagline">The essential guide to build a web browser</h2>
-        </header>
+    <div class="jumbotron sprocket-jumbotron">
+      <div class="container">
+        <img src="img/sprocket_title.png" class="img-responsive center-block">
+
+        <p class="text-success sprocket-intro">Sprocket is an experimental browser based on Chromium's Content API. It is free, open source, and has a great deal of documentation. We are inviting You to join Sprocket team to improve the next generation embeddable browser!</p>
+
+        <p style="text-align: center;">
+            <a class="btn btn-success btn-lg" href="http://browser.sed.hu/category/keywords/sprocket" target="_blank" role="button">
+                Blog posts &raquo;
+            </a>
+            <a class="btn btn-success btn-lg" href="https://github.com/szeged/sprocket" target="_blank" role="button">
+                Source code &raquo;
+            </a>
+            <a class="btn btn-success btn-lg" href="http://build.sprocket.sed.hu/waterfall" target="_blank" role="button">
+                Build status &raquo;
+            </a>
+        </p>
+      </div>
     </div>
-    <!-- MAIN CONTENT -->
-    <div id="main_content_wrap" class="outer">
-      <section id="main_content" class="inner">
-        <iframe width="560" height="315" src="https://www.youtube.com/embed/sgKi38GbOj0?rel=0" frameborder="0" allowfullscreen></iframe>
-      </section>
-    </div>
-    <!-- FOOTER  -->
-    <div id="footer_wrap" class="outer">
-      <footer class="inner">
-        <p class="copyright">Slate theme created by <a href="https://github.com/jasoncostello">Jason Costello</a></p>
+
+    <div class="col-md-2"></div>
+    <div class="container col-md-8">
+
+      <div class="row">
+        <div class="col-md-8">
+          <h2>Introduction</h2>
+          <p>There are lots of very good standalone and embedded browsers on the market, but each one of them is connected to and based on their separate ecosystems. In general it is a good strategy to join an already existing system, but sometimes there is a need to build up a totally different one. Our guide is about to show how to do this, “How to build a Web Browser”.</p>
+          <p><a class="btn btn-default" href="intro.html" role="button">View details &raquo;</a></p>
+        </div>
+        <div class="col-md-4">
+          <img src="img/sprocket_logo.png" class="img-responsive center-block">
+        </div>
+      </div>
+
+      <hr>
+
+      <div class="sprocket-video-container">
+        <iframe width="100%" src="https://www.youtube.com/embed/sgKi38GbOj0">
+        </iframe>
+      </div>
+
+      <hr>
+
+      <div class="row">
+        <div class="col-md-4">
+          <img src="img/milestone.jpg" class="img-responsive center-block">
+        </div>
+        <div class="col-md-8">
+          <h2>Milestones</h2>
+          <p>Our project has just started and has a long way to go. So, we collected our goals and broke them down into milestones.</p>
+          <p><a class="btn btn-default" href="milestones.html" role="button">View details &raquo;</a></p>
+       </div>
+      </div>
+
+      <hr>
+
+      <div class="row">
+        <div class="col-md-4">
+          <h2>Architecture overview</h2>
+          <p>Detailed descriptions of the architecture of Chromium.</p>
+        </div>
+        <div class="col-md-4">
+          <h2>Sprocket in details</h2>
+          <p>In this section, we will discuss a simplified version of Content API’s architecture, what kind of classes exist, the connections between them and what we’ve done in our implementation.</p>
+       </div>
+        <div class="col-md-4">
+          <h2>Tutorials</h2>
+          <p>These are detailed descriptions of specific features as addition for the "<a href="sprocket_in_details.html">Sprocket in details</a>" overview.</p>
+        </div>
+      </div>
+
+      <div class="row">
+        <div class="col-md-4">
+          <p><a class="btn btn-default" href="architecture_overview.html" role="button">View details &raquo;</a></p>
+        </div>
+        <div class="col-md-4">
+          <p><a class="btn btn-default" href="sprocket_in_details.html" role="button">View details &raquo;</a></p>
+        </div>
+        <div class="col-md-4">
+          <p><a class="btn btn-default" href="tutorials.html" role="button">View details &raquo;</a></p>
+        </div>
+      </div>
+
+      <hr>
+
+      <div class="row">
+        <div class="col-md-12">
+          <h2>Blog posts</h2>
+          <p>In the future, we plan to create a series of documents in order to oversee and share our process and achievements, and we shall also provide detailed tutorials for the community about the implemented features.</p>
+          <p><a class="btn btn-default" href="http://browser.sed.hu/category/keywords/sprocket" role="button">Check out our blog &raquo;</a></p>
+        </div>
+      </div>
+
+      <hr>
+
+      <footer>
+        <div class="row">
+          <div class="col-md-6">
+            <p>&copy; 2016 University of Szeged, DSE; Sprocket Team</p>
+          </div>
+          <div class="col-md-6 license-button-container">
+            <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank">
+              <img src="https://licensebuttons.net/l/by-sa/4.0/88x31.png">
+            </a>
+          </div>
+        </div>
       </footer>
-    </div>
+    </div> <!-- /container -->
+    <div class="col-md-2"></div>
 
   </body>
 </html>

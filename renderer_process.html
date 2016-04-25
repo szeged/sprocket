@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Sprocket - Renderer process</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="sprocket.css">
+    <script src="bootstrap/js/bootstrap.min.js"></script>
+  </head>
+  <body>
+
+    <div class="sprocket-jumbotron">
+      <div class="container">
+        <a href="index.html">
+          <img src="img/sprocket_title.png" class="img-responsive center-block" style="height: 100px;">
+        </a>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <div class="row">
+        <div class="col-sm-2"></div>
+        <div class="col-sm-8">
+
+          <h1>Renderer process - detailed architecture overview</h1>
+
+          <a href="img/arch/Renderer_Process.png" target="_blank"><img src="img/arch/Renderer_Process.png" class="img-responsive center-block"></a>
+
+<ul>
+<li><strong>Startup</strong></li>
+<ul><li>startup box represents the parent process’s startup procedure</li>
+<li>after Browser process startup, Zygote process is created</li></ul>
+<li><strong>Renderer</strong></li>
+<ul><li>renderer box represents that the Renderer process is forked from the Zygote process</li></ul>
+<li><strong>Loop</strong></li>
+<ul><li>MainMessageLoop</li>
+<ul><li>is used to process events for a particular thread</li>
+<li>puts the incoming messages, tasks to a queue</li>
+<li>pops a task from the queue and starts it</li>
+<li>strong relationship with the IPC communication framework</li>
+<li>has task reentrancy protection</li>
+<ul><li>second task cannot be started until first task finishes</li></ul></ul></ul>
+<li><strong>IPC / Mojo</strong></li>
+<ul><li>framework which is used for inter-process communication</li>
+<li>connects directly to the MainMessageLoop</li>
+<li>provides communication channels through which the messages can be sent</li>
+<li>message creating, sending and receiving</li>
+<li>asynchronous message handling</li></ul>
+<li><strong>TaskAnnotator</strong></li>
+<ul><li>all incoming tasks are going through a TaskAnnotator which annotates the task before the execution</li>
+<li>implements common debug annotations for posted tasks. This includes data such as task origins, queueing durations and memory usage</li>
+<li>runs a previously queued task</li></ul>
+<li><strong>Scheduler</strong></li>
+<ul><li>package which contains multiple classes regarding task schedule</li>
+<li>TaskQueueManager</li>
+<ul><li>The task queue manager provides N task queues and a selector interface for choosing which task queue to service next. Each task queue consists of two sub queues</li>
+<ul><li>Incoming task queue</li>
+<li>Work queue</li></ul></ul></ul>
+<li><strong>content::MessageRouter</strong></li>
+<ul><li>the MessageRouter handles all incoming messages sent to it by routing them to the correct listener</li>
+<li>routing is based on the Message's routing ID</li>
+<li>since routing IDs are typically assigned asynchronously by the browser process, the MessageRouter has the notion of pending IDs for listeners that have not yet been assigned a routing ID</li></ul>
+<li><strong>content::RenderWidget</strong></li>
+<ul><li>RenderWidget provides a communication bridge between a WebWidget and a RenderWidgetHost, the latter of which lives in a different process.</li>
+<li>handles incoming Message in OnMessageReceived method</li>
+<li>handles input Events across a chain to <strong>blink::handleInputEvent</strong></li>
+<li>in case of a mouse event, the <strong>tooltip</strong> gets set and also <strong>hit tests</strong> should be executed</li>
+<li>sends response back through IPC</li></ul>
+<li><strong>content::InputHandler</strong></li>
+<ul><li><strong>content::InputHandlerManager</strong></li>
+<ul><li>manages InputHandlerProxy instances for the WebViews in this renderer.</li></ul>
+<li><strong>content::InputHandlerProxy</strong></li>
+<ul><li>this class is a proxy between the content input event filtering and the compositor's input handling logic. InputHandlerProxy instances live entirely on the compositor thread. Each InputHandler instance handles input events intended for a specific WebWidget.</li></ul>
+<li>calls specific <strong>Compositor</strong> functions as a result for the input event </ul></li>
+<li><strong>Compositor (cc)</strong></li>
+<ul><li>compositor calls specific <strong>gfx</strong> and <strong>GL/GLES</strong> functions in order to perform the correct drawing</li></ul>
+<li><strong>blink::ScriptController</strong></li>
+<ul><li>evaluates JavaScript, and gets the return value through a V8ScriptRunner object</li></ul>
+<li><strong>V8</strong></li>
+<ul><li>Blink’s JavaScript engine</li>
+<li>JavaScript</li>
+<ul><li>parsing</li>
+<li>compiling</li>
+<li>executing</li></ul>
+<li>callbacks to modify DOM tree, etc.</li>
+<li>deals with</li>
+<ul><li>heap allocation</li>
+<li>garbage collection</li></ul></ul>
+</ul>
+
+<hr>
+
+<p>Sources:</p>
+<ul>
+<li><a href="https://code.google.com/p/chromium/codesearch#chromium/src/components/scheduler/base/task_queue_manager.h&q=task_queue_manager.h&sq=package:chromium&type=cs&l=5">https://code.google.com/p/chromium/codesearch#chromium/src/components/scheduler/base/task_queue_manager.h&q=task_queue_manager.h&sq=package:chromium&type=cs&l=5</a></li>
+<li><a href="https://code.google.com/p/chromium/codesearch#chromium/src/content/common/message_router.h&q=message_router.h&sq=package:chromium&type=cs&l=1">https://code.google.com/p/chromium/codesearch#chromium/src/content/common/message_router.h&q=message_router.h&sq=package:chromium&type=cs&l=1</a></li>
+<li><a href="https://code.google.com/p/chromium/codesearch#chromium/src/base/message_loop/message_loop.h">https://code.google.com/p/chromium/codesearch#chromium/src/base/message_loop/message_loop.h</a></li>
+<li><a href="https://code.google.com/p/chromium/codesearch#chromium/src/content/renderer/render_widget.h&q=render_widget.h&sq=package:chromium&type=cs&l=1">https://code.google.com/p/chromium/codesearch#chromium/src/content/renderer/render_widget.h&q=render_widget.h&sq=package:chromium&type=cs&l=1</a></li>
+<li><a href="https://code.google.com/p/chromium/codesearch#chromium/src/base/debug/task_annotator.h&q=task_annotator&sq=package:chromium&type=cs&l=1">https://code.google.com/p/chromium/codesearch#chromium/src/base/debug/task_annotator.h&q=task_annotator&sq=package:chromium&type=cs&l=1</a></li>
+<li><a href="https://code.google.com/p/chromium/codesearch#chromium/src/content/renderer/input/input_handler_manager.h&q=input_handler_manager.&sq=package:chromium&type=cs&l=1">https://code.google.com/p/chromium/codesearch#chromium/src/content/renderer/input/input_handler_manager.h&q=input_handler_manager.&sq=package:chromium&type=cs&l=1</a></li>
+<li><a href="https://code.google.com/p/chromium/codesearch#chromium/src/content/renderer/input/input_handler_proxy.h&q=input_handler_pr&sq=package:chromium&type=cs&l=1">https://code.google.com/p/chromium/codesearch#chromium/src/content/renderer/input/input_handler_proxy.h&q=input_handler_pr&sq=package:chromium&type=cs&l=1</a></li>
+</ul>
+
+          <hr>
+
+      <footer>
+        <div class="row">
+          <div class="col-md-6">
+            <p>&copy; 2016 University of Szeged, DSE; Sprocket Team</p>
+          </div>
+          <div class="col-md-6 license-button-container">
+            <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank">
+              <img src="https://licensebuttons.net/l/by-sa/4.0/88x31.png">
+            </a>
+          </div>
+        </div>
+      </footer>
+
+        </div>
+        <div class="col-sm-2"></div>
+      </div>
+
+    </div> <!-- /container -->
+
+  </body>
+</html>

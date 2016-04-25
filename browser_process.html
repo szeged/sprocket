@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Sprocket - Browser process</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="sprocket.css">
+    <script src="bootstrap/js/bootstrap.min.js"></script>
+  </head>
+  <body>
+
+    <div class="sprocket-jumbotron">
+      <div class="container">
+        <a href="index.html">
+          <img src="img/sprocket_title.png" class="img-responsive center-block" style="height: 100px;">
+        </a>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <div class="row">
+        <div class="col-sm-2"></div>
+        <div class="col-sm-8">
+
+          <h1>Browser process - detailed architecture overview</h1>
+
+          <a href="img/arch/Browser_Process.png" target="_blank"><img src="img/arch/Browser_Process.png" class="img-responsive center-block"></a>
+
+          <ul>
+            <li><strong>Startup</strong></li>
+            <ul>
+              <li>This is the entry point of the whole application (Main).
+              <li>Main launches ContentMain and BrowserMain
+              <li>BrowserMain starts the MainMessageLoop
+            </ul>
+            <li><strong>Threads</strong></li>
+              <ul>
+                <li>Right after the startup the required threads are started</li>
+                <ul>
+                  <li><strong>I/O thread</strong></li>
+                  <ul>
+                    <li>communication with the renderer task</li>
+                  </ul>
+                  <li><strong>DB thread</strong></li>
+                  <ul>
+                    <li>sqlite database connection and queries</li>
+                  </ul>
+                  <li><strong>Cache thread</strong></li>
+                  <ul>
+                    <li>cache store / retrieve</li>
+                  </ul>
+                  <li><strong>Worker threads</strong></li>
+                  <ul>
+                    <li>this is a facility that runs tasks that don't require a specific thread or a message loop</li>
+                    <li>there is a thread pool called WorkerPool, which dynamically adds threads (if necessary) to handle all tasks</li>
+                    <li>there are different implementations for POSIX and non-POSIX based systems</li>
+                  </ul>
+                </ul>
+              </ul>
+            <li><strong>Loop</strong></li>
+            <ul>
+              <li>MainMessageLoop</li>
+              <ul>
+                <li>is used to process events for a particular thread</li>
+                <li>puts the incoming messages, tasks to a queue</li>
+                <li>pops a task from the queue and starts it</li>
+                <li>strong relationship with the IPC communication framework</li>
+                <li>has task reentrancy protection</li>
+                <ul>
+                  <li>second task cannot be started until first task finishes</li>
+                </ul>
+              </ul>
+            </ul>
+            <li><strong>IPC / Mojo</strong></li>
+            <ul>
+              <li>framework which is used for inter-process communication</li>
+              <li>connects directly to the MainMessageLoop</li>
+              <li>provides communication channels through which the messages can be sent</li>
+              <li>message creating, sending and receiving</li>
+              <li>asynchronous message handling</li>
+            </ul>
+            <li><strong>TaskAnnotator</strong></li>
+            <ul>
+              <li>all incoming tasks are going through a TaskAnnotator which annotates the task before the execution</li>
+              <li>implements common debug annotations for posted tasks. This includes data such as task origins, queueing durations and memory usage</li>
+              <li>runs a previously queued task</li>
+            </ul>
+            <li><strong>ResourceLoader</strong></li>
+            <ul>
+              <li>browser side of the resource dispatcher</li>
+              <li>receives requests from the child processes (Renderer, Worker, etc)</li>
+              <li>dispatches the received requests to URLRequests</li>
+              <li>forwards the messages from the URLRequests back to the correct process for handling</li>
+            </ul>
+            <li><strong>URL</strong></li>
+            <ul>
+              <li>this group contains all the URL-relevant features</li>
+              <li>URL replacing and URL extension</li>
+              <li>URL autocomplete</li>
+              <li>extracting search terms from URL</li>
+              <li>URL parsing</li>
+              <li>URL canonicalization (picking the best URL, when there are multiple choices)</li>
+              <li>connection to <strong>Omnibox</strong> (Chromium’s “smart” URL bar)</li>
+            </ul>
+            <li><strong>SQL</strong></li>
+            <ul>
+              <li>classes which communicate with the sqlite3 database</li>
+              <li>load / update url autocomplete predictions from database</li>
+              <li>load saved favicons</li>
+            </ul>
+            <li><strong>net</strong></li>
+            <ul>
+              <li>NetworkDelegate</li>
+              <ul>
+                <li>performs actions before the <strong>URLRequest</strong> starts
+              </ul>
+              <li>starts <strong>URLRequests</strong></li>
+              <li>handles <strong>Cookies</strong></li>
+              <ul>
+                <li>loads all Cookies for a given URL async</li>
+                <li>sets all Cookies for the given URL</li>
+              </ul>
+              <li><strong>SSL Cert</strong></li>
+              <ul>
+                <li>handles SSL related actions</li>
+                <li>SSL handshake</li>
+                <li>certification verifying</li>
+                <li>signature verifying</li>
+              </ul>
+            </ul>
+            <li><strong>Compositor (cc)</strong></li>
+            <ul>
+              <li><strong>PaintFrame</strong></li>
+              <ul>
+                <li>painting main frame</li>
+                <li>prepare tiles</li>
+                <li>update layers</li>
+                <li>update picture layer</li>
+                <li>update display list</li>
+                <li>paint to display list</li>
+                <li>Aura’s painting is called</li>
+                <ul>
+                  <li>paint Tabs</li>
+                </ul>
+              </ul>
+              <li><strong>Swap</strong></li>
+              <ul>
+                <li>draw to a specified surface</li>
+                <li>swap buffers</li>
+              </ul>
+              <li><strong>RasterTask</strong></li>
+              <ul>
+                <li>task, which performs rasterization</li>
+                <li>tasks are represented as a task graph</li>
+                <ul>
+                  <li>edges: dependencies</li>
+                  <li>node: tasks, priority is assigned to them</li>
+                </ul>
+                <li>items in the display list are drawn to the surface</li>
+                <li>the rasterization calls specific <strong>Skia</strong> functions in order to get the canvas drawn correctly</li>
+                <ul>
+                  <li>drawColor, drawPicture, drawRect, fillRect, etc.</li>
+                </ul>
+              </ul>
+            </ul>
+            <li><strong>X11/Windows/Mac</strong></li>
+            <ul>
+              <li>captures mouse, key, (etc) events and passes it to Chromium</li>
+            </ul>
+            <li><strong>UIEvent</strong></li>
+            <ul>
+              <li>classes in views and ui namespaces deal with all UI related functionalities</li>
+              <li>one of their important duties is handling UI events, for example mousemove, mouseclick, keypress, etc.</li>
+              <li>these events are passed forward from the system's Windowing library</li>
+              <li>the events are passed through an event handling chain in order to perform certain actions in each step</li>
+              <li>if the user enters the URL into the URLBar, these classes perform the character insertion into the URLBar’s text field.</li>
+              <li><strong>Aura</strong></li>
+              <ul>
+                <li>UI framework, desktop window manager and shell environment</li>
+                <li>cross platform</li>
+                <li>Chrome OS uses it as well as Chrome / Chromium</li>
+                <li>Aura provides Window and Event types, as well as a set of interfaces to customize their behavior</li>
+              </ul>
+            </ul>
+          </ul>
+
+          <hr>
+
+          <p>Sources</p>
+          <ul>
+            <li><a href="https://www.chromium.org/developers/design-documents/aura/aura-overview">https://www.chromium.org/developers/design-documents/aura/aura-overview</a></li>
+            <li><a href="https://code.google.com/p/chromium/codesearch#chromium/src/base/threading/worker_pool_posix.h">https://code.google.com/p/chromium/codesearch#chromium/src/base/threading/worker_pool_posix.h</a></li>
+            <li><a href="https://code.google.com/p/chromium/codesearch#chromium/src/base/message_loop/message_loop.h">https://code.google.com/p/chromium/codesearch#chromium/src/base/message_loop/message_loop.h</a></li>
+            <li><a href="https://code.google.com/p/chromium/codesearch#chromium/src/content/browser/loader/resource_dispatcher_host_impl.h">https://code.google.com/p/chromium/codesearch#chromium/src/content/browser/loader/resource_dispatcher_host_impl.h</a></li>
+            <li><a href="https://www.mattcutts.com/blog/seo-advice-url-canonicalization/">https://www.mattcutts.com/blog/seo-advice-url-canonicalization/</a></li>
+            <li><a href="https://code.google.com/p/chromium/codesearch#chromium/src/base/debug/task_annotator.h&amp;q=task_annotator&amp;sq=package:chromium&amp;type=cs&amp;l=1">https://code.google.com/p/chromium/codesearch#chromium/src/base/debug/task_annotator.h&amp;q=task_annotator&amp;sq=package:chromium&amp;type=cs&amp;l=1</a></li>
+            <li><a href="https://code.google.com/p/chromium/codesearch#chromium/src/cc/raster/task_graph_runner.h&amp;q=taskgraph&amp;sq=package:chromium&amp;type=cs&amp;l=42">https://code.google.com/p/chromium/codesearch#chromium/src/cc/raster/task_graph_runner.h&amp;q=taskgraph&amp;sq=package:chromium&amp;type=cs&amp;l=42</a></li>
+            <li><a href="https://code.google.com/p/chromium/codesearch#chromium/src/base/threading/worker_pool.h&amp;q=worker_pool.h&amp;sq=package:chromium&amp;l=1">https://code.google.com/p/chromium/codesearch#chromium/src/base/threading/worker_pool.h&amp;q=worker_pool.h&amp;sq=package:chromium&amp;l=1</a></li>
+          </ul>
+
+          <hr>
+
+      <footer>
+        <div class="row">
+          <div class="col-md-6">
+            <p>&copy; 2016 University of Szeged, DSE; Sprocket Team</p>
+          </div>
+          <div class="col-md-6 license-button-container">
+            <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank">
+              <img src="https://licensebuttons.net/l/by-sa/4.0/88x31.png">
+            </a>
+          </div>
+        </div>
+      </footer>
+
+        </div>
+        <div class="col-sm-2"></div>
+      </div>
+
+    </div> <!-- /container -->
+
+  </body>
+</html>

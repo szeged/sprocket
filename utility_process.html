@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <title>Sprocket - Utility process</title>
+    <link rel="icon" type="image/png" href="favicon.png">
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="sprocket.css">
+    <script src="bootstrap/js/bootstrap.min.js"></script>
+  </head>
+  <body>
+
+    <div class="sprocket-jumbotron">
+      <div class="container">
+        <a href="index.html">
+          <img src="img/sprocket_title.png" class="img-responsive center-block" style="height: 100px;">
+        </a>
+      </div>
+    </div>
+
+    <div class="container">
+
+      <div class="row">
+        <div class="col-sm-2"></div>
+        <div class="col-sm-8">
+
+          <h1>Utility process - detailed architecture overview</h1>
+
+          <a href="img/arch/Utility_process.png" target="_blank"><img src="img/arch/Utility_process.png" class="img-responsive center-block"></a>
+
+<ul>
+<li><strong>Startup</strong></li>
+<ul><li>the entry point for the Utility process</li></ul>
+<li><strong>Utility</strong></li>
+<ul><li>utility box represents the Utility Main</li></ul>
+<li><strong>Loop</strong></li>
+<ul><li>MainMessageLoop</li>
+<ul><li>is used to process events for a particular thread</li>
+<li>puts the incoming messages, tasks to a queue</li>
+<li>pops a task from the queue and starts it</li>
+<li>strong relationship with the IPC communication framework</li>
+<li>has task reentrancy protection</li>
+<ul><li>second task cannot be started until first task finishes</li></ul></ul></ul>
+<li><strong>IPC / Mojo</strong></li>
+<ul><li>framework which is used for inter-process communication</li>
+<li>connects directly to the MainMessageLoop</li>
+<li>provides communication channels through which the messages can be sent</li>
+<li>message creating, sending and receiving</li>
+<li>asynchronous message handling</li></ul>
+<li><strong>Extensions</strong></li>
+<ul><li>ExtensionsHandler</li>
+<ul><li>dispatches IPCs for Chrome extensions utility messages</li></ul>
+<li>UtilityHandler</li>
+<ul><li>a handler for extensions-related IPC from within utility processes</li></ul>
+<li>unpack extensions</li>
+<ul><li>extensions::Unpacker</li>
+<ul><li>this class unpacks an extension</li>
+<li>it is designed to be used in a sandboxed child process</li>
+<li>various bits of the extension gets parsed, then it is reported back to the browser process, who then transcodes the pre-parsed bits and writes them back out to disk for later use</ul></li>
+</ul></ul>
+<li><strong>ResourceBundle</strong></li>
+<ul><li>initialize the ResourceBundle for this process</li>
+<li>returns the language selected</li></ul>
+<li><strong>icu</strong></li>
+<ul><li>initialize icu</li>
+<li>create default TimeZone</li></ul>
+<li><strong>V8Initializer</strong></li>
+<ul><li>initialize V8</li>
+<ul><li>load V8 natives from user provided platform file descriptors</li>
+<li>without the natives the startup cannot continue</li></ul></ul>
+</ul>
+
+<hr>
+
+<p>Sources:</p>
+<ul>
+<a href="https://code.google.com/p/chromium/codesearch#chromium/src/base/message_loop/message_loop.h">https://code.google.com/p/chromium/codesearch#chromium/src/base/message_loop/message_loop.h</a>
+<a href="https://code.google.com/p/chromium/codesearch#chromium/src/gin/v8_initializer.h&q=v8_initializer.h&sq=package:chromium&l=1">https://code.google.com/p/chromium/codesearch#chromium/src/gin/v8_initializer.h&q=v8_initializer.h&sq=package:chromium&l=1</a>
+<a href="https://code.google.com/p/chromium/codesearch#chromium/src/ui/base/resource/resource_bundle.h&q=resource_bundle.h&sq=package:chromium&l=1">https://code.google.com/p/chromium/codesearch#chromium/src/ui/base/resource/resource_bundle.h&q=resource_bundle.h&sq=package:chromium&l=1</a>
+<a href="https://code.google.com/p/chromium/codesearch#chromium/src/chrome/utility/extensions/extensions_handler.h&q=extensions_handler.h&sq=package:chromium&l=1">https://code.google.com/p/chromium/codesearch#chromium/src/chrome/utility/extensions/extensions_handler.h&q=extensions_handler.h&sq=package:chromium&l=1</a>
+<a href="https://code.google.com/p/chromium/codesearch#chromium/src/extensions/utility/utility_handler.h&q=utility_handler.h&sq=package:chromium&l=1">https://code.google.com/p/chromium/codesearch#chromium/src/extensions/utility/utility_handler.h&q=utility_handler.h&sq=package:chromium&l=1</a>
+<a href="https://code.google.com/p/chromium/codesearch#chromium/src/extensions/utility/unpacker.h&q=unpacker.h&sq=package:chromium&l=1">https://code.google.com/p/chromium/codesearch#chromium/src/extensions/utility/unpacker.h&q=unpacker.h&sq=package:chromium&l=1</a>
+</ul>
+
+          <hr>
+
+      <footer>
+        <div class="row">
+          <div class="col-md-6">
+            <p>&copy; 2016 University of Szeged, DSE; Sprocket Team</p>
+          </div>
+          <div class="col-md-6 license-button-container">
+            <a href="https://creativecommons.org/licenses/by-sa/4.0/" target="_blank">
+              <img src="https://licensebuttons.net/l/by-sa/4.0/88x31.png">
+            </a>
+          </div>
+        </div>
+      </footer>
+
+        </div>
+        <div class="col-sm-2"></div>
+      </div>
+
+    </div> <!-- /container -->
+
+  </body>
+</html>
