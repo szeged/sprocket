@@ -43,7 +43,9 @@ bool SprocketMainDelegate::BasicStartupComplete(int* exit_code) {
   std::string process_type = command_line->GetSwitchValueASCII(switches::kProcessType);
   if (process_type == switches::kBrowserProcess &&
       !command_line->HasSwitch(switches::kUseSandbox)) {
+#if !defined(OS_ANDROID)
     command_line->AppendSwitch(switches::kNoSandbox);
+#endif
   }
 
   // TODO: Do we really need this?

@@ -1,0 +1,20 @@
+diff --git a/BUILD.gn b/BUILD.gn
+index c013d45..1f1fd35 100644
+--- a/BUILD.gn
++++ b/BUILD.gn
+@@ -697,6 +697,7 @@ group("gn_only") {
+       "//ui/display/types",
+       "//ui/shell_dialogs:shell_dialogs_unittests",
+       "//ui/views/examples:views_examples_exe",
++      "//sprocket:sprocket"
+     ]
+ 
+     if (target_cpu == "x86" || target_cpu == "x64") {
+@@ -725,6 +726,7 @@ group("gn_only") {
+     deps += [
+       "//build/android/gyp/test:hello_world",
+       "//build/android/incremental_install:bootstrap_java",
++      "//sprocket/android:sprocket_apk",
+     ]
+   }
+ 

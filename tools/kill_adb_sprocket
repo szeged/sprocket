@@ -10,4 +10,4 @@
 #
 # Assumes you have sourced the build/android/envsetup.sh script.
 
-adb shell am force-stop hu.uszeged.sprocket_apk
+adb shell am force-stop hu.uszeged.sprocket
