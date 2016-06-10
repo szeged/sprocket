@@ -1,0 +1,89 @@
+import("//build/config/android/config.gni")
+import("//build/config/android/rules.gni")
+import("//build_overrides/v8.gni")
+import("//third_party/icu/config.gni")
+
+
+generate_jni("sprocket_jni_headers") {
+  jni_package = "sprocket"
+  sources = [
+    "src/hu/uszeged/sprocket/SprocketManager.java",
+    "src/hu/uszeged/sprocket/SprocketWindow.java",
+  ]
+}
+
+shared_library("libsprocket_content_view") {
+  deps = [
+    ":sprocket_jni_headers",
+    "//sprocket:sprocket_lib",
+    "//sprocket:pak",
+    "//build/config/sanitizers:deps",
+    "//components/crash/content/browser",
+    "//media/base/android",
+    "//skia",
+  ]
+  sources = [
+    "library_loader.cc",
+  ]
+}
+
+sprocket_manifest =
+    "$target_gen_dir/sprocket_manifest/AndroidManifest.xml"
+
+jinja_template("sprocket_manifest") {
+  input = "AndroidManifest.xml.jinja2"
+  output = sprocket_manifest
+}
+
+android_resources("sprocket_apk_resources") {
+  resource_dirs = [ "res" ]
+  deps = [
+    ":sprocket_manifest",
+  ]
+  custom_package = "hu.uszeged.sprocket"
+  android_manifest = sprocket_manifest
+}
+
+android_library("sprocket_apk_java") {
+  DEPRECATED_java_in_dir = "src"
+  deps = [
+    ":sprocket_apk_resources",
+    "//base:base_java",
+    "//content/public/android:content_java",
+    "//media/capture/video/android:capture_java",
+    "//net/android:net_java",
+    "//ui/android:ui_java",
+  ]
+}
+
+android_assets("sprocket_assets") {
+  sources = [
+    "$root_out_dir/sprocket.pak",
+  ]
+  disable_compression = true
+  deps = [
+    "//sprocket:pak",
+    "//third_party/icu:icu_assets",
+    "//v8:v8_external_startup_data_assets",
+  ]
+}
+
+android_apk("sprocket_apk") {
+  apk_name = "Sprocket"
+  android_manifest = sprocket_manifest
+  native_libs = [ "libsprocket_content_view.so" ]
+  loadable_modules = [ "$root_out_dir/libosmesa.so" ]
+
+  deps = [
+    ":sprocket_apk_java",
+    ":sprocket_assets",
+    ":sprocket_manifest",
+    ":libsprocket_content_view",
+    "//base:base_java",
+    "//content/public/android:content_java",
+    "//media/capture/video/android:capture_java",
+    "//net/android:net_java",
+    "//third_party/mesa:osmesa",
+    "//ui/android:ui_java",
+  ]
+}

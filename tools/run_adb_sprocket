@@ -9,5 +9,5 @@ optional_url=$1
 
 adb shell am start \
   -a android.intent.action.VIEW \
-  -n hu.uszeged.sprocket_apk/.SprocketActivity \
+  -n hu.uszeged.sprocket/.SprocketActivity \
   ${optional_url:+-d "$optional_url"}
