@@ -44,7 +44,7 @@ public:
   // Overridden from views::DialogDelegate:
   base::string16 GetWindowTitle() const override;
   bool Cancel() override;
-  bool Accept(bool window_closing) override;
+  bool Accept() override;
 
   // Overridden from ui::DialogModel:
   int GetDialogButtons() const override;

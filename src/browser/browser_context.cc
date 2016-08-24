@@ -70,6 +70,7 @@ void SprocketBrowserContext::InitWhileIOAllowed() {
 
   if (!base::PathExists(path_))
     base::CreateDirectory(path_);
+  BrowserContext::Initialize(this, path_);
 }
 
 base::FilePath SprocketBrowserContext::GetPath() const {
@@ -89,12 +90,6 @@ bool SprocketBrowserContext::IsOffTheRecord() const {
 net::URLRequestContextGetter*
 SprocketBrowserContext::GetRequestContext() {
   return GetDefaultStoragePartition(this)->GetURLRequestContext();
-}
-
-net::URLRequestContextGetter*
-SprocketBrowserContext::GetRequestContextForRenderProcess(
-    int renderer_child_id) {
-  return GetRequestContext();
 }
 
 net::URLRequestContextGetter*
@@ -155,11 +150,27 @@ content::BackgroundSyncController* SprocketBrowserContext::GetBackgroundSyncCont
 
 net::URLRequestContextGetter*
 SprocketBrowserContext::CreateRequestContext(
-    content::ProtocolHandlerMap* protocol_handlers) {
-  url_request_getter_ = new SprocketURLRequestContextGetter(
-      ignore_certificate_errors_,
-      GetPath(),
-      protocol_handlers);
+      content::ProtocolHandlerMap* protocol_handlers,
+      content::URLRequestInterceptorScopedVector request_interceptors) {
+  if (!url_request_getter_.get())
+    url_request_getter_ = new SprocketURLRequestContextGetter(
+        ignore_certificate_errors_,
+        GetPath(),
+        protocol_handlers);
   resource_context_->set_url_request_context_getter(url_request_getter_.get());
+  return url_request_getter_.get();
+}
+
+net::URLRequestContextGetter*
+SprocketBrowserContext::CreateRequestContextForStoragePartition(
+      const base::FilePath& partition_path,
+      bool in_memory,
+      content::ProtocolHandlerMap* protocol_handlers,
+      content::URLRequestInterceptorScopedVector request_interceptors) {
+  if (!url_request_getter_.get())
+    url_request_getter_ = new SprocketURLRequestContextGetter(
+        ignore_certificate_errors_,
+        GetPath(),
+        protocol_handlers);
   return url_request_getter_.get();
 }

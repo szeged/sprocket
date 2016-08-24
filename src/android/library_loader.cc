@@ -15,7 +15,7 @@
 namespace {
 
 bool RegisterJNI(JNIEnv* env) {
-  return RegisterSprocketWindowJni(env);
+  return RegisterSprocketJni(env);
 }
 
 bool Init() {

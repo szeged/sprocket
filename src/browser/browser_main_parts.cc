@@ -70,7 +70,6 @@ base::StringPiece NetResourceProvider(int key) {
 SprocketBrowserMainParts::SprocketBrowserMainParts(
     const content::MainFunctionParams& parameters)
     : parameters_(parameters),
-      run_message_loop_(true),
       devtools_http_handler_(nullptr) {
 }
 
@@ -117,10 +116,6 @@ void SprocketBrowserMainParts::PreMainMessageLoopRun() {
   devtools_http_handler_.reset(SprocketDevToolsManagerDelegate::CreateHttpHandler());
 
   InitializeMessageLoopContext();
-}
-
-bool SprocketBrowserMainParts::MainMessageLoopRun(int* result_code) {
-  return !run_message_loop_;
 }
 
 void SprocketBrowserMainParts::PostMainMessageLoopRun() {

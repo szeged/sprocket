@@ -13,14 +13,14 @@ target = get_target()
 # generate Ninja files with GN
 os.chdir(chromium_src_path)
 if target == x86_64:
-    subprocess.check_call(['gn', 'gen', build_output_dir])
+    subprocess.check_call(['gn', 'gen', build_output_dir, '--args=is_debug=false'])
 elif target == arm:
-    subprocess.check_call(['gn', 'gen', build_output_dir, '--args=target_cpu="arm"'])
+    subprocess.check_call(['gn', 'gen', build_output_dir, '--args=target_cpu="arm" is_debug=false'])
 elif target == android:
     # target_cpu is "arm" by default
-    subprocess.check_call(['gn', 'gen', build_output_dir, '--args=target_os="android"'])
+    subprocess.check_call(['gn', 'gen', build_output_dir, '--args=target_os="android" is_debug=false'])
 elif target == android_arm64:
-    subprocess.check_call(['gn', 'gen', build_output_dir, '--args=target_os="android" target_cpu="arm64"'])
+    subprocess.check_call(['gn', 'gen', build_output_dir, '--args=target_os="android" target_cpu="arm64" is_debug=false'])
 
 
 # build with Ninja

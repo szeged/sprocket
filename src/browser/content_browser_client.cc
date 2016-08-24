@@ -69,15 +69,6 @@ content::BrowserMainParts* SprocketContentBrowserClient::CreateBrowserMainParts(
   return browser_main_parts_;
 }
 
-net::URLRequestContextGetter* SprocketContentBrowserClient::CreateRequestContext(
-    content::BrowserContext* browser_context,
-    content::ProtocolHandlerMap* protocol_handlers,
-    content::URLRequestInterceptorScopedVector request_interceptors) {
-  SprocketBrowserContext* sprocket_browser_context =
-      SprocketBrowserContextForBrowserContext(browser_context);
-  return sprocket_browser_context->CreateRequestContext(protocol_handlers);
-}
-
 bool SprocketContentBrowserClient::IsHandledURL(const GURL& url) {
   if (!url.is_valid()) {
     return false;

@@ -7,6 +7,7 @@
 #include "sprocket/browser/browser_main.h"
 
 #include "base/memory/scoped_ptr.h"
+#include "build/build_config.h"
 #include "content/public/browser/browser_main_runner.h"
 
 #if defined(OS_ANDROID)

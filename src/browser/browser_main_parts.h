@@ -59,11 +59,6 @@ class SprocketBrowserMainParts : public content::BrowserMainParts {
   // various browser threads have all been created at this point.
   void PreMainMessageLoopRun() override;
 
-  // Returns true if the message loop was run, false otherwise.
-  // If this returns false, the default implementation will be run.
-  // May set |result_code|, which will be returned by |BrowserMain()|.
-  bool MainMessageLoopRun(int* result_code) override;
-
   // This happens after the main message loop has stopped, but before
   // threads are stopped.
   void PostMainMessageLoopRun() override;
@@ -86,10 +81,7 @@ class SprocketBrowserMainParts : public content::BrowserMainParts {
  private:
   scoped_ptr<SprocketBrowserContext> browser_context_;
   scoped_ptr<SprocketBrowserContext> off_the_record_browser_context_;
-
   const content::MainFunctionParams parameters_;
-  bool run_message_loop_;
-
   scoped_ptr<devtools_http_handler::DevToolsHttpHandler> devtools_http_handler_;
 
   DISALLOW_COPY_AND_ASSIGN(SprocketBrowserMainParts);

@@ -17,7 +17,6 @@ using namespace content;
 void SprocketJavaScriptDialogManager::RunJavaScriptDialog(
     WebContents* web_contents,
     const GURL& origin_url,
-    const std::string& accept_lang,
     JavaScriptMessageType javascript_message_type,
     const string16& message_text,
     const string16& default_prompt_text,
@@ -35,7 +34,6 @@ void SprocketJavaScriptDialogManager::RunJavaScriptDialog(
 
 void SprocketJavaScriptDialogManager::RunBeforeUnloadDialog(
   WebContents* web_contents,
-   const string16& message_text,
    bool is_reload,
    const DialogClosedCallback& callback) {
   if (SprocketWebContents* sprocket_web_contents = SprocketWebContents::From(web_contents)) {

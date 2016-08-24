@@ -7,7 +7,6 @@
 #ifndef SPROCKET_BROWSER_BROWSER_CONTEXT_H_
 #define SPROCKET_BROWSER_BROWSER_CONTEXT_H_
 
-#include "base/files/file_path.h"
 #include "content/public/browser/browser_context.h"
 #include "content/public/browser/content_browser_client.h"
 #include "content/public/browser/resource_context.h"
@@ -38,13 +37,6 @@ class SprocketBrowserContext : public content::BrowserContext {
   // this only on the UI thread, since it can send notifications that should
   // happen on the UI thread.
   net::URLRequestContextGetter* GetRequestContext() override;
-
-  // Returns the request context appropriate for the given renderer. If the
-  // renderer process doesn't have an associated installed app, or if the
-  // installed app doesn't have isolated storage, this is equivalent to calling
-  // GetRequestContext().
-  net::URLRequestContextGetter* GetRequestContextForRenderProcess(
-      int renderer_child_id) override;
 
   // Returns the default request context for media resources associated with
   // this context.
@@ -89,10 +81,18 @@ class SprocketBrowserContext : public content::BrowserContext {
   // nullptr otherwise.
   content::BackgroundSyncController* GetBackgroundSyncController() override;
 
-
-  // Used by SprocketContentBrowserClient.
+  // Creates the main net::URLRequestContextGetter. It's called only once.
   net::URLRequestContextGetter* CreateRequestContext(
-      content::ProtocolHandlerMap* protocol_handlers);
+      content::ProtocolHandlerMap* protocol_handlers,
+      content::URLRequestInterceptorScopedVector request_interceptors) override;
+
+  // Creates the net::URLRequestContextGetter for a StoragePartition. It's
+  // called only once per partition_path.
+  net::URLRequestContextGetter* CreateRequestContextForStoragePartition(
+      const base::FilePath& partition_path,
+      bool in_memory,
+      content::ProtocolHandlerMap* protocol_handlers,
+      content::URLRequestInterceptorScopedVector request_interceptors) override;
 
  protected:
 

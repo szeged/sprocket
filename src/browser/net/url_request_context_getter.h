@@ -16,6 +16,8 @@
 #include "net/url_request/url_request_context_getter.h"
 #include "net/url_request/url_request_job_factory.h"
 
+#include "content/public/browser/browser_context.h"
+
 namespace base {
 class MessageLoop;
 }

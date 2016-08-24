@@ -47,7 +47,16 @@ android_resources("sprocket_apk_resources") {
 }
 
 android_library("sprocket_apk_java") {
-  DEPRECATED_java_in_dir = "src"
+  java_files = [
+    "src/hu/uszeged/sprocket/SprocketActivity.java",
+    "src/hu/uszeged/sprocket/SprocketApplication.java",
+    "src/hu/uszeged/sprocket/SprocketManager.java",
+    "src/hu/uszeged/sprocket/SprocketWindow.java",
+    "src/hu/uszeged/sprocket/dialogs/SprocketAuthenticationDialog.java",
+    "src/hu/uszeged/sprocket/dialogs/SprocketJavaScriptConfirmDialog.java",
+    "src/hu/uszeged/sprocket/dialogs/SprocketJavaScriptDialog.java",
+    "src/hu/uszeged/sprocket/dialogs/SprocketJavaScriptPromptDialog.java",
+  ]
   deps = [
     ":sprocket_apk_resources",
     "//base:base_java",

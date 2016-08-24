@@ -56,6 +56,8 @@ SprocketURLRequestContextGetter::SprocketURLRequestContextGetter(
 SprocketURLRequestContextGetter::~SprocketURLRequestContextGetter() {
 }
 
+#include "net/cookies/cookie_store.h"
+
 net::URLRequestContext* SprocketURLRequestContextGetter::GetURLRequestContext() {
   DCHECK(content::BrowserThread::CurrentlyOn(content::BrowserThread::IO));
 
@@ -86,7 +88,8 @@ net::URLRequestContext* SprocketURLRequestContextGetter::GetURLRequestContext() 
 
     // Generating cookie store
     // CookieStoreConfig(): Convenience constructor for an in-memory cookie store with no delegate.
-    storage_->set_cookie_store(content::CreateCookieStore(content::CookieStoreConfig()));
+    scoped_ptr<net::CookieStore> cookie_store = content::CreateCookieStore(content::CookieStoreConfig());
+    storage_->set_cookie_store(std::move(cookie_store));
 
 
     // Setting HTTP user agent
@@ -122,8 +125,6 @@ net::URLRequestContext* SprocketURLRequestContextGetter::GetURLRequestContext() 
         url_request_context_->ssl_config_service();
     network_session_params.http_auth_handler_factory =
         url_request_context_->http_auth_handler_factory();
-    network_session_params.network_delegate =
-        network_delegate_.get();
     network_session_params.http_server_properties =
         url_request_context_->http_server_properties();
     network_session_params.ignore_certificate_errors =

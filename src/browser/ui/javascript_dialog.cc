@@ -49,10 +49,8 @@ bool SprocketJavaScriptDialog::Cancel() {
   return true;
 }
 
-bool SprocketJavaScriptDialog::Accept(bool window_closing) {
-  if (window_closing)
-    Cancel();
-  else if (type_ == content::JAVASCRIPT_MESSAGE_TYPE_PROMPT)
+bool SprocketJavaScriptDialog::Accept() {
+  if (type_ == content::JAVASCRIPT_MESSAGE_TYPE_PROMPT)
     callback_.Run(true, prompt_->text());
   else
     callback_.Run(true, default_prompt_text_);

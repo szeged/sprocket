@@ -26,7 +26,6 @@ import android.widget.TextView;
 import android.widget.TextView.OnEditorActionListener;
 
 import org.chromium.base.annotations.CalledByNative;
-import org.chromium.base.annotations.JNINamespace;
 import org.chromium.content.browser.ContentView;
 import org.chromium.content.browser.ContentViewClient;
 import org.chromium.content.browser.ContentViewCore;
@@ -39,7 +38,6 @@ import org.chromium.ui.base.WindowAndroid;
 /**
  * Container for the various UI components that make up a sprocket window.
  */
-//@JNINamespace("content")
 public class SprocketWindow extends LinearLayout {
 
     private static final long COMPLETED_PROGRESS_TIMEOUT_MS = 200;

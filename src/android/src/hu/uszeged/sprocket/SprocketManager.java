@@ -13,7 +13,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.FrameLayout;
 
-import org.chromium.base.annotations.JNINamespace;
 import org.chromium.base.annotations.CalledByNative;
 import org.chromium.base.ThreadUtils;
 import org.chromium.base.VisibleForTesting;
@@ -27,7 +26,6 @@ import org.chromium.ui.base.WindowAndroid;
 /**
  * Container and generator of SprocketWindow.
  */
-//@JNINamespace("content")
 public class SprocketManager extends FrameLayout {
 
     public static final String DEFAULT_SPROCKET_URL = "http://www.google.com";

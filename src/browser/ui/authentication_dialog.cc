@@ -55,11 +55,8 @@ bool SprocketAuthenticationDialog::Cancel() {
   return true;
 }
 
-bool SprocketAuthenticationDialog::Accept(bool window_closing) {
-  if (window_closing)
-    Cancel();
-  else
-    delegate_->InputProvided(username_prompt_->text(), password_prompt_->text());
+bool SprocketAuthenticationDialog::Accept() {
+  delegate_->InputProvided(username_prompt_->text(), password_prompt_->text());
   return true;
 }
 

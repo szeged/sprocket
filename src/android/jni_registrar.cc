@@ -16,7 +16,7 @@
 
 namespace {
 
-static base::android::RegistrationMethod kSprocketWindowRegistrationMethods[] = {
+static base::android::RegistrationMethod kSprocketRegistrationMethods[] = {
     {"SprocketWindow", SprocketWindow::Register},
     {"SprocketManager", RegisterSprocketManager},
     {"SprocketJavaScriptDialog", SprocketJavaScriptDialog::Register},
@@ -25,7 +25,7 @@ static base::android::RegistrationMethod kSprocketWindowRegistrationMethods[] = 
 
 }  // namespace
 
-bool RegisterSprocketWindowJni(JNIEnv* env) {
-  return RegisterNativeMethods(env, kSprocketWindowRegistrationMethods,
-                               arraysize(kSprocketWindowRegistrationMethods));
+bool RegisterSprocketJni(JNIEnv* env) {
+  return RegisterNativeMethods(env, kSprocketRegistrationMethods,
+                               arraysize(kSprocketRegistrationMethods));
 }

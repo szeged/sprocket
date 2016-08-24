@@ -34,13 +34,6 @@ class SprocketContentBrowserClient : public content::ContentBrowserClient {
   content::BrowserMainParts* CreateBrowserMainParts(
       const content::MainFunctionParams& parameters) override;
 
-  // Creates the main net::URLRequestContextGetter. Should only be called once
-  // per SprocketContentBrowserClient object.
-  net::URLRequestContextGetter* CreateRequestContext(
-      content::BrowserContext* browser_context,
-      content::ProtocolHandlerMap* protocol_handlers,
-      content::URLRequestInterceptorScopedVector request_interceptors) override;
-
   // Returns whether a specified URL is handled by the embedder's internal
   // protocol handlers.
   bool IsHandledURL(const GURL& url) override;

@@ -41,7 +41,7 @@ class SprocketJavaScriptDialog
 #if defined(USE_AURA)
   // Overridden from views::DialogDelegate:
   bool Cancel() override;
-  bool Accept(bool window_closing) override;
+  bool Accept() override;
 
   // Overridden from ui::DialogModel:
   int GetDialogButtons() const override;
