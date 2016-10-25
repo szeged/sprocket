@@ -126,7 +126,7 @@ TabbedPane::TabbedPane()
       contents_(new views::View()),
       tab_scroll_view_(new views::ScrollView),
       selected_tab_index_(-1) {
-  SetFocusable(true);
+  SetFocusBehavior(FocusBehavior::ALWAYS);
   tab_scroll_view_->SetContents(tab_strip_);
   tab_scroll_view_->set_hide_horizontal_scrollbar(false);
   AddChildView(tab_scroll_view_);

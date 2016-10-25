@@ -178,7 +178,7 @@ class SprocketWebContents : public content::WebContentsDelegate,
                                   bool enter_fullscreen);
 
   static std::map<content::WebContents*, SprocketWebContents*> sprocket_web_contents_;
-  scoped_ptr<content::WebContents> web_contents_;
+  std::unique_ptr<content::WebContents> web_contents_;
   SprocketWindow* window_;
 #if defined(USE_AURA)
   Tab* tab_;

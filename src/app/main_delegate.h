@@ -7,7 +7,7 @@
 #ifndef SPROCKET_APP_MAIN_DELEGATE_H_
 #define SPROCKET_APP_MAIN_DELEGATE_H_
 
-#include "base/memory/scoped_ptr.h"
+#include "base/memory/ptr_util.h"
 #include "content/public/app/content_main_delegate.h"
 #include "sprocket/common/content_client.h"
 
@@ -53,14 +53,14 @@ class SprocketMainDelegate : public content::ContentMainDelegate {
   static void InitializeResourceBundle();
  private:
   // The embedder API for participating in browser logic.
-  scoped_ptr<SprocketContentBrowserClient> browser_client_;
+  std::unique_ptr<SprocketContentBrowserClient> browser_client_;
   // The embedder API for participating in renderer logic.
-  scoped_ptr<SprocketContentRendererClient> renderer_client_;
+  std::unique_ptr<SprocketContentRendererClient> renderer_client_;
 
   SprocketContentClient content_client_;
 
 #if defined(OS_ANDROID)
-  scoped_ptr<content::BrowserMainRunner> browser_runner_;
+  std::unique_ptr<content::BrowserMainRunner> browser_runner_;
 #endif
 
   DISALLOW_COPY_AND_ASSIGN(SprocketMainDelegate);

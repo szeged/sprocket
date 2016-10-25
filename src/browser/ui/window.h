@@ -7,7 +7,6 @@
 #ifndef SPROCKET_BROWSER_UI_WINDOW_H_
 #define SPROCKET_BROWSER_UI_WINDOW_H_
 
-#include "base/memory/scoped_ptr.h"
 #include "base/strings/string16.h"
 #include "third_party/skia/include/core/SkColor.h"
 #include "ui/gfx/geometry/size.h"

@@ -6,6 +6,7 @@
 
 #include "sprocket/browser/net/url_request_context_getter.h"
 
+#include "base/memory/ptr_util.h"
 #include "base/threading/worker_pool.h"
 #include "content/public/browser/browser_thread.h"
 #include "content/public/browser/cookie_store_factory.h"
@@ -71,36 +72,36 @@ net::URLRequestContext* SprocketURLRequestContextGetter::GetURLRequestContext() 
     // Generating URLRequestContextStorage
     storage_.reset(new net::URLRequestContextStorage(url_request_context_.get()));
 
-    scoped_ptr<net::HostResolver> host_resolver(net::HostResolver::CreateDefaultResolver(NULL));
+    std::unique_ptr<net::HostResolver> host_resolver(net::HostResolver::CreateDefaultResolver(NULL));
 
-    storage_->set_channel_id_service(make_scoped_ptr(
+    storage_->set_channel_id_service(base::WrapUnique(
         new net::ChannelIDService(new net::DefaultChannelIDStore(NULL),
                                   base::WorkerPool::GetTaskRunner(true))));
     storage_->set_cert_verifier(net::CertVerifier::CreateDefault());
-    storage_->set_transport_security_state(make_scoped_ptr(new net::TransportSecurityState));
+    storage_->set_transport_security_state(base::WrapUnique(new net::TransportSecurityState));
     storage_->set_proxy_service(net::ProxyService::CreateUsingSystemProxyResolver(std::move(proxy_config_service_), 0, NULL));
     storage_->set_ssl_config_service(new net::SSLConfigServiceDefaults);
     storage_->set_http_auth_handler_factory( net::HttpAuthHandlerFactory::CreateDefault(host_resolver.get()));
-    storage_->set_http_server_properties(scoped_ptr<net::HttpServerProperties>(new net::HttpServerPropertiesImpl()));
+    storage_->set_http_server_properties(base::WrapUnique<net::HttpServerProperties>(new net::HttpServerPropertiesImpl()));
     // Give |storage_| ownership at the end in case it's |mapped_host_resolver|.
     storage_->set_host_resolver(std::move(host_resolver));
 
 
     // Generating cookie store
     // CookieStoreConfig(): Convenience constructor for an in-memory cookie store with no delegate.
-    scoped_ptr<net::CookieStore> cookie_store = content::CreateCookieStore(content::CookieStoreConfig());
+    std::unique_ptr<net::CookieStore> cookie_store = content::CreateCookieStore(content::CookieStoreConfig());
     storage_->set_cookie_store(std::move(cookie_store));
 
 
     // Setting HTTP user agent
-    storage_->set_http_user_agent_settings(make_scoped_ptr(
+    storage_->set_http_user_agent_settings(base::WrapUnique(
         new net::StaticHttpUserAgentSettings(
             "en-us,en", GetSprocketUserAgent())));
 
 
     // Cache settings
     base::FilePath cache_path = base_path_.Append(FILE_PATH_LITERAL("Cache"));
-    scoped_ptr<net::HttpCache::DefaultBackend> main_backend(
+    std::unique_ptr<net::HttpCache::DefaultBackend> main_backend(
         new net::HttpCache::DefaultBackend(
             net::DISK_CACHE,
 #if defined(OS_ANDROID)
@@ -132,29 +133,29 @@ net::URLRequestContext* SprocketURLRequestContextGetter::GetURLRequestContext() 
     network_session_params.host_resolver =
         url_request_context_->host_resolver();
 
-    storage_->set_http_network_session(make_scoped_ptr(new net::HttpNetworkSession(network_session_params)));
-    storage_->set_http_transaction_factory(make_scoped_ptr(new net::HttpCache(storage_->http_network_session(), std::move(main_backend), true)));
+    storage_->set_http_network_session(base::WrapUnique(new net::HttpNetworkSession(network_session_params)));
+    storage_->set_http_transaction_factory(base::WrapUnique(new net::HttpCache(storage_->http_network_session(), std::move(main_backend), true)));
 
 
     // Generate job factory
-    scoped_ptr<net::URLRequestJobFactoryImpl> job_factory(new net::URLRequestJobFactoryImpl());
+    std::unique_ptr<net::URLRequestJobFactoryImpl> job_factory(new net::URLRequestJobFactoryImpl());
 
     bool set_protocol = false;
     // Keep ProtocolHandlers added in sync with SprocketContentBrowserClient::IsHandledURL().
     for (auto it = protocol_handlers_.begin(); it != protocol_handlers_.end(); ++it) {
-      set_protocol = job_factory->SetProtocolHandler(it->first, make_scoped_ptr(it->second.release()));
+      set_protocol = job_factory->SetProtocolHandler(it->first, base::WrapUnique(it->second.release()));
       DCHECK(set_protocol);
     }
     protocol_handlers_.clear();
 
     set_protocol = job_factory->SetProtocolHandler(
-        url::kDataScheme, make_scoped_ptr(new net::DataProtocolHandler));
+        url::kDataScheme, base::WrapUnique(new net::DataProtocolHandler));
     DCHECK(set_protocol);
 
 #if !defined(DISABLE_FILE_SUPPORT)
     set_protocol = job_factory->SetProtocolHandler(
         url::kFileScheme,
-        make_scoped_ptr(new net::FileProtocolHandler(
+        base::WrapUnique(new net::FileProtocolHandler(
             content::BrowserThread::GetBlockingPool()->GetTaskRunnerWithShutdownBehavior(
                 base::SequencedWorkerPool::SKIP_ON_SHUTDOWN))));
     DCHECK(set_protocol);
