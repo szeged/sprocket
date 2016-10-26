@@ -7,7 +7,6 @@
 #ifndef SPROCKET_BROWSER_BROWSER_MAIN_PARTS_H_
 #define SPROCKET_BROWSER_BROWSER_MAIN_PARTS_H_
 
-#include "base/memory/scoped_ptr.h"
 #include "content/public/browser/browser_main_parts.h"
 #include "content/public/common/main_function_params.h"
 #include "sprocket/browser/browser_context.h"
@@ -79,10 +78,10 @@ class SprocketBrowserMainParts : public content::BrowserMainParts {
   }
 
  private:
-  scoped_ptr<SprocketBrowserContext> browser_context_;
-  scoped_ptr<SprocketBrowserContext> off_the_record_browser_context_;
+  std::unique_ptr<SprocketBrowserContext> browser_context_;
+  std::unique_ptr<SprocketBrowserContext> off_the_record_browser_context_;
   const content::MainFunctionParams parameters_;
-  scoped_ptr<devtools_http_handler::DevToolsHttpHandler> devtools_http_handler_;
+  std::unique_ptr<devtools_http_handler::DevToolsHttpHandler> devtools_http_handler_;
 
   DISALLOW_COPY_AND_ASSIGN(SprocketBrowserMainParts);
 };

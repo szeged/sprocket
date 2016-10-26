@@ -22,6 +22,7 @@
 #include "sprocket/browser/ui/window.h"
 #include "sprocket/browser/web_contents.h"
 #include "ui/base/resource/resource_bundle.h"
+#include "ui/base/material_design/material_design_controller.h"
 #include "url/gurl.h"
 
 #if defined(OS_ANDROID)
@@ -99,6 +100,7 @@ void SprocketBrowserMainParts::InitializeBrowserContexts() {
 }
 
 void SprocketBrowserMainParts::InitializeMessageLoopContext() {
+  ui::MaterialDesignController::Initialize();
   SprocketWindow* window = SprocketWindow::CreateNewWindow(gfx::Size());
   SprocketWebContents::CreateSprocketWebContents(window,
                                                  browser_context_.get(),

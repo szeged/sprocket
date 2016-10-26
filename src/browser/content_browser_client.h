@@ -9,7 +9,6 @@
 
 #include <string>
 
-#include "base/memory/scoped_ptr.h"
 #include "content/public/browser/content_browser_client.h"
 #include "sprocket/browser/resource_dispatcher_host_delegate.h"
 
@@ -81,7 +80,7 @@ class SprocketContentBrowserClient : public content::ContentBrowserClient {
       content::BrowserContext* content_browser_context);
 
   SprocketBrowserMainParts* browser_main_parts_;
-  scoped_ptr<SprocketResourceDispatcherHostDelegate> resource_dispatcher_host_delegate_;
+  std::unique_ptr<SprocketResourceDispatcherHostDelegate> resource_dispatcher_host_delegate_;
 };
 
 #endif  // SPROCKET_BROWSER_CONTENT_BROWSER_CLIENT_H_

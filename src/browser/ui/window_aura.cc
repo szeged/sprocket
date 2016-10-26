@@ -34,7 +34,7 @@ views::ViewsDelegate* SprocketWindow::views_delegate_ = NULL;
 
 // static
 void SprocketWindow::PlatformInitialize() {
-  gfx::Screen::SetScreenInstance(views::CreateDesktopScreen());
+  display::Screen::SetScreenInstance(views::CreateDesktopScreen());
   views_delegate_ = new SprocketViewsDelegateAura;
 }
 
@@ -42,7 +42,6 @@ void SprocketWindow::PlatformInitialize() {
 void SprocketWindow::PlatformExit() {
   delete views_delegate_;
   views_delegate_ = NULL;
-  aura::Env::DeleteInstance();
 }
 
 void SprocketWindow::PlatformCleanUp() {

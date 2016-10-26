@@ -46,13 +46,13 @@ class UnixDomainServerSocketFactory
 
  private:
   // DevToolsHttpHandler::ServerSocketFactory.
-  scoped_ptr<net::ServerSocket> CreateForHttpServer() override {
-    scoped_ptr<net::ServerSocket> socket(
+  std::unique_ptr<net::ServerSocket> CreateForHttpServer() override {
+    std::unique_ptr<net::ServerSocket> socket(
         new net::UnixDomainServerSocket(
             base::Bind(&content::CanUserConnectToDevTools),
             true /* use_abstract_namespace */));
     if (socket->ListenWithAddressAndPort(socket_name_, 0, kBackLog) != net::OK)
-      return scoped_ptr<net::ServerSocket>();
+      return std::unique_ptr<net::ServerSocket>();
 
     return socket;
   }
@@ -71,11 +71,11 @@ class TCPServerSocketFactory
 
  private:
   // DevToolsHttpHandler::ServerSocketFactory.
-  scoped_ptr<net::ServerSocket> CreateForHttpServer() override {
-    scoped_ptr<net::ServerSocket> socket(
+  std::unique_ptr<net::ServerSocket> CreateForHttpServer() override {
+    std::unique_ptr<net::ServerSocket> socket(
         new net::TCPServerSocket(nullptr, net::NetLog::Source()));
     if (socket->ListenWithAddressAndPort(address_, port_, kBackLog) != net::OK)
-      return scoped_ptr<net::ServerSocket>();
+      return std::unique_ptr<net::ServerSocket>();
 
     return socket;
   }
@@ -87,7 +87,7 @@ class TCPServerSocketFactory
 };
 #endif
 
-scoped_ptr<DevToolsHttpHandler::ServerSocketFactory> CreateSocketFactory() {
+std::unique_ptr<DevToolsHttpHandler::ServerSocketFactory> CreateSocketFactory() {
 #if defined(OS_ANDROID)
   const base::CommandLine& command_line =
       *base::CommandLine::ForCurrentProcess();
@@ -96,10 +96,10 @@ scoped_ptr<DevToolsHttpHandler::ServerSocketFactory> CreateSocketFactory() {
     socket_name = command_line.GetSwitchValueASCII(
         switches::kRemoteDebuggingSocketName);
   }
-  return scoped_ptr<DevToolsHttpHandler::ServerSocketFactory>(
+  return std::unique_ptr<DevToolsHttpHandler::ServerSocketFactory>(
       new UnixDomainServerSocketFactory(socket_name));
 #else
-  return scoped_ptr<DevToolsHttpHandler::ServerSocketFactory>(
+  return std::unique_ptr<DevToolsHttpHandler::ServerSocketFactory>(
       new TCPServerSocketFactory(
             SprocketDevToolsHttpHandlerDelegate::host(),
             SprocketDevToolsHttpHandlerDelegate::port()));

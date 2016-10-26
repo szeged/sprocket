@@ -7,6 +7,7 @@
 #ifndef SPROCKET_BROWSER_BROWSER_CONTEXT_H_
 #define SPROCKET_BROWSER_BROWSER_CONTEXT_H_
 
+#include "base/memory/ptr_util.h"
 #include "content/public/browser/browser_context.h"
 #include "content/public/browser/content_browser_client.h"
 #include "content/public/browser/resource_context.h"
@@ -27,26 +28,19 @@ class SprocketBrowserContext : public content::BrowserContext {
 
   // Creates a delegate to initialize a HostZoomMap and persist its information.
   // This is called during creation of each StoragePartition.
-  scoped_ptr<content::ZoomLevelDelegate> CreateZoomLevelDelegate(
+  std::unique_ptr<content::ZoomLevelDelegate> CreateZoomLevelDelegate(
       const base::FilePath& partition_path) override;
 
   // Return whether this context is incognito. Default is false.
   bool IsOffTheRecord() const override;
 
-  // Returns the request context information associated with this context. Call
-  // this only on the UI thread, since it can send notifications that should
-  // happen on the UI thread.
-  net::URLRequestContextGetter* GetRequestContext() override;
-
   // Returns the default request context for media resources associated with
   // this context.
-  net::URLRequestContextGetter* GetMediaRequestContext() override;
+  net::URLRequestContextGetter* CreateMediaRequestContext() override;
 
   // Returns the request context for media resources associated with this
-  // context and renderer process.
-  net::URLRequestContextGetter* GetMediaRequestContextForRenderProcess(
-      int renderer_child_id) override;
-  net::URLRequestContextGetter* GetMediaRequestContextForStoragePartition(
+  // context.
+  net::URLRequestContextGetter* CreateMediaRequestContextForStoragePartition(
       const base::FilePath& partition_path,
       bool in_memory) override;
 
@@ -131,7 +125,7 @@ class SprocketBrowserContext : public content::BrowserContext {
     return ignore_certificate_errors_;
   }
 
-  scoped_ptr<SprocketResourceContext> resource_context_;
+  std::unique_ptr<SprocketResourceContext> resource_context_;
   bool ignore_certificate_errors_;
 
  private:

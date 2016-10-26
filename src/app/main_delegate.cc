@@ -72,7 +72,7 @@ int SprocketMainDelegate::RunProcess(
 #if !defined(OS_ANDROID)
   // Android stores the BrowserMainRunner instance as a scoped member pointer
   // on the SprocketMainDelegate class because of different object lifetime.
-  scoped_ptr<content::BrowserMainRunner> browser_runner_;
+  std::unique_ptr<content::BrowserMainRunner> browser_runner_;
 #endif
 
   browser_runner_.reset(content::BrowserMainRunner::Create());

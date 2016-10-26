@@ -7,7 +7,7 @@
 #ifndef SPROCKET_BROWSER_BROWSER_MAIN_H_
 #define SPROCKET_BROWSER_BROWSER_MAIN_H_
 
-#include "base/memory/scoped_ptr.h"
+#include "base/memory/ptr_util.h"
 
 namespace content {
 class BrowserMainRunner;
@@ -18,6 +18,6 @@ struct MainFunctionParams;
 // TODO: Do we really need this? We should check on Android.
 int BrowserMain(
     const content::MainFunctionParams& parameters,
-    const scoped_ptr<content::BrowserMainRunner>& main_runner);
+    const std::unique_ptr<content::BrowserMainRunner>& main_runner);
 
 #endif  // SPROCKET_BROWSER_BROWSER_MAIN_H_

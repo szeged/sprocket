@@ -21,7 +21,7 @@ SprocketResourceDispatcherHostLoginDelegate::SprocketResourceDispatcherHostLogin
     net::URLRequest* request)
     : url_(request->url()),
       realm_(auth_info->realm),
-      host_(auth_info->challenger.ToString()),
+      host_(auth_info->challenger.host()),
       request_(request) {
   DCHECK(content::BrowserThread::CurrentlyOn(content::BrowserThread::IO));
 

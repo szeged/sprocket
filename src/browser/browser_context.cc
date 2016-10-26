@@ -60,7 +60,7 @@ void SprocketBrowserContext::InitWhileIOAllowed() {
   CHECK(PathService::Get(base::DIR_ANDROID_APP_DATA, &path_));
   path_ = path_.Append(FILE_PATH_LITERAL("sprocket"));
 #else
-  scoped_ptr<base::Environment> env(base::Environment::Create());
+  std::unique_ptr<base::Environment> env(base::Environment::Create());
   base::FilePath config_dir(
       base::nix::GetXDGDirectory(env.get(),
                                  base::nix::kXdgConfigHomeEnvVar,
@@ -77,10 +77,10 @@ base::FilePath SprocketBrowserContext::GetPath() const {
   return path_;
 }
 
-scoped_ptr<content::ZoomLevelDelegate>
+std::unique_ptr<content::ZoomLevelDelegate>
 SprocketBrowserContext::CreateZoomLevelDelegate(
     const base::FilePath& partition_path) {
-  return scoped_ptr<content::ZoomLevelDelegate>();
+  return std::unique_ptr<content::ZoomLevelDelegate>();
 }
 
 bool SprocketBrowserContext::IsOffTheRecord() const {
@@ -88,26 +88,15 @@ bool SprocketBrowserContext::IsOffTheRecord() const {
 }
 
 net::URLRequestContextGetter*
-SprocketBrowserContext::GetRequestContext() {
-  return GetDefaultStoragePartition(this)->GetURLRequestContext();
+SprocketBrowserContext::CreateMediaRequestContext() {
+  return url_request_getter_.get();
 }
 
 net::URLRequestContextGetter*
-SprocketBrowserContext::GetMediaRequestContext() {
-  return GetRequestContext();
-}
-
-net::URLRequestContextGetter*
-SprocketBrowserContext::GetMediaRequestContextForRenderProcess(
-    int renderer_child_id) {
-  return GetRequestContext();
-}
-
-net::URLRequestContextGetter*
-SprocketBrowserContext::GetMediaRequestContextForStoragePartition(
+SprocketBrowserContext::CreateMediaRequestContextForStoragePartition(
     const base::FilePath& partition_path,
     bool in_memory) {
-  return GetRequestContext();
+  return nullptr;
 }
 
 content::ResourceContext*

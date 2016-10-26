@@ -6,7 +6,6 @@
 
 #include "sprocket/browser/browser_main.h"
 
-#include "base/memory/scoped_ptr.h"
 #include "build/build_config.h"
 #include "content/public/browser/browser_main_runner.h"
 
@@ -17,7 +16,7 @@
 // Main routine for running as the Browser process.
 int BrowserMain(
     const content::MainFunctionParams& parameters,
-    const scoped_ptr<content::BrowserMainRunner>& main_runner) {
+    const std::unique_ptr<content::BrowserMainRunner>& main_runner) {
   int exit_code = main_runner->Initialize(parameters);
 
   if (exit_code >= 0)
