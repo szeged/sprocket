@@ -94,6 +94,7 @@ static_library("sprocket_lib") {
     "//base",
     "//components/devtools_discovery",
     "//components/devtools_http_handler",
+    "//components/network_session_configurator:switches",
     "//components/plugins/renderer",
     "//content:resources",
     "//content/app/resources",

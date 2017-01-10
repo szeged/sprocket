@@ -11,6 +11,7 @@
 #include "base/files/file_util.h"
 #include "base/path_service.h"
 #include "base/nix/xdg_util.h"
+#include "components/network_session_configurator/switches.h"
 #include "content/public/browser/browser_thread.h"
 #include "content/public/browser/permission_manager.h"
 #include "content/public/browser/storage_partition.h"

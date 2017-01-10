@@ -29,7 +29,7 @@ class SprocketContentClient : public content::ContentClient {
       ui::ScaleFactor scale_factor) const override;
 
   // Returns the raw bytes of a scale independent data resource.
-  base::RefCountedStaticMemory* GetDataResourceBytes(
+  base::RefCountedMemory* GetDataResourceBytes(
       int resource_id) const override;
 
   // Returns a native image given its id.

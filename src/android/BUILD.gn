@@ -39,11 +39,9 @@ jinja_template("sprocket_manifest") {
 
 android_resources("sprocket_apk_resources") {
   resource_dirs = [ "res" ]
-  deps = [
-    ":sprocket_manifest",
-  ]
   custom_package = "hu.uszeged.sprocket"
   android_manifest = sprocket_manifest
+  android_manifest_dep = ":sprocket_manifest"
 }
 
 android_library("sprocket_apk_java") {
@@ -82,14 +80,13 @@ android_assets("sprocket_assets") {
 android_apk("sprocket_apk") {
   apk_name = "Sprocket"
   android_manifest = sprocket_manifest
-  native_libs = [ "libsprocket_content_view.so" ]
+  android_manifest_dep = ":sprocket_manifest"
+  shared_libraries = [ ":libsprocket_content_view" ]
   loadable_modules = [ "$root_out_dir/libosmesa.so" ]
 
   deps = [
     ":sprocket_apk_java",
     ":sprocket_assets",
-    ":sprocket_manifest",
-    ":libsprocket_content_view",
     "//base:base_java",
     "//content/public/android:content_java",
     "//media/capture/video/android:capture_java",
